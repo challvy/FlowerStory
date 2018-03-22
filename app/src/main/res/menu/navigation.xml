@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_story"
+        android:orderInCategory="0"
+        android:icon="@drawable/ic_menu_story"
+        android:title="@string/title_story" />
+
+    <item
+        android:id="@+id/navigation_flower"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_menu_flower"
+        android:title="@string/title_flower" />
+
+    <item
+        android:id="@+id/navigation_user"
+        android:orderInCategory="2"
+        android:icon="@drawable/ic_menu_user"
+        android:title="@string/title_user" />
+
+</menu>

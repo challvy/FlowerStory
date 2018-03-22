@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">观花物语</string>
+
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_story">物语</string>
+    <string name="title_user">我的</string>
+    <string name="title_flower">观花</string>
+
+    <string name="FlowerStory">观花物语</string>
+
+    <string name="title_activity_flower">FlowerActivity</string>
+    <string name="dummy_button">拍照</string>
+    <string name="dummy_content">观花物语</string>
+    <string name="TakePhoto">拍照</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="gallery">Gallery</string>
+    <string name="todo">TODO</string>
+    <string name="flower_fragment">fragment</string>
 </resources>
