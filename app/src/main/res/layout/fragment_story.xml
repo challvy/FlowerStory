@@ -15,23 +15,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            app:tabIndicatorColor="@color/colorPrimaryDark"
+            app:tabGravity="fill"
             android:layout_toLeftOf="@+id/ic_class"
             app:tabIndicatorHeight="1dp"
             app:tabMode="scrollable"
-            app:tabSelectedTextColor="@color/white"
-            app:tabTextAppearance="@style/TextAppearance.Design.Tab"
-            android:layout_toStartOf="@+id/ic_class" />
+            app:tabSelectedTextColor="@color/colorPrimary"
+            app:tabTextAppearance="@style/TextAppearance.Design.Tab" />
 
         <ImageView
             android:id="@+id/ic_class"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:src="@drawable/ic_class" android:contentDescription="@string/todo" android:layout_alignParentEnd="true" />
+            android:src="@drawable/ic_class" />
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager
@@ -42,13 +42,3 @@
         />
 
 </LinearLayout>
-    <!--
-
-               app:tabMode="scrollable" 设置tabMode属性为可以滚动
-               tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-               android design library提供的TabLayout控件
-               tabIndicatorColor：菜单下方移动的横线的颜色
-               tabSelectedTextColor ：菜单被选中之后的颜色
-               tabTextColor : 菜单正常的颜色
-               app:tabTextAppearance : 添加样式，这里加了样式主要是为了在文字前面加一个图所用，就是把textAllCaps设置成false
-           -->
