@@ -24,7 +24,6 @@ public class UserFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
     }
 
@@ -35,24 +34,8 @@ public class UserFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
+        // TODO
         super.onViewCreated(view, savedInstanceState);
-        mWebView = (WebView) view.findViewById(R.id.user_web);
-        WebSettings settings = mWebView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        //支持缩放
-        settings.setUseWideViewPort(true);//设定支持viewport
-        settings.setLoadWithOverviewMode(true);
-        settings.setBuiltInZoomControls(true);
-        settings.setSupportZoom(true);//设定支持缩放
-        mWebView.setWebViewClient(new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return super.shouldOverrideUrlLoading(view, url);
-            }
-        });
-        mWebView.loadUrl("https://www.huabaike.com/tupu");
     }
 
 }

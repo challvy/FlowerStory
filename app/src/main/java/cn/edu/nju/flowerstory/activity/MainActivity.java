@@ -1,9 +1,14 @@
 package cn.edu.nju.flowerstory.activity;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +36,13 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem mMenuItem;
     private boolean mIsExit;
 
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 2;
+    boolean isRequireCheck = true;
+
+    public static final int PERMISSIONS_GRANTED = 0;
+    public static final int PERMISSIONS_DENIED = 1;
+
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +55,12 @@ public class MainActivity extends AppCompatActivity {
         //只允许竖屏模式
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         init();
+        if(lacksPermissions()) {
+            requestPermissions(new String[]{
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+        }
     }
 
     private void init(){
@@ -55,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
         mBottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             //底部菜单栏各个menuitem的点击事件处理
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
@@ -111,6 +130,37 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private boolean lacksPermissions(){
+        if(checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS && hasAllPermissionsGranted(grantResults)) {
+            isRequireCheck = true;
+            setResult(PERMISSIONS_GRANTED);
+        } else {
+            isRequireCheck = false;
+            setResult(PERMISSIONS_DENIED);
+            finish();
+        }
+    }
+
+    // 含有全部的权限
+    private boolean hasAllPermissionsGranted(@NonNull int[] grantResults) {
+        for (int grantResult : grantResults) {
+            if (grantResult == PackageManager.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

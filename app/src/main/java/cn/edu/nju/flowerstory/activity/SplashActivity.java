@@ -1,5 +1,6 @@
 package cn.edu.nju.flowerstory.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,12 +21,11 @@ public class SplashActivity extends AppCompatActivity {
 
         new android.os.Handler().postDelayed(new Runnable() {
             public void run() {
-                Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+                Intent mainIntent = mainIntent = new Intent(SplashActivity.this, MainActivity.class);
                 SplashActivity.this.startActivity(mainIntent);
                 SplashActivity.this.finish();
             }
         }, 1000);
-
     }
 
 }

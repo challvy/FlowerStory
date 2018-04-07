@@ -15,8 +15,7 @@
         android:supportsRtl="true">
         <activity
             android:name=".activity.MainActivity"
-            android:theme="@style/AppTheme"
-            />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".activity.SplashActivity"
             android:theme="@style/AppTheme.splash">
@@ -26,7 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>
