@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,12 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import butterknife.BindView;
+import butterknife.Unbinder;
 import cn.edu.nju.flowerstory.R;
 
 import static android.app.Activity.RESULT_OK;
@@ -31,6 +36,13 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class FlowerFragment extends Fragment  {
+
+    @BindView(R.id.flowerRecyclerView)
+    RecyclerView mRecyclerView;
+
+    Unbinder unbinder;
+
+    private List<String> mdata = new ArrayList<>();
 
     public ImageView mImageView;
 
@@ -47,12 +59,18 @@ public class FlowerFragment extends Fragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_flower, container, false);
+
         mImageView = (ImageView) v.findViewById(R.id.civ);
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler);
+
+        initData();
         return v;
     }
 
-    public void setImageView(ImageView imageView) {
-        mImageView = imageView;
+    private void initData() {
+        for (int i = 0; i < 20; i++) {
+            mdata.add("  -- 罗平油菜花 " + "第" + (i+1) + "张");
+        }
     }
 
     @Override
@@ -76,6 +94,9 @@ public class FlowerFragment extends Fragment  {
                 imageUri = Uri.fromFile(file);
                 it.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 startActivityForResult(it, TAKE_PHOTO);
+
+                mImageView.setWillNotDraw(false);
+                //mRecyclerView.setVisibility(View.GONE);
             }
         });
 
@@ -84,6 +105,15 @@ public class FlowerFragment extends Fragment  {
             public void onClick(View v) {
                 Intent albumIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(albumIntent, SELECT_PHOTO);
+
+                mImageView.setWillNotDraw(false);
+            }
+        });
+
+        btn_recognition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ;
             }
         });
     }
@@ -128,4 +158,5 @@ public class FlowerFragment extends Fragment  {
         cursor.close();
         mImageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
     }
+
 }

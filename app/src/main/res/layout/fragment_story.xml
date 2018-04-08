@@ -16,22 +16,11 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             app:tabGravity="fill"
-            android:layout_toLeftOf="@+id/ic_class"
             app:tabIndicatorHeight="1dp"
             app:tabMode="scrollable"
             app:tabSelectedTextColor="@color/colorPrimary"
             app:tabTextAppearance="@style/TextAppearance.Design.Tab" />
 
-        <ImageView
-            android:id="@+id/ic_class"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:src="@drawable/ic_class" />
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager

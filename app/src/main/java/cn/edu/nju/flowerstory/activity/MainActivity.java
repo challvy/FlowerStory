@@ -153,7 +153,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // 含有全部的权限
+    /*
+     * 含有全部的权限
+     */
     private boolean hasAllPermissionsGranted(@NonNull int[] grantResults) {
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {

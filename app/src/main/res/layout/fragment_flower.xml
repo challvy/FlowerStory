@@ -11,12 +11,19 @@
         android:id="@+id/crime_camera_progressContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:theme="@style/AlertDialog.AppCompat.Light">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/flowerRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
         <ImageView
             android:id="@+id/civ"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1" />
 
         <LinearLayout

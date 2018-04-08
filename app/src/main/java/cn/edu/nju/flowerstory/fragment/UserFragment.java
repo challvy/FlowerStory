@@ -20,8 +20,6 @@ import cn.edu.nju.flowerstory.R;
 
 public class UserFragment extends Fragment {
 
-    WebView mWebView = null;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +32,6 @@ public class UserFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        // TODO
         super.onViewCreated(view, savedInstanceState);
     }
 
