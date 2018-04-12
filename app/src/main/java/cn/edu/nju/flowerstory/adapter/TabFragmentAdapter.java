@@ -9,17 +9,18 @@ import java.util.List;
 
 /**
  *
- * Created by Administrator on 2018/3/23 0023.
+ * Created by Administrator on 2018/4/12 0012.
  */
 
 public class TabFragmentAdapter extends FragmentPagerAdapter {
-    private final List<Fragment> mFragmentList;
+
     private final List<String> mTabTitle;
+    private final List<Fragment> mFragmentList;
 
     public TabFragmentAdapter(FragmentManager fm, List<Fragment> fragmentList, List<String> tabTitle) {
         super(fm);
-        this.mFragmentList=fragmentList;
-        this.mTabTitle=tabTitle;
+        this.mTabTitle = tabTitle;
+        this.mFragmentList = fragmentList;
     }
 
     @Override

@@ -12,38 +12,29 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.adapter.TabFragmentAdapter;
 
-import static cn.edu.nju.flowerstory.app.Config.TAB_SIZE;
-import static cn.edu.nju.flowerstory.app.Config.TAB_TITLE;
+import static cn.edu.nju.flowerstory.app.Constants.TAB_SIZE;
+import static cn.edu.nju.flowerstory.app.Constants.TAB_TITLE;
 
 /**
  *
  * Created by Administrator on 2018/3/22 0022.
  */
 
-public class StoryFragment extends Fragment implements View.OnClickListener {
+public class StoryFragment extends Fragment {
 
-    @BindView(R.id.tablayout)
-    TabLayout mTabLayout;
-
-    @BindView(R.id.tab_viewpager)
+    View view;
     ViewPager tabViewpager;
-
-    Unbinder unbinder;
+    TabLayout mTabLayout;
 
     private List<Fragment> mFragmentArrays = new ArrayList<>();
     private List<String> mTabs = new ArrayList<>();
-    private View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (view != null) {
-            unbinder = ButterKnife.bind(this, view);
             ViewGroup parent = (ViewGroup) view.getParent();
             if (parent != null) {
                 parent.removeView(view);
@@ -51,7 +42,8 @@ public class StoryFragment extends Fragment implements View.OnClickListener {
             return view;
         }
         view = inflater.inflate(R.layout.fragment_story, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        mTabLayout = view.findViewById(R.id.tablayout);
+        tabViewpager = view.findViewById(R.id.tab_viewpager);
         init();
         return view;
     }
@@ -62,12 +54,12 @@ public class StoryFragment extends Fragment implements View.OnClickListener {
 
         if (mFragmentArrays != null) {
             mFragmentArrays.clear();
-            mTabs.clear();
+            mTabs = new ArrayList<>();
         }
 
         mTabs.addAll(Arrays.asList(TAB_TITLE).subList(0, TAB_SIZE));
         for (int i = 0; i < mTabs.size(); i++) {
-            Fragment fragment = new TabFragment();
+            Fragment fragment = new StoryItemFragment();
             Bundle bundle = new Bundle();
             bundle.putInt("position", i);
             fragment.setArguments(bundle);
@@ -76,19 +68,6 @@ public class StoryFragment extends Fragment implements View.OnClickListener {
         tabViewpager.setAdapter(new TabFragmentAdapter(getFragmentManager(), mFragmentArrays, mTabs));
         tabViewpager.setCurrentItem(2);
         mTabLayout.setupWithViewPager(tabViewpager);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            //
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
     }
 
 }

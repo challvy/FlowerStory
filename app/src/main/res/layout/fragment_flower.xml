@@ -14,19 +14,15 @@
         android:orientation="vertical"
         android:theme="@style/AlertDialog.AppCompat.Light">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/flowerRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
         <ImageView
-            android:id="@+id/civ"
+            android:id="@+id/imageViewFlowerPhoto"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:srcCompat="@mipmap/flowerstoryphoto" />
 
         <LinearLayout
+            android:id="@+id/flowerbtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="bottom"

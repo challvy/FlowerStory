@@ -2,6 +2,7 @@ package cn.edu.nju.flowerstory.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -11,26 +12,31 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewConfiguration;
+import android.view.WindowManager;
+import android.widget.SearchView;
 import android.widget.Toast;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import java.lang.reflect.Field;
+
 import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.adapter.ViewPagerAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.fragment.StoryFragment;
 import cn.edu.nju.flowerstory.fragment.UserFragment;
 
+import static cn.edu.nju.flowerstory.app.Constants.*;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.bottom_navigation)
     BottomNavigationView mBottomNavigationView;
-
-    @BindView(R.id.viewpager)
     ViewPager mViewPager;
 
     private MenuItem mMenuItem;
@@ -39,27 +45,67 @@ public class MainActivity extends AppCompatActivity {
     final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 2;
     boolean isRequireCheck = true;
 
-    public static final int PERMISSIONS_GRANTED = 0;
-    public static final int PERMISSIONS_DENIED = 1;
+    private DrawerLayout drawerLayout;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
 
+        mBottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
         //只允许竖屏模式
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         init();
+
+        //权限获取
         if(lacksPermissions()) {
             requestPermissions(new String[]{
                     Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        //searchView.setIconifiedByDefault(false);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        getOverflowMenu();
+        switch (item.getItemId()) {
+            case R.id.search:
+                return true;
+            case R.id.more:
+                Intent intentB = new Intent(getApplicationContext(),SearchActivity.class);
+                startActivityForResult(intentB, 0);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void getOverflowMenu() {
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if(menuKeyField != null) {
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -134,11 +180,8 @@ public class MainActivity extends AppCompatActivity {
 
     @TargetApi(Build.VERSION_CODES.M)
     private boolean lacksPermissions(){
-        if(checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED ||
-                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED){
-            return true;
-        }
-        return false;
+        return checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -153,9 +196,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*
-     * 含有全部的权限
-     */
     private boolean hasAllPermissionsGranted(@NonNull int[] grantResults) {
         for (int grantResult : grantResults) {
             if (grantResult == PackageManager.PERMISSION_DENIED) {
