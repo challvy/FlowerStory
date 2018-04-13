@@ -20,29 +20,26 @@
             android:theme="@style/AppTheme.splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
-            android:name=".activity.MainActivity"
-            android:persistableMode="persistAcrossReboots"
+            android:allowBackup="true"
+            android:name=".MainActivity"
             android:theme="@style/AppTheme">
         </activity>
 
         <activity
             android:name=".activity.RecognitionDetailActivity"
             android:label="识别结果"
-            android:parentActivityName=".activity.MainActivity"
+            android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
-
         </activity>
 
         <activity android:name=".activity.SearchActivity"
             android:theme="@style/AppTheme"
-            android:parentActivityName=".activity.MainActivity" >
-
+            android:parentActivityName=".MainActivity" >
         </activity>
 
     </application>

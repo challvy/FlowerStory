@@ -13,6 +13,8 @@ Flower Story 即“观花物语”
 * 养花：疾病识别
 > 精确识别花卉病虫害，并提供解决方案仅供参考
 
+![FlowerStory](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory.png)
+
 ## Environment
 * gradle: 3.0.1
 * compileSdkVersion: 26

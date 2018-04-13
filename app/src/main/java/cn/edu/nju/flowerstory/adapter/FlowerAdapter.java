@@ -47,15 +47,7 @@ public class FlowerAdapter extends BaseAdapter {
     @SuppressLint("ViewHolder")
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        view = LayoutInflater.from(mContext).inflate(R.layout.layout_floweritem,viewGroup,false);
-
-        ImageView img_icon = (ImageView) view.findViewById(R.id.img_icon);
-        TextView txt_aName = (TextView) view.findViewById(R.id.txt_aName);
-        TextView txt_aSpeak = (TextView) view.findViewById(R.id.txt_aSpeak);
-
-        img_icon.setBackgroundResource(mData.get(i).getaIcon());
-        txt_aName.setText(mData.get(i).getaName());
-        txt_aSpeak.setText(mData.get(i).getaSpeak());
         return view;
     }
+
 }

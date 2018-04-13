@@ -1,24 +1,25 @@
 package cn.edu.nju.flowerstory.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 
 import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.adapter.FlowerAdapter;
-import cn.edu.nju.flowerstory.model.FlowerModel;
+import cn.edu.nju.flowerstory.adapter.RecyclerAdapter;
 
-
-import static cn.edu.nju.flowerstory.app.Constants.MAIN_INDEX;
 
 /**
  *
@@ -27,9 +28,10 @@ import static cn.edu.nju.flowerstory.app.Constants.MAIN_INDEX;
 
 public class StoryItemFragment extends Fragment {
 
-    ListView mListView;
+    RecyclerView mRecyclerView;
+    RecyclerAdapter mAdapter;
 
-    private List<String> imageUrl = new ArrayList<>();
+    ListView mListView;
     private FlowerAdapter mFlowerAdapter;
     int mPosition;
 
@@ -37,13 +39,23 @@ public class StoryItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layout_flowers, container, false);
 
-        mListView = (ListView) view.findViewById(R.id.flowerList);
-        List<FlowerModel> data = new LinkedList<FlowerModel>();
-
-        for (int i=0; i<10; i++) {
-            data.add(new FlowerModel("花", "第"+(i+1)+"张", R.mipmap.flower));
-        }
-        mFlowerAdapter = new FlowerAdapter((LinkedList<FlowerModel>) data, getActivity().getApplicationContext());
+        List<String> dataa = new ArrayList<String>(Arrays.asList("Android","iOS是由苹果公司开发的移动操作系统。\n苹果公司最早于2007年1月9日的Macworld大会上公布这个系统，最初是设计给iPhone使用的。",
+                "jack","tony","Microsoft Windows\n是美国微软公司研发的一套操作系统，它问世于1985年。","mac"));
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.flowerRecyclerView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), GridLayoutManager.VERTICAL, false));
+        mAdapter = new RecyclerAdapter(dataa);
+        mRecyclerView.setAdapter(mAdapter);
+        final SwipeRefreshLayout mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshFlowersLayout);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    public void run() {
+                        mRefreshLayout.setRefreshing(false);
+                    }
+                }, 1500);
+            }
+        });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -51,7 +63,6 @@ public class StoryItemFragment extends Fragment {
 
         mPosition = getArguments().getInt("position");
 
-        mListView.setAdapter(mFlowerAdapter);
         return view;
     }
 

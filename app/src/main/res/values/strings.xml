@@ -3,8 +3,8 @@
 
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="title_story">物语</string>
-    <string name="title_user">我的</string>
     <string name="title_flower">观花</string>
+    <string name="title_user">我的</string>
 
     <string name="FlowerStory">观花物语</string>
 

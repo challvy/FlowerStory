@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import cn.edu.nju.flowerstory.MainActivity;
 import cn.edu.nju.flowerstory.R;
 
 public class SplashActivity extends AppCompatActivity {

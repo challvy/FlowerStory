@@ -15,6 +15,7 @@ import java.util.List;
 import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.adapter.TabFragmentAdapter;
 
+import static cn.edu.nju.flowerstory.app.Constants.CURRENT_ITEM_INDEX;
 import static cn.edu.nju.flowerstory.app.Constants.TAB_SIZE;
 import static cn.edu.nju.flowerstory.app.Constants.TAB_TITLE;
 
@@ -66,7 +67,7 @@ public class StoryFragment extends Fragment {
             mFragmentArrays.add(fragment);
         }
         tabViewpager.setAdapter(new TabFragmentAdapter(getFragmentManager(), mFragmentArrays, mTabs));
-        tabViewpager.setCurrentItem(2);
+        tabViewpager.setCurrentItem(CURRENT_ITEM_INDEX);
         mTabLayout.setupWithViewPager(tabViewpager);
     }
 
