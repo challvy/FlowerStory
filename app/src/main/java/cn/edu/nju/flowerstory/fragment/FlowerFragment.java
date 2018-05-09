@@ -5,14 +5,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -21,7 +20,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import cn.edu.nju.flowerstory.R;
-import cn.edu.nju.flowerstory.activity.RecognitionDetailActivity;
+import cn.edu.nju.flowerstory.activity.RecognitionActivity;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -38,6 +37,7 @@ public class FlowerFragment extends Fragment  {
     public ImageView mImageView;
     private Uri imageUri;
     private File file;
+    private static Bitmap bitmap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,9 +50,26 @@ public class FlowerFragment extends Fragment  {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Button btn_takePhoto = (Button) getActivity().findViewById(R.id.crime_camera_takePictureButton);
-        Button btn_album = (Button) getActivity().findViewById(R.id.crime_camera_gallaryButton);
-        Button btn_recognition = (Button) getActivity().findViewById(R.id.crime_recognition_button);
+        ImageButton btn_takePhoto = (ImageButton) getActivity().findViewById(R.id.crime_camera_takePictureButton);
+        ImageButton btn_album = (ImageButton) getActivity().findViewById(R.id.crime_camera_gallaryButton);
+        ImageButton btn_recognition = (ImageButton) getActivity().findViewById(R.id.crime_recognition_button);
+
+        btn_album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent albumIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(albumIntent, SELECT_PHOTO);
+            }
+        });
+
+        btn_recognition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), RecognitionActivity.class);
+                //intent.putExtra(RecognitionActivity.RETURN_INFO, imageUri.toString());
+                startActivityForResult(intent,0);
+            }
+        });
 
         btn_takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,29 +77,13 @@ public class FlowerFragment extends Fragment  {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
                 Date curDate =  new Date(System.currentTimeMillis());
-                String   str   =   formatter.format(curDate);
-                file = new File(Environment.getExternalStorageDirectory().getPath(), "FS_" + str + ".jpg");
+                String str = formatter.format(curDate);// + "cn.edu.nju.flowerstory"
+                file = new File(new File(SUB_DIR_PATH[0]), "FS_" + str + ".jpg");
                 imageUri = Uri.fromFile(file);
                 if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                     startActivityForResult(intent, TAKE_PHOTO);
                 }
-            }
-        });
-
-        btn_recognition.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), RecognitionDetailActivity.class);
-                startActivityForResult(intent, 0);
-            }
-        });
-
-        btn_album.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent albumIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(albumIntent, SELECT_PHOTO);
             }
         });
     }
@@ -94,7 +95,11 @@ public class FlowerFragment extends Fragment  {
             return;
         }
         switch (requestCode) {
+            case 0:
+                System.out.print("!");
             case TAKE_PHOTO:
+                bitmap = BitmapFactory.decodeFile(file.getPath());
+                mImageView.setImageBitmap(bitmap);/*
                 Intent intent = new Intent("com.android.camera.action.CROP");
                 intent.setDataAndType(imageUri, "image/*");
                 intent.putExtra("scale", true);
@@ -102,14 +107,14 @@ public class FlowerFragment extends Fragment  {
                 intent.putExtra("crop", "true");
                 intent.putExtra("aspectX", 1);
                 intent.putExtra("aspectY", 1);
-                startActivityForResult(intent, CUT_PHOTO);
+                startActivityForResult(intent, CUT_PHOTO);*/
                 break;
             case CUT_PHOTO:
                 Intent it = new Intent();
                 it.setAction(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 it.setData(imageUri);
                 getActivity().sendBroadcast(it);
-                Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+                bitmap = BitmapFactory.decodeFile(file.getPath());
                 mImageView.setImageBitmap(bitmap);
                 break;
             case SELECT_PHOTO:
@@ -131,4 +136,7 @@ public class FlowerFragment extends Fragment  {
         mImageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
     }
 
+    public static Bitmap getBitmap() {
+        return bitmap;
+    }
 }

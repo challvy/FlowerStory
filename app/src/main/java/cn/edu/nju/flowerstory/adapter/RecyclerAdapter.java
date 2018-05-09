@@ -73,7 +73,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public void onClick(View v) {
             if (mAdapter != null && mAdapter.get() != null) {
                 // 调用RecyclerView.ViewHolder类的getPosition()获取当前位置
-                mAdapter.get().removeData(getPosition());
+                //mAdapter.get().removeData(getPosition());
             }
         }
     }

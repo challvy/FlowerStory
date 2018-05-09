@@ -2,16 +2,12 @@ package cn.edu.nju.flowerstory.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.LinkedList;
 
-import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.model.FlowerModel;
 
 /**

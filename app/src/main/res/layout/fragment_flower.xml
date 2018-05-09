@@ -24,30 +24,39 @@
         <LinearLayout
             android:id="@+id/flowerbtn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:gravity="bottom"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="#eeeeee">
 
-            <Button
+            <ImageButton
                 android:id="@+id/crime_camera_gallaryButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/gallary_button" />
+                android:background="@layout/layout_button"
+                android:src="@drawable/ic_action_gallery"
+                android:textColor="@color/colorPrimary" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/crime_recognition_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="识别" />
+                android:background="@layout/layout_button"
+                android:src="@drawable/ic_action_recognize"
+                android:text="@string/Recognition"
+                android:textColor="@color/colorPrimary" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/crime_camera_takePictureButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/TakePhoto" />
+                android:background="@layout/layout_button"
+                android:src="@drawable/ic_action_camer"
+                android:text="@string/TakePhoto"
+                android:textColor="@color/colorPrimary" />
         </LinearLayout>
 
     </LinearLayout>

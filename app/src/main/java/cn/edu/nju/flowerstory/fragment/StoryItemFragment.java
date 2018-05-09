@@ -25,7 +25,6 @@ import cn.edu.nju.flowerstory.adapter.RecyclerAdapter;
  *
  * Created by Administrator on 2018/3/23 0023.
  */
-
 public class StoryItemFragment extends Fragment {
 
     RecyclerView mRecyclerView;
@@ -39,11 +38,10 @@ public class StoryItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layout_flowers, container, false);
 
-        List<String> dataa = new ArrayList<String>(Arrays.asList("Android","iOS是由苹果公司开发的移动操作系统。\n苹果公司最早于2007年1月9日的Macworld大会上公布这个系统，最初是设计给iPhone使用的。",
-                "jack","tony","Microsoft Windows\n是美国微软公司研发的一套操作系统，它问世于1985年。","mac"));
+        List<String> data = new ArrayList<String>(Arrays.asList("油菜花1","油菜花2","油菜花3","油菜花4","油菜花5","油菜花6","油菜花7"));
         mRecyclerView = (RecyclerView) view.findViewById(R.id.flowerRecyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), GridLayoutManager.VERTICAL, false));
-        mAdapter = new RecyclerAdapter(dataa);
+        mAdapter = new RecyclerAdapter(data);
         mRecyclerView.setAdapter(mAdapter);
         final SwipeRefreshLayout mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshFlowersLayout);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -60,9 +58,7 @@ public class StoryItemFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.canScrollVertically();
-
         mPosition = getArguments().getInt("position");
-
         return view;
     }
 
