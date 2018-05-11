@@ -3,30 +3,80 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    tools:context="cn.edu.nju.flowerstory.activity.FlowerDetailActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/mToolbarDetail"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:theme="@style/ToolbarTheme"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:theme="@style/ToolbarTheme">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/refreshLayoutDetail"
-        android:layout_width="match_parent"
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/mToolbarDetail"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:fillViewport="false"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mToolbarDetail">
 
-        <TextView
-            android:id="@+id/detail_view"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+            <TextView
+                android:id="@+id/tittle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="Tittle"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#333333" />
+
+            <ImageView
+                android:id="@+id/imageViewDetail"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#ffffff"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/photodetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Photo Description"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#2E3092" />
+
+            <TextView
+                android:id="@+id/detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:lineSpacingMultiplier="1.25"
+                android:text="Description"
+                android:textColor="#333333"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/readme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text=" --以上信息取自百度百科--"
+                android:textColor="#888888"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

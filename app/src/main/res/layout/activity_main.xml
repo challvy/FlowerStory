@@ -13,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/my_toolbar"
@@ -22,15 +21,41 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"
             android:theme="@style/ToolbarTheme"
-            app:title="@string/title_story"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp">
 
-            <!--android.support.v7.widget.ActionMenuView
-                android:id="@+id/action_menu_view"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent" /-->
+                android:layout_height="match_parent"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/camera"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginRight="25dp"
+                    android:background="@drawable/camera_selector"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginEnd="25dp" />
+                <ImageView
+                    android:id="@+id/story"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:background="@drawable/story_selector"
+                    android:clickable="true"
+                    android:focusable="true" />
+                <ImageView
+                    android:id="@+id/user"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/user_selector"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </LinearLayout>
 
         </android.support.v7.widget.Toolbar>
 
@@ -42,18 +67,6 @@
             app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
         </android.support.v4.view.ViewPager>
 
-        <!--android.support.design.widget.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="?android:attr/windowBackground"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:menu="@menu/navigation">
-
-        </android.support.design.widget.BottomNavigationView-->
 
     </android.support.constraint.ConstraintLayout>
 

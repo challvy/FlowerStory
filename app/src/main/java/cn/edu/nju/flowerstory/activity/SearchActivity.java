@@ -19,7 +19,6 @@ public class SearchActivity extends AppCompatActivity {
 
         toolbar = (Toolbar) findViewById(R.id.mToolbarSearch);
         setSupportActionBar(toolbar);
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -35,4 +34,5 @@ public class SearchActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

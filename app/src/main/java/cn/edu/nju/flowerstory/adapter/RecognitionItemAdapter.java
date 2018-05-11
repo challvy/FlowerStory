@@ -21,6 +21,31 @@ import cn.edu.nju.flowerstory.model.FlowerModel;
 public class RecognitionItemAdapter extends RecyclerView.Adapter<RecognitionItemAdapter.ViewHolder> {
 
     private List<FlowerModel> items;
+    private OnItemClickListener mOnItemClickListener;
+
+    static class ViewHolder extends RecyclerView.ViewHolder{
+        private SoftReference<RecognitionItemAdapter> mAdapter;
+        private ImageView mImageView;
+        private TextView tittle;
+        private TextView digest;
+
+        ViewHolder(View itemView, RecognitionItemAdapter adapter) {
+            super(itemView);
+            mAdapter = new SoftReference<RecognitionItemAdapter>(adapter);
+            mImageView = (ImageView) itemView.findViewById(R.id.imageViewRec);
+            tittle = (TextView) itemView.findViewById(R.id.tittle);
+            digest = (TextView) itemView.findViewById(R.id.digest);
+        }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClik(View view,int position);
+        void onItemLongClik(View view,int position);
+    }
+
+    public void setItemClikListener(OnItemClickListener mOnItemClikListener ){
+        this.mOnItemClickListener = mOnItemClikListener;
+    }
 
     public RecognitionItemAdapter(List<FlowerModel> items) {
         this.items = items;
@@ -35,15 +60,15 @@ public class RecognitionItemAdapter extends RecyclerView.Adapter<RecognitionItem
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         FlowerModel item = items.get(position);
-        //holder.mImageView.set setImageURI();
-        holder.text1.setText(item.getName());
-        holder.text2.setText(item.getName());
-        if(mOnItemClikListener!=null){
+        holder.mImageView.setImageBitmap(item.getBitmap());
+        holder.tittle.setText(item.getName());
+        holder.digest.setText(item.getImageDetail());
+        if(mOnItemClickListener !=null){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int pos=holder.getLayoutPosition();
-                    mOnItemClikListener.onItemClik(holder.itemView,pos);
+                    mOnItemClickListener.onItemClik(holder.itemView,pos);
                 }
             });
 
@@ -51,11 +76,16 @@ public class RecognitionItemAdapter extends RecyclerView.Adapter<RecognitionItem
                 @Override
                 public boolean onLongClick(View v) {
                     int pos=holder.getLayoutPosition();
-                    mOnItemClikListener.onItemLongClik(holder.itemView,pos);
+                    mOnItemClickListener.onItemLongClik(holder.itemView,pos);
                     return false;
                 }
             });
         }
+    }
+
+    @Override
+    public int getItemCount() {
+        return items.size();
     }
 
     public void appendData(List<FlowerModel> newItems){
@@ -72,46 +102,4 @@ public class RecognitionItemAdapter extends RecyclerView.Adapter<RecognitionItem
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return items.size();
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-        private SoftReference<RecognitionItemAdapter> mAdapter;
-
-        ImageView mImageView;
-        TextView text1;
-        public TextView text2;
-
-        ViewHolder(View itemView, RecognitionItemAdapter adapter) {
-            super(itemView);
-            mAdapter = new SoftReference<RecognitionItemAdapter>(adapter);
-            mImageView = (ImageView) itemView.findViewById(R.id.imageView0);
-            text1 = (TextView) itemView.findViewById(R.id.text1);
-            text2 = (TextView) itemView.findViewById(R.id.text2);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (mAdapter != null && mAdapter.get() != null) {
-                // 调用RecyclerView.ViewHolder类的getPosition()获取当前位置
-                //mAdapter.get().removeData(getPosition());
-            }
-        }
-    }
-
-    public interface OnItemClikListener{
-        void onItemClik(View view,int position);
-        void onItemLongClik(View view,int position);
-    }
-
-    private OnItemClikListener mOnItemClikListener;
-
-    //对外设置item点击暴露的方法
-    public void setItemClikListener(OnItemClikListener mOnItemClikListener ){
-        this.mOnItemClikListener=mOnItemClikListener;
-    }
 }

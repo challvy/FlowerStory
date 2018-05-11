@@ -1,6 +1,9 @@
 package cn.edu.nju.flowerstory.activity;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -12,9 +15,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cn.edu.nju.flowerstory.R;
@@ -22,63 +27,26 @@ import cn.edu.nju.flowerstory.adapter.RecognitionItemAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.model.FlowerModel;
 
+import static cn.edu.nju.flowerstory.app.Constants.*;
 
 public class RecognitionActivity extends AppCompatActivity {
 
+    public static Bitmap mBitmap;
+
     Toolbar toolbar;
+    private ProgressBar mProgressBar;
     RecyclerView mRecyclerView;
+
     RecognitionItemAdapter mAdapter;
-    public static String RETURN_INFO = "cn.edu.nju.flowerstory.activity.RecognitionActivity.info";
+
+    private int mProgressStatus = 0;
+    private Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recognition);
-
-        getRETURN_INFO();
-
-        toolbar = (Toolbar) findViewById(R.id.mToolbarRec);
-        setSupportActionBar(toolbar);
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-
-        List<FlowerModel> data = new ArrayList<FlowerModel>();//(Arrays.asList("玫瑰花","牡丹花","兰花","向日葵"));
-        FlowerModel flowerModel = new FlowerModel();
-        data.add(flowerModel);
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.recognition_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
-        mAdapter = new RecognitionItemAdapter(data);
-        mAdapter.setItemClikListener(new RecognitionItemAdapter.OnItemClikListener() {
-            @Override
-            public void onItemClik(View view, int position) {
-                //Toast.makeText(getApplicationContext(), "点击了" + position, Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getApplicationContext(), FlowerDetailActivity.class);
-                //intent.putExtra(RecognitionActivity.RETURN_INFO, imageUri.toString());
-                startActivityForResult(intent,0);
-            }
-
-            @Override
-            public void onItemLongClik(View view, int position) {
-                Toast.makeText(getApplicationContext(), "长按点击了" + position, Toast.LENGTH_LONG).show();
-            }
-        });
-        mRecyclerView.setAdapter(mAdapter);
-
-        final SwipeRefreshLayout mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    public void run() {
-                        mRefreshLayout.setRefreshing(false);
-                    }
-                }, 1500);
-            }
-        });
+        initView();
+        initData();
     }
 
     @Override
@@ -104,6 +72,95 @@ public class RecognitionActivity extends AppCompatActivity {
         if(FlowerFragment.getBitmap()!=null){
             //Upload;
         }
+    }
+
+    private void loading(){
+        new Thread(new Runnable() {
+            public void run() {
+                while (mProgressStatus < 100) {
+                    try {
+                        Thread.sleep(10);
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    mProgressStatus++;// = doWork();
+                    // Update the progress bar
+                    mHandler.post(new Runnable() {
+                        public void run() {
+                            mProgressBar.setVisibility(View.VISIBLE);
+                            if(mProgressStatus < 100) {
+                                mProgressBar.setProgress(mProgressStatus);
+                            } else {
+                                mProgressBar.setVisibility(View.INVISIBLE);
+                                mProgressStatus=0;
+                            }
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    private void initView(){
+        setContentView(R.layout.activity_recognition);
+
+        toolbar = (Toolbar) findViewById(R.id.mToolbarRec);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        final SwipeRefreshLayout mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    public void run() {
+                        mRefreshLayout.setRefreshing(false);
+                    }
+                }, 1000);
+                loading();
+            }
+        });
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.recognition_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
+    }
+
+    private void initData(){
+        getRETURN_INFO();
+        loading();
+        Resources res = this.getResources();
+        final List<FlowerModel> data = new ArrayList<FlowerModel>(Arrays.asList(
+                new FlowerModel(1, "玫瑰", BitmapFactory.decodeResource(res, R.mipmap.rose), FLOWERD[0], FLOWER[0]),
+                new FlowerModel(2, "兰花", BitmapFactory.decodeResource(res, R.mipmap.orchid), FLOWERD[1], FLOWER[1]),
+                new FlowerModel(3, "牡丹", BitmapFactory.decodeResource(res, R.mipmap.peony), FLOWERD[2], FLOWER[2]),
+                new FlowerModel(4, "向日葵", BitmapFactory.decodeResource(res, R.mipmap.sunflower), FLOWERD[3], FLOWER[3]),
+                new FlowerModel(5, "樱花", BitmapFactory.decodeResource(res, R.mipmap.cerasus), FLOWERD[4], FLOWER[4]),
+                new FlowerModel(6, "油菜花", BitmapFactory.decodeResource(res, R.mipmap.brassicacampestris), FLOWERD[5], FLOWER[5])
+        ));
+
+        mAdapter = new RecognitionItemAdapter(data);
+        mAdapter.setItemClikListener(new RecognitionItemAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClik(View view, int position) {
+                //Toast.makeText(getApplicationContext(), "点击了" + position, Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), FlowerDetailActivity.class);
+                intent.putExtra(FlowerDetailActivity.RETURN_INFO, position);
+                mBitmap = data.get(position).getBitmap();
+                startActivity(intent);
+                //startActivityForResult(intent,0);
+            }
+
+            @Override
+            public void onItemLongClik(View view, int position) {
+                Toast.makeText(getApplicationContext(), "长按点击了" + position, Toast.LENGTH_LONG).show();
+            }
+        });
+        mRecyclerView.setAdapter(mAdapter);
     }
 
 }

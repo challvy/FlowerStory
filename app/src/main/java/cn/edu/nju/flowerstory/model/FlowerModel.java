@@ -1,6 +1,6 @@
 package cn.edu.nju.flowerstory.model;
 
-import android.media.Image;
+import android.graphics.Bitmap;
 
 /**
  *
@@ -8,18 +8,18 @@ import android.media.Image;
  */
 public class FlowerModel {
 
-    private Image image;
     private int id;
     private String name;
-    private String digest;
+    private Bitmap bitmap;
+    private String imageDetail;
+    private String detail;
 
-    public FlowerModel() {
-    }
-
-    public FlowerModel(int id, String name, Image image) {
+    public FlowerModel(int id, String name, Bitmap bitmap, String imageDetail, String detail) {
         this.id = id;
         this.name = name;
-        this.image = image;
+        this.bitmap = bitmap;
+        this.imageDetail = imageDetail;
+        this.detail = detail;
     }
 
     public int getId() {
@@ -38,12 +38,28 @@ public class FlowerModel {
         this.name = name;
     }
 
-    public Image getImage() {
-        return image;
+    public Bitmap getBitmap() {
+        return bitmap;
     }
 
-    public void setImage(Image image) {
-        this.image = image;
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
+
+    public String getImageDetail() {
+        return imageDetail;
+    }
+
+    public void setImageDetail(String imageDetail) {
+        this.imageDetail = imageDetail;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
     }
 
 }

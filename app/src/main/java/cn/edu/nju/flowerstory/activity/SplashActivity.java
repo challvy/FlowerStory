@@ -18,13 +18,13 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        //隐藏导航栏和系统栏
+        // 隐藏状态栏和导航栏
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN);
 
         new android.os.Handler().postDelayed(new Runnable() {
             public void run() {
-                Intent mainIntent = mainIntent = new Intent(SplashActivity.this, MainActivity.class);
+                Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
                 SplashActivity.this.startActivity(mainIntent);
                 SplashActivity.this.finish();
             }

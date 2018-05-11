@@ -1,21 +1,7 @@
 <resources>
+
     <string name="app_name">观花物语</string>
+    <string name="detail">观花详情</string>
+    <string name="result">识别结果</string>
 
-    <string name="title_activity_navigation">NavigationActivity</string>
-    <string name="title_story">物语</string>
-    <string name="title_flower">观花</string>
-    <string name="title_user">我的</string>
-
-    <string name="FlowerStory">观花物语</string>
-
-    <string name="title_activity_flower">FlowerActivity</string>
-    <string name="gallary_button">相册</string>
-    <string name="dummy_content">观花物语</string>
-    <string name="TakePhoto">拍照</string>
-    <string name="Recognition">识别</string>
-    <string name="take_photo">Take Photo</string>
-    <string name="gallery">Gallery</string>
-    <string name="todo">TODO</string>
-    <string name="flower_fragment">fragment</string>
-    <string name="animation">Animation</string>
 </resources>

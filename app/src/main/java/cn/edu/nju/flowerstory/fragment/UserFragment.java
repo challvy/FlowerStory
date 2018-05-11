@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 
 import cn.edu.nju.flowerstory.R;
 
@@ -14,6 +15,8 @@ import cn.edu.nju.flowerstory.R;
  */
 public class UserFragment extends Fragment {
 
+    WebView webview;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,7 +24,10 @@ public class UserFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_user, container, false);
+        View v = inflater.inflate(R.layout.fragment_user, container, false);
+        webview = (WebView) v.findViewById(R.id.webview);
+        webview.loadUrl("http://35.185.78.233/");
+        return v;
     }
 
     @Override

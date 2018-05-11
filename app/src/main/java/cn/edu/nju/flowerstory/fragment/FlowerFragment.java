@@ -139,4 +139,5 @@ public class FlowerFragment extends Fragment  {
     public static Bitmap getBitmap() {
         return bitmap;
     }
+
 }

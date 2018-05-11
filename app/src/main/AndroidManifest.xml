@@ -30,7 +30,7 @@
         </activity>
         <activity
             android:name=".activity.RecognitionActivity"
-            android:label="识别结果"
+            android:label="@string/result"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
         </activity>
@@ -41,7 +41,7 @@
         </activity>
         <activity
             android:name=".activity.FlowerDetailActivity"
-            android:label="观花详情"
+            android:label="@string/detail"
             android:parentActivityName=".activity.RecognitionActivity"
             android:theme="@style/AppTheme">
         </activity>

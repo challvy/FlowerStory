@@ -42,13 +42,9 @@ public class StoryFragment extends Fragment {
             return view;
         }
         view = inflater.inflate(R.layout.fragment_story, container, false);
+
         mTabLayout = view.findViewById(R.id.tablayout);
         tabViewpager = view.findViewById(R.id.tab_viewpager);
-        init();
-        return view;
-    }
-
-    private void init(){
         mTabLayout.removeAllTabs();
         tabViewpager.removeAllViews();
 
@@ -56,7 +52,6 @@ public class StoryFragment extends Fragment {
             mFragmentArrays.clear();
             mTabs = new ArrayList<>();
         }
-
         mTabs.addAll(Arrays.asList(TAB_TITLE).subList(0, TAB_SIZE));
         for (int i = 0; i < mTabs.size(); i++) {
             Fragment fragment = new StoryItemFragment();
@@ -68,6 +63,8 @@ public class StoryFragment extends Fragment {
         tabViewpager.setAdapter(new TabFragmentAdapter(getFragmentManager(), mFragmentArrays, mTabs));
         tabViewpager.setCurrentItem(CURRENT_ITEM_INDEX);
         mTabLayout.setupWithViewPager(tabViewpager);
+
+        return view;
     }
 
 }

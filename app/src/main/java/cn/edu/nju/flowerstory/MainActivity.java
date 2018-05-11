@@ -12,19 +12,20 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import cn.edu.nju.flowerstory.adapter.ViewPagerAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
@@ -37,131 +38,150 @@ import static cn.edu.nju.flowerstory.app.Constants.*;
 
 public class MainActivity extends AppCompatActivity {
 
-    ViewPager mViewPager;
+    NavigationView navigationView;
+
     Toolbar toolbar;
+    private ImageView story, camera, user;
+    private ArrayList<ImageView> tabs = new ArrayList<>();
+
+    ViewPager mViewPager;
 
     private boolean mIsExit;
-    NavigationView navigationView;
-    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 2;
     boolean isRequireCheck = true;
+
+    SearchView mSearchView;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setStatusBarColor(Color.TRANSPARENT);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setContentView(R.layout.activity_main);
-        MakeDir.makeAppDataDir();
+        initView();
 
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-
-        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        toolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_action_menu);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                drawerLayout.openDrawer(Gravity.LEFT);
-            }
-        });
-
-        navigationView = (NavigationView) findViewById(R.id.navigation);
-        navigationView.getMenu().getItem(MAIN_INDEX).setChecked(true);
-
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.navigation_story:
-                        mViewPager.setCurrentItem(0);
-                        menuItem.setChecked(true);
-                        toolbar.setTitle(R.string.title_story);
-                        break;
-                    case R.id.navigation_flower:
-                        mViewPager.setCurrentItem(1);
-                        menuItem.setChecked(true);
-                        toolbar.setTitle(R.string.title_flower);
-                        break;
-                    case R.id.navigation_user:
-                        mViewPager.setCurrentItem(2);
-                        menuItem.setChecked(true);
-                        toolbar.setTitle(R.string.title_user);
-                        break;
-                }
-                drawerLayout.closeDrawers();
-                return false;
-            }
-        });
-
-        //只允许竖屏模式
+        // 竖屏模式
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        init();
-
-        //权限获取
+        // 创建目录
+        MakeDir.makeAppDataDir();
+        // 键盘输入从底部弹起
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        // 权限获取
         if(lacksPermissions()) {
             requestPermissions(new String[]{
                     Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             }, REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS);
         }
-        toolbar.setTitle(R.string.title_story);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-
-        //MenuItem searchItem = menu.findItem(R.id.search);
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
         //SearchView searchView = (SearchView) searchItem.getActionView();
         //searchView.setIconifiedByDefault(false);
         return true;
     }
 
-    private void getOverflowMenu() {
-        try {
-            ViewConfiguration config = ViewConfiguration.get(this);
-            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if(menuKeyField != null) {
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                Toast.makeText(this, "打开搜索页面", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
-    private void init(){
+    @TargetApi(Build.VERSION_CODES.M)
+    private void initView(){
+        // 透明状态栏
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+
+        // 侧栏菜单
+        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar!=null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.mipmap.ic_menu_left);
+        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                drawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+        navigationView = (NavigationView) findViewById(R.id.navigation);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {/*
+                    case R.id.navigation_flower:
+                        break;*/
+                }
+                drawerLayout.closeDrawers();
+                return false;
+            }
+        });
+
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        story = (ImageView) findViewById(R.id.story);
+        camera = (ImageView) findViewById(R.id.camera);
+        user = (ImageView) findViewById(R.id.user);
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(0);
+            }
+        });
+        story.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(1);
+            }
+        });
+        user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewPager.setCurrentItem(2);
+            }
+        });
+        camera.setSelected(true);
+        story.setSelected(false);
+        user.setSelected(false);
+        tabs.add(camera);
+        tabs.add(story);
+        tabs.add(user);
+
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new StoryFragment());
         adapter.addFragment(new FlowerFragment());
+        adapter.addFragment(new StoryFragment());
         adapter.addFragment(new UserFragment());
         mViewPager.setAdapter(adapter);
-        mViewPager.setOffscreenPageLimit(3);
-
+        mViewPager.setOffscreenPageLimit(5);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
             @Override
             public void onPageSelected(int position) {
-                navigationView.getMenu().getItem(position).setChecked(true);
-                switch (position) {
-                    case 0:
-                        toolbar.setTitle("物语");
-                        break;
-                    case 1:
-                        toolbar.setTitle("观花");
-                        break;
-                    case 2:
-                        toolbar.setTitle("我的");
-                        break;
-                }
+                switchTabs(position);
             }
             @Override
             public void onPageScrollStateChanged(int state) {
             }
         });
+    }
+
+    private void switchTabs(int position) {
+        for (int i = 0; i < tabs.size(); i++) {
+            if (position == i) {
+                tabs.get(i).setSelected(true);
+            } else {
+                tabs.get(i).setSelected(false);
+            }
+        }
     }
 
     @Override
