@@ -123,7 +123,7 @@ public class StoryItemFragment extends Fragment {
 
             @Override
             public void onItemLongClik(View view, int position) {
-                Toast.makeText(getContext(), "长按点击了" + position, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(), "长按点击了" + position, Toast.LENGTH_LONG).show();
             }
         });
         mRecyclerView.setAdapter(mAdapter);

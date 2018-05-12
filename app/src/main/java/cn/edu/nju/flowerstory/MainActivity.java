@@ -2,6 +2,7 @@ package cn.edu.nju.flowerstory;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -22,16 +23,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import cn.edu.nju.flowerstory.activity.SearchActivity;
 import cn.edu.nju.flowerstory.adapter.ViewPagerAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.fragment.StoryFragment;
 import cn.edu.nju.flowerstory.fragment.UserFragment;
 import cn.edu.nju.flowerstory.utils.MakeDir;
+import android.view.MenuItem.OnMenuItemClickListener;
 
 import static cn.edu.nju.flowerstory.app.Constants.*;
 
@@ -48,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean mIsExit;
     boolean isRequireCheck = true;
-
-    SearchView mSearchView;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -76,21 +76,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        //SearchView searchView = (SearchView) searchItem.getActionView();
-        //searchView.setIconifiedByDefault(false);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                Toast.makeText(this, "打开搜索页面", Toast.LENGTH_SHORT).show();
+        MenuItem searchItem = menu.findItem(R.id.search_menuitem);
+        //搜索图标按钮(打开搜索框的按钮)的点击事件
+        searchItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                //Toast.makeText(getApplicationContext(), "Open", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                //intent.putExtra(RecognitionActivity.RETURN_INFO, imageUri.toString());
+                startActivityForResult(intent,0);
                 return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -172,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
+
     }
 
     private void switchTabs(int position) {

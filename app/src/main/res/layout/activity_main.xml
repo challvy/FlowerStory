@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer"
-    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/activity_main"
         android:layout_width="match_parent"
@@ -19,43 +19,55 @@
             android:id="@+id/my_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:background="?attr/colorPrimary"
             android:theme="@style/ToolbarTheme"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp">
+            app:contentInsetStart="0dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:focusable="true"
+                android:orientation="horizontal"
+                tools:targetApi="lollipop">
 
                 <ImageView
                     android:id="@+id/camera"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginRight="25dp"
-                    android:background="@drawable/camera_selector"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginEnd="25dp" />
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:color="@android:color/transparent"
+                    android:padding="7dp"
+                    android:src="@drawable/camera_selector" />
+
                 <ImageView
                     android:id="@+id/story"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginRight="25dp"
-                    android:layout_marginEnd="25dp"
-                    android:background="@drawable/story_selector"
-                    android:clickable="true"
-                    android:focusable="true" />
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@id/camera"
+                    android:layout_toRightOf="@id/camera"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="7dp"
+                    android:src="@drawable/story_selector" />
+
                 <ImageView
                     android:id="@+id/user"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:background="@drawable/user_selector"
-                    android:clickable="true"
-                    android:focusable="true" />
-            </LinearLayout>
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@id/story"
+                    android:layout_toRightOf="@id/story"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="7dp"
+                    android:src="@drawable/user_selector" />
+
+            </RelativeLayout>
 
         </android.support.v7.widget.Toolbar>
 
@@ -66,7 +78,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
         </android.support.v4.view.ViewPager>
-
 
     </android.support.constraint.ConstraintLayout>
 

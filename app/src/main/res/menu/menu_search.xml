@@ -6,14 +6,13 @@
     <!--item android:id="@+id/search"
         android:title="Search"
         app:showAsAction="always"
-        app:actionViewClass="android.widget.SearchView"
+        app:actionViewClass="android.widget.SearchView"android.support.v7.widget.SearchView
         /-->
     <item
-        android:id="@+id/action_search"
-        android:icon="@mipmap/ic_search"
+        android:id="@+id/search_menuitem"
         android:orderInCategory="100"
-        android:title="搜索"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="always" />
+        android:icon="@mipmap/ic_search"
+        android:title="@string/search"
+        app:showAsAction="always"/>
 
 </menu>

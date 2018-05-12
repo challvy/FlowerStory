@@ -6,7 +6,7 @@
     <item
         android:id="@+id/favr"
         android:icon="@drawable/ic_action_favorite_false"
-        android:title="favr"
+        android:title="@string/favr"
         app:showAsAction="always" />
 
 </menu>

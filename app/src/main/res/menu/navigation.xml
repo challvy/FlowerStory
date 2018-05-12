@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:targetApi="lollipop"
+    android:background="?android:attr/selectableItemBackgroundBorderless">
 
     <item
         android:id="@+id/nav_share"
         android:icon="@drawable/ic_action_favorite"
-        android:title="收藏"/>
+        android:title="@string/favr"/>
     <item
         android:id="@+id/nav_send"
         android:icon="@drawable/ic_action_share"
-        android:title="分享"/>
+        android:title="@string/share"/>
 
 </menu>

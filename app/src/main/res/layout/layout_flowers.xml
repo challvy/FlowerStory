@@ -22,14 +22,14 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:progressTint="@color/yellow"
+                    android:progressTint="@color/colorPrimary"
                     android:progressTintMode="src_atop"
                     android:theme="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/flowerRecyclerView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"/>
 
             </LinearLayout>
         </android.support.v4.widget.SwipeRefreshLayout>
