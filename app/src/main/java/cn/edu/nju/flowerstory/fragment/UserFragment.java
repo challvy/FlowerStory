@@ -1,5 +1,6 @@
 package cn.edu.nju.flowerstory.fragment;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -26,7 +27,9 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_user, container, false);
         webview = (WebView) v.findViewById(R.id.webview);
-        webview.loadUrl("http://35.185.78.233/");
+        String url = "http://10.0.0.0";//"http://localhost:8080/";//"http://10.0.2.2";//
+        webview.loadUrl(url);
+        //webview.postUrl(url, EncodingUtils.getBytes(postData, "base64"));
         return v;
     }
 

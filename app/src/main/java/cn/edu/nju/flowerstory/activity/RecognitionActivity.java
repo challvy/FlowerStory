@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +26,12 @@ import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.adapter.RecognitionItemAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.model.FlowerModel;
+import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static cn.edu.nju.flowerstory.app.Constants.*;
 
@@ -45,7 +52,11 @@ public class RecognitionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
-        initData();
+        try {
+            initData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -74,24 +85,26 @@ public class RecognitionActivity extends AppCompatActivity {
     }
 
     private void loading(){
+        mProgressStatus = 0;
+        final int[] finalMProgressStatus = {mProgressStatus};
         new Thread(new Runnable() {
             public void run() {
-                while (mProgressStatus < 100) {
+                while (finalMProgressStatus[0] < 100) {
                     try {
                         Thread.sleep(10);
                     }catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    mProgressStatus++;// = doWork();
+                    // = doWork();
+                    finalMProgressStatus[0]++;
                     // Update the progress bar
+                    mProgressBar.setProgress(finalMProgressStatus[0]);
                     mHandler.post(new Runnable() {
                         public void run() {
-                            mProgressBar.setVisibility(View.VISIBLE);
-                            if(mProgressStatus < 100) {
-                                mProgressBar.setProgress(mProgressStatus);
+                            if (finalMProgressStatus[0] < 100) {
+                                mProgressBar.setVisibility(View.VISIBLE);
                             } else {
-                                mProgressBar.setVisibility(View.INVISIBLE);
-                                mProgressStatus=0;
+                                mProgressBar.setVisibility(View.GONE);
                             }
                         }
                     });
@@ -129,7 +142,24 @@ public class RecognitionActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
     }
 
-    private void initData(){
+    private void initData() throws Exception {
+        /*
+        OkHttpClient okHttpClient = new OkHttpClient();
+        //RequestBody requestBody = new FormBody.Builder().add("name","name").add("age","age").build();
+        Request request = new Request.Builder()
+                .url("https://github.com/")
+                .build();
+        Response response = okHttpClient.newCall(request).execute();
+        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+        Headers responseHeaders = response.headers();
+        for (int i = 0; i < responseHeaders.size(); i++) {
+            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+        }
+
+        System.out.println(response.body().string());
+        */
+
         getRETURN_INFO();
         loading();
         Resources res = this.getResources();

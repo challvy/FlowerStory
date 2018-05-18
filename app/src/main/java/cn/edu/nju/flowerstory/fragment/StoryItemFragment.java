@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,14 +39,14 @@ public class StoryItemFragment extends Fragment {
     RecyclerAdapter mAdapter;
     int mPosition;
 
-    private ProgressBar mProgress;
-    private int mProgressStatus = 0;
+    private ProgressBar mProgressBar;
     private Handler mHandler = new Handler();
 
+    private int mProgressStatus;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layout_flowers, container, false);
-        mProgress  = (ProgressBar) view.findViewById(R.id.progressBarFlower);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBarFlower);
         final SwipeRefreshLayout mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshFlowersLayout);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -72,24 +71,26 @@ public class StoryItemFragment extends Fragment {
     }
 
     private void loading(){
+        mProgressStatus = 0;
+        final int[] finalMProgressStatus = {mProgressStatus};
         new Thread(new Runnable() {
             public void run() {
-                while (mProgressStatus < 100) {
+                while (finalMProgressStatus[0] < 100) {
                     try {
                         Thread.sleep(10);
                     }catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    mProgressStatus++;// = doWork();
+                    // = doWork();
+                    finalMProgressStatus[0]++;
                     // Update the progress bar
+                    mProgressBar.setProgress(finalMProgressStatus[0]);
                     mHandler.post(new Runnable() {
                         public void run() {
-                            mProgress.setVisibility(View.VISIBLE);
-                            if(mProgressStatus < 100) {
-                                mProgress.setProgress(mProgressStatus);
+                            if (finalMProgressStatus[0] < 100) {
+                                mProgressBar.setVisibility(View.VISIBLE);
                             } else {
-                                mProgress.setVisibility(View.INVISIBLE);
-                                mProgressStatus=0;
+                                mProgressBar.setVisibility(View.GONE);
                             }
                         }
                     });

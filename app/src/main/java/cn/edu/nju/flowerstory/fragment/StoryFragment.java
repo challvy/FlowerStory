@@ -61,6 +61,7 @@ public class StoryFragment extends Fragment {
             mFragmentArrays.add(fragment);
         }
         tabViewpager.setAdapter(new TabFragmentAdapter(getFragmentManager(), mFragmentArrays, mTabs));
+        tabViewpager.setOffscreenPageLimit(5);
         tabViewpager.setCurrentItem(CURRENT_ITEM_INDEX);
         mTabLayout.setupWithViewPager(tabViewpager);
 
