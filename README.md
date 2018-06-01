@@ -20,9 +20,9 @@ Flower Story £¬ÊÇÄÏ¾©´óÑ§´óÑ§Éú´´ÐÂÏîÄ¿×é¡°¹Û»¨ÎïÓï¡±µÄ¹¤³ÌÏîÄ¿£¬ÊÇÒ»¿î×¨Îª°®»¨Ê
 
   ¾«È·Ê¶±ð»¨»Ü²¡³æº¦£¬²¢Ìá¹©½â¾ö·½°¸½ö¹©²Î¿¼
 
-![FlowerStory1](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory1.png)
+![FlowerStory-1](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory-1.png)
 
-![FlowerStory2](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory2.png)
+![FlowerStory-2](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory-2.png)
 
 ## Environment
 * Gradle
