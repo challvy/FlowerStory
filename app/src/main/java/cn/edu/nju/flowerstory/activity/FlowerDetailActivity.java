@@ -16,6 +16,7 @@ import cn.edu.nju.flowerstory.R;
 
 import static cn.edu.nju.flowerstory.app.Constants.*;
 
+
 public class FlowerDetailActivity extends AppCompatActivity {
 
     public static String RETURN_INFO = "cn.edu.nju.flowerstory.activity.FlowerDetailActivity.info";

@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,14 +25,9 @@ import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.adapter.RecognitionItemAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.model.FlowerModel;
-import okhttp3.FormBody;
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import static cn.edu.nju.flowerstory.app.Constants.*;
+
 
 public class RecognitionActivity extends AppCompatActivity {
 

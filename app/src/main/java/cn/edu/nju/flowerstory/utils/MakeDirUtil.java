@@ -12,7 +12,7 @@ import static cn.edu.nju.flowerstory.app.Constants.*;
  * Created by Administrator on 2018/5/9 0009.
  */
 
-public class MakeDir {
+public class MakeDirUtil {
 
     public static void makeAppDataDir(){
         File tmpDirPath = new File(DIR_PATH);

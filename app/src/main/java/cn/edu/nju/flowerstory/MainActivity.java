@@ -21,6 +21,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -32,8 +33,7 @@ import cn.edu.nju.flowerstory.adapter.ViewPagerAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.fragment.StoryFragment;
 import cn.edu.nju.flowerstory.fragment.UserFragment;
-import cn.edu.nju.flowerstory.utils.MakeDir;
-import android.view.MenuItem.OnMenuItemClickListener;
+import cn.edu.nju.flowerstory.utils.MakeDirUtil;
 
 import static cn.edu.nju.flowerstory.app.Constants.*;
 
@@ -41,9 +41,11 @@ import static cn.edu.nju.flowerstory.app.Constants.*;
 public class MainActivity extends AppCompatActivity {
 
     NavigationView navigationView;
+    View headerLayout;
+    ImageView headPortrait;
 
     Toolbar toolbar;
-    private ImageView story, camera, user;
+    private ImageView camera, story, user;
     private ArrayList<ImageView> tabs = new ArrayList<>();
 
     ViewPager mViewPager;
@@ -56,12 +58,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         initView();
 
         // 竖屏模式
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // 创建目录
-        MakeDir.makeAppDataDir();
+        MakeDirUtil.makeAppDataDir();
         // 键盘输入从底部弹起
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         // 权限获取
@@ -97,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(Color.TRANSPARENT);
 
         // 侧栏菜单
-        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        final DrawerLayout drawerLayout = findViewById(R.id.drawer);
+        toolbar = findViewById(R.id.my_toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -111,15 +114,24 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(Gravity.LEFT);
             }
         });
-        navigationView = (NavigationView) findViewById(R.id.navigation);
+        navigationView = findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {/*
-                    case R.id.navigation_flower:
-                        break;*/
+                switch (menuItem.getItemId()) {
+                    case R.id.head_portrait:
+                        System.out.print("");
+                        break;
                 }
                 drawerLayout.closeDrawers();
                 return false;
+            }
+        });
+        headerLayout = navigationView.inflateHeaderView(R.layout.layout_header);
+        headPortrait = (ImageView) headerLayout.findViewById(R.id.head_portrait);
+        headPortrait.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // TODO: Add User Activity
+                drawerLayout.closeDrawers();
             }
         });
 
@@ -145,8 +157,8 @@ public class MainActivity extends AppCompatActivity {
                 mViewPager.setCurrentItem(2);
             }
         });
-        camera.setSelected(true);
-        story.setSelected(false);
+        camera.setSelected(false);
+        story.setSelected(true);
         user.setSelected(false);
         tabs.add(camera);
         tabs.add(story);
@@ -157,7 +169,8 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new StoryFragment());
         adapter.addFragment(new UserFragment());
         mViewPager.setAdapter(adapter);
-        mViewPager.setOffscreenPageLimit(5);
+        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setCurrentItem(1);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

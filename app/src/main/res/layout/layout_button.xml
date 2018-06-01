@@ -13,6 +13,6 @@
 
     <!--边框的宽度及颜色-->
     <stroke
-        android:width="2px"
+        android:width="2dp"
         android:color="@color/colorPrimary" />
 </shape>

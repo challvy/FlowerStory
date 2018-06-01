@@ -7,49 +7,75 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="com.meilapp.meila.permission.MIPUSH_RECEIVE" />
+    <uses-permission
+        android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.INTERACT_ACROSS_USERS_FULL"
+        tools:ignore="ProtectedPermissions" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <application
+        android:name=".app.FloatWindowApp"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         tools:targetApi="jelly_bean">
-
         <activity
             android:name=".activity.SplashActivity"
             android:theme="@style/AppTheme.splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainActivity"
             android:allowBackup="true"
-            android:theme="@style/AppTheme">
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            tools:ignore="RtlEnabled">
         </activity>
-
         <activity
             android:name=".activity.RecognitionActivity"
             android:label="@string/result"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppItemTheme">
         </activity>
-
         <activity
             android:name=".activity.SearchActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
         </activity>
-
         <activity
             android:name=".activity.FlowerDetailActivity"
             android:label="@string/detail"
             android:parentActivityName=".activity.RecognitionActivity"
             android:theme="@style/AppItemTheme">
         </activity>
-
+        <activity
+            android:name=".activity.CameraActivity"
+            android:label="@string/takephoto"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/MaterialTheme">
+        </activity>
+        <activity android:name=".activity.CameraOnePictureActivity"
+            android:parentActivityName=".activity.CameraActivity"
+            android:theme="@style/MaterialTheme">
+        </activity>
     </application>
 
 </manifest>

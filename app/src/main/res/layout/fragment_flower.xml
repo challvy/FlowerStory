@@ -6,55 +6,32 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/crime_camera_progressContainer"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayoutFlower"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:theme="@style/AlertDialog.AppCompat.Light">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <ImageView
-            android:id="@+id/imageViewFlowerPhoto"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/white"
-            app:srcCompat="@mipmap/flowerstoryphoto" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/flowerbtn"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="bottom"
-            android:orientation="horizontal"
-            android:background="#eeeeee"
-            tools:targetApi="lollipop">
+            <ProgressBar
+                android:id="@+id/progressBarFlower"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:progressTint="@color/colorPrimary"
+                android:progressTintMode="src_atop"
+                android:theme="@style/Widget.AppCompat.ProgressBar.Horizontal" />
 
-            <ImageButton
-                android:id="@+id/crime_camera_gallaryButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/ic_action_gallery"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
-
-            <ImageButton
-                android:id="@+id/crime_recognition_button"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/ic_action_recognize"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
-
-            <ImageButton
-                android:id="@+id/crime_camera_takePictureButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@drawable/ic_action_camer"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/flower_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </LinearLayout>
 
-    </LinearLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </android.support.constraint.ConstraintLayout>

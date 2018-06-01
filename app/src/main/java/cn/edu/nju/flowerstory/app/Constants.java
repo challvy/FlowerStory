@@ -8,6 +8,9 @@ import android.os.Environment;
  */
 public class Constants {
 
+    public static final int MAX_PREVIEW_WIDTH = 1920;
+    public static final int MAX_PREVIEW_HEIGHT = 1080;
+
     public static final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 2;
 
     public static final int TAB_SIZE = 5;
@@ -18,6 +21,7 @@ public class Constants {
     public static final int TAKE_PHOTO = 1;
     public static final int CUT_PHOTO = 2;
     public static final int SELECT_PHOTO = 3;
+    public static final int CAMERA = 4;
 
     public static final int PERMISSIONS_GRANTED = 0;
     public static final int PERMISSIONS_DENIED = 1;

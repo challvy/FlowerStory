@@ -42,16 +42,8 @@ public class FlowerModel {
         return bitmap;
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
-    }
-
     public String getImageDetail() {
         return imageDetail;
-    }
-
-    public void setImageDetail(String imageDetail) {
-        this.imageDetail = imageDetail;
     }
 
     public String getDetail() {

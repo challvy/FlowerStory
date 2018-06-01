@@ -47,10 +47,8 @@
                     android:id="@+id/story"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
                     android:layout_toEndOf="@id/camera"
-                    android:layout_toRightOf="@id/camera"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="7dp"
                     android:src="@drawable/story_selector" />
@@ -59,10 +57,8 @@
                     android:id="@+id/user"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginStart="15dp"
                     android:layout_toEndOf="@id/story"
-                    android:layout_toRightOf="@id/story"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="7dp"
                     android:src="@drawable/user_selector" />
@@ -83,10 +79,9 @@
 
     <android.support.design.widget.NavigationView
         android:id="@+id/navigation"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:headerLayout="@layout/layout_header"
         app:menu="@menu/navigation" />
 
 </android.support.v4.widget.DrawerLayout>
