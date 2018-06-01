@@ -3,6 +3,7 @@
 An Android Project about Flower Recognition
 
 ## Introduce
+
 Flower Story £¬ÊÇÄÏ¾©´óÑ§´óÑ§Éú´´ĞÂÏîÄ¿×é¡°¹Û»¨ÎïÓï¡±µÄ¹¤³ÌÏîÄ¿£¬ÊÇÒ»¿î×¨Îª°®»¨Ê¶»¨Ñø»¨¶øÔìµÄApp¡£
 
 ±¾AppÔ¤¼Æ½«Ìá¹©ÒÔÏÂ¹¦ÄÜ£º
@@ -24,26 +25,37 @@ Flower Story £¬ÊÇÄÏ¾©´óÑ§´óÑ§Éú´´ĞÂÏîÄ¿×é¡°¹Û»¨ÎïÓï¡±µÄ¹¤³ÌÏîÄ¿£¬ÊÇÒ»¿î×¨Îª°®»¨Ê
 ![FlowerStory2](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory2.png)
 
 ## Environment
-* gradle: 3.0.1
+* Gradle
 
-* compileSdkVersion: 26
+  ```
+  gradle: 3.1.2
+  distributionUrl=http\://services.gradle.org/distributions/gradle-4.4-all.zip
+  ```
 
-* dependencies:
+* AndroidSDK
+
+  ```
+  compileSdkVersion: 27
+  buildToolsVersion '27.0.3'
+  minSdkVersion 21
+  targetSdkVersion 27
+  ```
+
+* Dependencies
 
   ```java
-  implementation 'com.android.support:design:26.1.0'
-  implementation 'com.android.support:cardview-v7:26.1.0'
-  implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+  implementation 'com.android.support:appcompat-v7:27.1.1'
+  implementation 'com.android.support:design:27.1.1'
+  implementation 'com.android.support:cardview-v7:27.1.1'
+  implementation 'com.squareup.okhttp3:okhttp:3.10.0'£¨ÔİÎ´ÓÃµ½£©
   ```
 
-* gradle-wrapper.properties
-
-  ```
-  distributionUrl=http\://services.gradle.org/distributions/gradle-4.1-all.zip
-  ```
 
 ## Version
 
-Version 1.00 Íê³ÉÒ³ÃæÂß¼­²¿·Ö
+Version 0.2
+
+- ½çÃæÉè¼Æ
+- Óë±¾µØºó¶Ë¼òµ¥Á¬½Ó
 
 ## End
