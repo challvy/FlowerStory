@@ -36,8 +36,8 @@ public class FloatWindowView extends View {
 
     public void init() {
         Bitmap src = BitmapFactory.decodeResource(getResources(), R.mipmap.camera_icon);
+        // 将图片裁剪到指定大小
         width = height = ScreenSizeUtil.dp2px(50.0f);
-        //将图片裁剪到指定大小
         bitmap = Bitmap.createScaledBitmap(src, width, height, true);
     }
 

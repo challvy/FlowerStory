@@ -2,7 +2,6 @@ package cn.edu.nju.flowerstory.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
@@ -13,17 +12,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import static cn.edu.nju.flowerstory.app.Constants.CAMERA_RESULT;
+import static cn.edu.nju.flowerstory.utils.BitmapUtil.cropImage;
+import static cn.edu.nju.flowerstory.utils.BitmapUtil.sizeBitmap;
+
 public class ImageSaver implements Runnable {
 
     private final Image mImage;
-    private final File mFile;
+    private File mFileUpload;
     private Handler mUIHandler;
     private double zoom;
-    private static final int SETIMAGE = 1;
 
     public ImageSaver(Image image, File file, Handler handler, double zoom) {
         mImage = image;
-        mFile = file;
+        mFileUpload = file;
         mUIHandler = handler;
         this.zoom = zoom;
     }
@@ -35,27 +37,26 @@ public class ImageSaver implements Runnable {
         buffer.get(bytes);
         FileOutputStream output = null;
         try {
-            output = new FileOutputStream(mFile);
+            output = new FileOutputStream(mFileUpload);
             BitmapFactory.Options ontain = new BitmapFactory.Options();
             Bitmap bm = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, ontain);
 
             int width = bm.getWidth();
             int height = bm.getHeight();
 
-            // 设置想要的大小
-            int newWidth = (int)(width/zoom);
-            int newHeight = (int)(height/zoom);
+            // 设置想要的大小, 0.6为取景框的缩放补偿系数,非精确值
+            int newWidth = (int)(width/(zoom+0.6));
+            int newHeight = (int)(height/(zoom+0.6));
 
-            // 取得想要缩放的matrix参数
-            Matrix matrix = new Matrix();
+            Bitmap newbm = Bitmap.createBitmap(bm, (width-newWidth)/2, (height-newHeight)/2, newWidth, newHeight);
+            Bitmap newbm1 = cropImage(newbm);
+            Bitmap newbm2 = sizeBitmap(newbm1, 300, 300);
 
-            //matrix.postScale(1/(float)zoom, 1/(float)zoom);
-
-            Bitmap newbm = Bitmap.createBitmap(bm, (width-newWidth)/2, (height-newHeight)/2, newWidth, newHeight, matrix, true);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            newbm.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+            newbm2.compress(Bitmap.CompressFormat.JPEG, 100, baos);
 
-            Message.obtain(mUIHandler, SETIMAGE, newbm).sendToTarget();
+            Message.obtain(mUIHandler, CAMERA_RESULT).sendToTarget();
+            //Message.obtain(mUIHandler, RESULT, newbm2).sendToTarget();
 
             output.write(baos.toByteArray());
         } catch (IOException e) {

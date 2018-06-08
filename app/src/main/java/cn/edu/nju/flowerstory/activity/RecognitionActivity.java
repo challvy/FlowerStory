@@ -137,23 +137,6 @@ public class RecognitionActivity extends AppCompatActivity {
     }
 
     private void initData() throws Exception {
-        /*
-        OkHttpClient okHttpClient = new OkHttpClient();
-        //RequestBody requestBody = new FormBody.Builder().add("name","name").add("age","age").build();
-        Request request = new Request.Builder()
-                .url("https://github.com/")
-                .build();
-        Response response = okHttpClient.newCall(request).execute();
-        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
-        Headers responseHeaders = response.headers();
-        for (int i = 0; i < responseHeaders.size(); i++) {
-            System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
-        }
-
-        System.out.println(response.body().string());
-        */
-
         getRETURN_INFO();
         loading();
         Resources res = this.getResources();

@@ -13,7 +13,6 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.media.ExifInterface;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,7 +27,7 @@ import java.io.InputStream;
 public class BitmapUtil {
 
     private static final String TAG = "BitmapUtil";
-
+/*
     public static boolean saveBitmap(Bitmap b, String absolutePath) {
         return saveBitmap(b, absolutePath, 100);
     }
@@ -36,12 +35,12 @@ public class BitmapUtil {
     public static boolean saveBitmap(Bitmap b, String absolutePath, Bitmap.CompressFormat format) {
         return saveBitmap(b, absolutePath, 100, format);
     }
-
-    public static boolean saveBitmap(Bitmap b, String absolutePath, int quality) {
+*/
+    public static File saveBitmap(Bitmap b, String absolutePath, int quality) {
         return saveBitmap(b, absolutePath, quality, Bitmap.CompressFormat.JPEG);
     }
 
-    public static boolean saveBitmap(Bitmap b, String absolutePath, int quality, Bitmap.CompressFormat format) {
+    public static File saveBitmap(Bitmap b, String absolutePath, int quality, Bitmap.CompressFormat format) {
         String fileName = absolutePath;
         File f = new File(fileName);
         try {
@@ -50,11 +49,11 @@ public class BitmapUtil {
             b.compress(format, quality, fOut);
             fOut.flush();
             fOut.close();
-            return true;
+            //return true;
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
-        return false;
+        return f;
     }
 
 
@@ -63,13 +62,10 @@ public class BitmapUtil {
         if (b != null) {
             if (b.getWidth() != width) {
                 float scale = width / b.getWidth();
-
                 Matrix matrix = new Matrix();
                 matrix.postScale(scale, scale);
                 matrix.postRotate(angle);
-
-                Bitmap bNew = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), matrix, true);
-                return bNew;
+                return Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), matrix, true);
             } else {
                 return b;
             }
@@ -98,7 +94,9 @@ public class BitmapUtil {
     public static Bitmap scale(Bitmap bitmap, float scale) {
         Matrix matrix = new Matrix();
         matrix.postScale(scale, scale);
-        Bitmap outBitmap = Bitmap.createBitmap(bitmap, 0, 0, (int) (bitmap.getWidth()), (int) (bitmap.getHeight()), matrix, true);
+        int x = 1;
+        int y = 1;
+        Bitmap outBitmap = Bitmap.createBitmap(bitmap, x, y, 300, 300);
         bitmap.recycle();
         return outBitmap;
     }
@@ -107,10 +105,8 @@ public class BitmapUtil {
     /**
      * 圆角图片
      *
-     * @param context
      * @param resId   资源文件
      * @param ratio   圆角占图片的百分比
-     * @return
      */
 
     public static Bitmap getRoundCornerBitmapByRatio(Context context, int resId, float ratio) {
@@ -314,9 +310,26 @@ public class BitmapUtil {
         int centerX = w / 2;
         int centerY = h / 2;
 
-        Bitmap outBitmap = Bitmap.createBitmap(bitmap, centerX - wh / 2, centerY - wh / 2, wh, wh, null, false);
+        Bitmap outBitmap = Bitmap.createBitmap(bitmap, centerX - wh / 2, centerY - wh / 2, wh, wh);
         bitmap.recycle();
         return outBitmap;
+    }
+
+    public static Bitmap sizeBitmap(Bitmap origin, int newWidth, int newHeight) {
+        if (origin == null) {
+            return null;
+        }
+        int height = origin.getHeight();
+        int width = origin.getWidth();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);// 使用后乘
+        Bitmap newBM = Bitmap.createBitmap(origin, 0, 0, width, height, matrix, false);
+        if (!origin.isRecycled()) {//这时候origin还有吗？
+            origin.recycle();
+        }
+        return newBM;
     }
 
     /**

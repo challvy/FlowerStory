@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
@@ -23,6 +24,7 @@ import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.ImageReader;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -46,6 +48,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.edu.nju.flowerstory.R;
@@ -53,11 +56,19 @@ import cn.edu.nju.flowerstory.adapter.PickerAdapter;
 import cn.edu.nju.flowerstory.utils.AlbumUtil;
 import cn.edu.nju.flowerstory.model.AlbumItemModel;
 import cn.edu.nju.flowerstory.utils.BitmapUtil;
-import cn.edu.nju.flowerstory.utils.ImageSaver;
 import cn.edu.nju.flowerstory.view.AutoFitTextureView;
 import cn.edu.nju.flowerstory.utils.PickerLayoutManager;
+import cn.edu.nju.flowerstory.view.OverlayerView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,9 +80,12 @@ import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static cn.edu.nju.flowerstory.app.Constants.MAX_PREVIEW_HEIGHT;
-import static cn.edu.nju.flowerstory.app.Constants.MAX_PREVIEW_WIDTH;
-import static cn.edu.nju.flowerstory.app.Constants.SUB_DIR_PATH;
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static cn.edu.nju.flowerstory.app.Constants.*;
+import static cn.edu.nju.flowerstory.utils.BitmapUtil.cropImage;
+import static cn.edu.nju.flowerstory.utils.BitmapUtil.saveBitmap;
+import static cn.edu.nju.flowerstory.utils.BitmapUtil.sizeBitmap;
 
 public class CameraFragment extends Fragment implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -80,15 +94,25 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private AutoFitTextureView mTextureView;
     private ImageView mImageViewRecentPic;
     private ImageView mImageViewChoose;
-    Button mButtonPicture;
-    RecyclerView rv;
+    private OverlayerView mOverlayerView;
+    private Button mButtonPicture;
+    private RecyclerView mRecyclerView;
+    private ImageView mImageViewResult;
+    private View mView;
+    private TextView mTextViewMoreResult;
+    private TextView mTextViewFlower;
+    private TextView mTextViewAbstract;
+    private TextView mTextViewConfidence;
 
-    PickerAdapter adapter;
+    private PickerAdapter adapter;
+
+    private boolean flagToken = false;
 
     /**
      * A {@link Semaphore} to prevent the app from exiting before closing the camera.
      */
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
+
     private Handler mUIHandler;
     /**
      * An additional thread for running tasks that shouldn't block the UI.
@@ -124,6 +148,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private static final int STATE_WAITING_PRECAPTURE = 2;
     private static final int STATE_WAITING_NON_PRECAPTURE = 3;
     private static final int STATE_PICTURE_TAKEN = 4;
+
+    public static final MediaType MEDIA_TYPE_MARKDOWN
+            = MediaType.parse("text/x-markdown; charset=utf-8");
 
     private CameraCaptureSession mCaptureSession;
     private CameraDevice mCameraDevice;
@@ -165,13 +192,31 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
         mButtonPicture = view.findViewById(R.id.picture);
         mTextureView =  view.findViewById(R.id.texture);
-        mImageViewRecentPic =  view.findViewById(R.id.imageView);
+        mImageViewRecentPic =  view.findViewById(R.id.imageViewRecentPic);
+        mOverlayerView = view.findViewById(R.id.imageView2);
         mImageViewChoose = view.findViewById(R.id.imageViewReturn);
-        rv = view.findViewById(R.id.rv);
+        mRecyclerView = view.findViewById(R.id.rv);
+        mImageViewResult = view.findViewById(R.id.imageViewResult);
+        mView = view.findViewById(R.id.view2);
+        mTextViewMoreResult = view.findViewById(R.id.textViewMoreResult);
+        mTextViewFlower = view.findViewById(R.id.textViewFlower);
+        mTextViewAbstract = view.findViewById(R.id.textViewAbstract);
+        mTextViewConfidence = view.findViewById(R.id.textViewConfidence);
+
+        mImageViewRecentPic.setBackgroundColor(0xffffff);
+        mImageViewResult.setVisibility(View.INVISIBLE);
+        mView.setAlpha(0.3f);
+        mView.setVisibility(View.INVISIBLE);
+        mTextViewMoreResult.setVisibility(View.INVISIBLE);
+        mTextViewFlower.setVisibility(View.INVISIBLE);
+        mTextViewAbstract.setVisibility(View.INVISIBLE);
+        mTextViewConfidence.setVisibility(View.INVISIBLE);
 
         mImageViewRecentPic.setOnClickListener(this);
         mButtonPicture.setOnClickListener(this);
+        mButtonPicture.setSelected(false);
         mImageViewChoose.setOnClickListener(this);
+        mTextViewMoreResult.setOnClickListener(this);
 
         PickerLayoutManager pickerLayoutManager = new PickerLayoutManager(getContext(), PickerLayoutManager.HORIZONTAL, false);
         pickerLayoutManager.setChangeAlpha(false);
@@ -179,14 +224,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         pickerLayoutManager.setScaleDownDistance(1.0f);
 
         List<String> data = new ArrayList<>();
-        data.add("单拍");
         data.add("多拍");
+        data.add("单拍");
         data.add("视频");
-        adapter = new PickerAdapter(getContext(), data, rv);
+        adapter = new PickerAdapter(getContext(), data, mRecyclerView);
         SnapHelper snapHelper = new LinearSnapHelper();
-        snapHelper.attachToRecyclerView(rv);
-        rv.setLayoutManager(pickerLayoutManager);
-        rv.setAdapter(adapter);
+        snapHelper.attachToRecyclerView(mRecyclerView);
+        mRecyclerView.setLayoutManager(pickerLayoutManager);
+        mRecyclerView.setAdapter(adapter);
+        mRecyclerView.invalidate();
 
         pickerLayoutManager.setOnScrollStopListener(new PickerLayoutManager.onScrollStopListener() {
             @Override
@@ -224,24 +270,148 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
         }
         mTextureView.setOnTouchListener(textTureOntuchListener);
+
+        mButtonPicture.setSelected(false);
+        mButtonPicture.setBackgroundResource(R.mipmap.icon_shutter);
+        flagToken = false;
+        mImageViewResult.setVisibility(View.INVISIBLE);
+        mView.setVisibility(View.INVISIBLE);
+        mTextViewMoreResult.setVisibility(View.INVISIBLE);
+        mTextViewFlower.setVisibility(View.INVISIBLE);
+        mTextViewAbstract.setVisibility(View.INVISIBLE);
+        mTextViewConfidence.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.picture: {
-                takePicture();
+                if(!mButtonPicture.isSelected()) {
+                    mButtonPicture.setSelected(true);
+                    takePicture();
+                    flagToken = true;
+                    Message.obtain(mUIHandler, CAMERA_SETIMAGE).sendToTarget();
+                } else {
+                    mButtonPicture.setSelected(false);
+                    mButtonPicture.setBackgroundResource(R.mipmap.icon_shutter);
+                    unlockFocus();
+                    flagToken = false;
+                    mImageViewResult.setVisibility(View.INVISIBLE);
+                    mView.setVisibility(View.INVISIBLE);
+                    mTextViewMoreResult.setVisibility(View.INVISIBLE);
+                    mTextViewFlower.setVisibility(View.INVISIBLE);
+                    mTextViewAbstract.setVisibility(View.INVISIBLE);
+                    mTextViewConfidence.setVisibility(View.INVISIBLE);
+                }
                 break;
             }
-            case R.id.imageView:{
-                Intent intent = new Intent(Intent.ACTION_DEFAULT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivity(intent);
+            case R.id.imageViewRecentPic:{
+                Intent albumIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(albumIntent, SELECT_PHOTO);
                 break;
             }
             case R.id.imageViewReturn: {
                 ;//mImageViewChoose.setImageResource(R.mipmap.yes);
             }
+            case R.id.textViewMoreResult: {
+                Intent intent = new Intent(Intent.ACTION_DEFAULT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivity(intent);
+                break;
+            }
         }
+    }
+
+
+    File aaafile;
+    Uri imageUri;
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_CANCELED){
+            return;
+        }
+        switch (requestCode) {
+            case SELECT_PHOTO: {
+                if (resultCode == RESULT_OK) {
+                    flagToken = true;
+                    Intent intent = new Intent("com.android.camera.action.CROP");
+                    aaafile = new File(selectPic(data));
+                    imageUri = Uri.fromFile(aaafile);
+                    intent.setDataAndType(data.getData(), "image/*");
+                    intent.putExtra("scale", true);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                    intent.putExtra("crop", "true");
+                    intent.putExtra("aspectX", 1);
+                    intent.putExtra("aspectY", 1);
+                    Message.obtain(mUIHandler, CAMERA_RESULT, "玫瑰").sendToTarget();
+                    //startActivityForResult(intent, CUT_PHOTO);
+                    //Message.obtain(mUIHandler, SETIMAGE).sendToTarget();
+                }
+                break;
+            }
+            case CUT_PHOTO:
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                intent.setData(data.getData());
+                getActivity().sendBroadcast(intent);
+                /*
+                //Bitmap bm = (Bitmap) message.obj;
+                mBitmap = BitmapFactory.decodeFile(aaafile.getPath());
+                //mBitmap = mTextureView.getBitmap();
+
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+                Date curDate =  new Date(System.currentTimeMillis());
+                String str = formatter.format(curDate);
+
+                int width = mBitmap.getWidth();
+                int height = mBitmap.getHeight();
+
+                // 设置想要的大小
+                int newWidth = (int)(width/(curZoom+0.6));
+                int newHeight = (int)(height/(curZoom+0.6));
+                Bitmap newbm = Bitmap.createBitmap(mBitmap, (width-newWidth)/2, (height-newHeight)/2, newWidth, newHeight);
+                Bitmap newbm1 = cropImage(newbm);
+                Bitmap newbm2 = sizeBitmap(newbm1, 300, 300);
+                File mmFile = saveBitmap(newbm2,SUB_DIR_PATH[0]+"FS_" + str + ".jpg",100);
+
+                // Post
+                OkHttpClient mOkHttpClient = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("http://10.0.2.2:8080/recognition")
+                        .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, mmFile))
+                        .build();
+                Call call = mOkHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call arg0, IOException e) {
+                        System.out.println(e.toString());
+                    }
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        //Message.obtain(mUIHandler, RESULT, response.body().string()).sendToTarget();
+                        //System.out.println(response.body().string());
+                    }
+                });
+                */
+                //mButtonPicture.setSelected(true);
+                //takePicture();
+                //flagToken = true;
+                //Message.obtain(mUIHandler, SELECTED).sendToTarget();
+                //bitmap = BitmapFactory.decodeFile(file.getPath());
+                //mImageView.setImageBitmap(bitmap);
+                break;
+        }
+    }
+
+    private String selectPic(Intent intent) {
+        Uri selectImageUri = intent.getData();
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getActivity().getContentResolver().query(selectImageUri, filePathColumn, null, null, null);
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String picturePath = cursor.getString(columnIndex);
+        cursor.close();
+        return picturePath;
     }
 
     /**
@@ -259,7 +429,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
             mState = STATE_WAITING_LOCK;
             // CaptureSession发送拍照对焦请求capture()
-            mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+            if(!flagToken) {
+                mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+            }
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -282,31 +454,33 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     count = 1;
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (count >= 2) {
-                        float x1 = event.getX(0);
-                        float y1 = event.getY(0);
-                        float x2 = event.getX(1);
-                        float y2 = event.getY(1);
-                        float x = x1 - x2;
-                        float y = y1 - y2;
-                        Double lenthRec = Math.sqrt(x * x + y * y) - length;
-                        Double viewLenth = Math.sqrt(v.getWidth() * v.getWidth() + v.getHeight() * v.getHeight());
-                        if(curZoom<1){
-                            curZoom = 1;
-                        } else if (curZoom>maxRealRadio){
-                            curZoom = maxRealRadio;
+                    if(!flagToken) {
+                        if (count >= 2) {
+                            float x1 = event.getX(0);
+                            float y1 = event.getY(0);
+                            float x2 = event.getX(1);
+                            float y2 = event.getY(1);
+                            float x = x1 - x2;
+                            float y = y1 - y2;
+                            Double lenthRec = Math.sqrt(x * x + y * y) - length;
+                            Double viewLenth = Math.sqrt(v.getWidth() * v.getWidth() + v.getHeight() * v.getHeight());
+                            if (curZoom < 1) {
+                                curZoom = 1;
+                            } else if (curZoom > maxRealRadio) {
+                                curZoom = maxRealRadio;
+                            }
+                            curZoom = ((lenthRec / viewLenth) * maxRealRadio) + lastZoom;
+                            if (curZoom < 1) {
+                                curZoom = 1;
+                            } else if (curZoom > maxRealRadio) {
+                                curZoom = maxRealRadio;
+                            }
+                            picRect.top = (int) (maxZoomrect.top / (curZoom));
+                            picRect.left = (int) (maxZoomrect.left / (curZoom));
+                            picRect.right = (int) (maxZoomrect.right / (curZoom));
+                            picRect.bottom = (int) (maxZoomrect.bottom / (curZoom));
+                            Message.obtain(mUIHandler, CAMERA_MOVE_FOCK).sendToTarget();
                         }
-                        curZoom = ((lenthRec / viewLenth) * maxRealRadio) + lastZoom;
-                        if(curZoom<1){
-                            curZoom = 1;
-                        } else if (curZoom>maxRealRadio){
-                            curZoom = maxRealRadio;
-                        }
-                        picRect.top = (int) (maxZoomrect.top / (curZoom));
-                        picRect.left = (int) (maxZoomrect.left / (curZoom));
-                        picRect.right = (int) (maxZoomrect.right / (curZoom));
-                        picRect.bottom = (int) (maxZoomrect.bottom / (curZoom));
-                        Message.obtain(mUIHandler, MOVE_FOCK).sendToTarget();
                     }
                     break;
                 case MotionEvent.ACTION_UP:
@@ -426,8 +600,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                         @Override
                         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                             //showToast("Saved: " + mFile);
-                            Log.d(TAG, mFile.toString());
-                            unlockFocus();
+                            //Log.d(TAG, mFile.toString());
+                            //unlockFocus();
                         }
                     }, null
             );
@@ -459,7 +633,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
             // Tell #mCaptureCallback to wait for the precapture sequence to be set.
             mState = STATE_WAITING_PRECAPTURE;
-            mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+            if(!flagToken) {
+                mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+            }
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -471,12 +647,14 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private void unlockFocus() {
         try {
             // Reset the auto-focus trigger
-            mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
-            setAutoFlash(mPreviewRequestBuilder);
-            mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+            if(flagToken) {
+                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
+                setAutoFlash(mPreviewRequestBuilder);
+                mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
 
-            mState = STATE_PREVIEW;
-            mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+                mState = STATE_PREVIEW;
+                mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+            }
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -512,7 +690,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         setUpCameraOutputs(width, height);
         CameraManager manager = (CameraManager) getActivity().getSystemService(Context.CAMERA_SERVICE);
         try {
-            if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
+            if (!mCameraOpenCloseLock.tryAcquire(1500, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
             manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
@@ -622,24 +800,78 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         }
     }
 
-    private static final int SETIMAGE = 1;
-    private static final int MOVE_FOCK = 2;
     private class InnerCallBack implements Handler.Callback {
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what) {
-                case SETIMAGE:
-                    Bitmap bm = (Bitmap) message.obj;
-                    mBitmap = bm;
-                    mImageViewRecentPic.setImageBitmap(bm);
+                case CAMERA_SETIMAGE:
+                    mBitmap = mTextureView.getBitmap();
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+                    Date curDate =  new Date(System.currentTimeMillis());
+                    String str = formatter.format(curDate);
+
+                    int width = mBitmap.getWidth();
+                    int height = mBitmap.getHeight();
+
+                    // 设置想要的大小
+                    int newWidth = (int)(width/(curZoom+0.6));
+                    int newHeight = (int)(height/(curZoom+0.6));
+                    Bitmap newbm = Bitmap.createBitmap(mBitmap, (width-newWidth)/2, (height-newHeight)/2, newWidth, newHeight);
+                    Bitmap newbm1 = cropImage(newbm);
+                    Bitmap newbm2 = sizeBitmap(newbm1, 300, 300);
+                    File mmFile = saveBitmap(newbm2,SUB_DIR_PATH[0]+"FS_" + str + ".jpg",100);
+
+                    // Post
+                    OkHttpClient mOkHttpClient = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url("http://10.0.2.2:8080/recognition")
+                            .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, mmFile))
+                            .build();
+                    Call call = mOkHttpClient.newCall(request);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call arg0, IOException e) {
+                            System.out.println(e.toString());
+                        }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            Message.obtain(mUIHandler, CAMERA_RESULT, response.body().string()).sendToTarget();
+                            //System.out.println(response.body().string());
+                        }
+                    });
                     break;
-                case MOVE_FOCK:
-                    mPreviewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, picRect);
-                    try {
-                        mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
-                    } catch (CameraAccessException e) {
-                        e.printStackTrace();
+                case CAMERA_MOVE_FOCK:
+                    if(!flagToken) {
+                        mPreviewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, picRect);
+                        try {
+                            mCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+                        } catch (CameraAccessException e) {
+                            e.printStackTrace();
+                        }
                     }
+                    break;
+                case CAMERA_RESULT:
+                    mTextViewAbstract.setText(message.obj.toString());
+                    mImageViewRecentPic.setImageBitmap(mTextureView.getBitmap());
+                    mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
+                    mImageViewResult.setVisibility(View.VISIBLE);
+                    mView.setVisibility(View.VISIBLE);
+                    mTextViewMoreResult.setVisibility(View.VISIBLE);
+                    mTextViewFlower.setVisibility(View.VISIBLE);
+                    mTextViewAbstract.setVisibility(View.VISIBLE);
+                    mTextViewConfidence.setVisibility(View.VISIBLE);
+                    /*
+                    ArrayList<String> s = (ArrayList<String>) message.obj;
+                    for (String a : s) {
+                        String tmp = a;
+                    }*/
+                    //mImageViewRecentPic.setImageBitmap((Bitmap)message.obj);
+                    break;
+                case CAMERA_SELECTED:
+                    lastZoom = 0;
+                    closeCamera();
+                    stopBackgroundThread();
                     break;
             }
             return false;
@@ -723,16 +955,16 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private void createCameraPreviewSession() {
         try {
             SurfaceTexture texture = mTextureView.getSurfaceTexture();
-            assert texture != null;
+            if(texture==null) return;
             // We configure the size of default buffer to be the size of camera preview we want.
             texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+
             // This is the output Surface we need to start preview.
             Surface surface = new Surface(texture);
 
             // We set up a CaptureRequest.Builder with the output Surface.
             mPreviewRequestBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             mPreviewRequestBuilder.addTarget(surface);
-
             // Here, we create a CameraCaptureSession for camera preview.
             mCameraDevice.createCaptureSession(Arrays.asList(surface, mImageReader.getSurface()),
                     new CameraCaptureSession.StateCallback() {
@@ -742,7 +974,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                             try {
                                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
                                 setAutoFlash(mPreviewRequestBuilder);
-
                                 mPreviewRequest = mPreviewRequestBuilder.build();
                                 mCaptureSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
                             } catch (CameraAccessException e) {
@@ -765,6 +996,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private void startBackgroundThread() {
         mBackgroundThread = new HandlerThread("CameraBackground");
         mBackgroundThread.start();
+
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
 
@@ -850,11 +1082,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private final ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
         @Override
         public void onImageAvailable(ImageReader reader) {
+            /*
             SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
             Date curDate =  new Date(System.currentTimeMillis());
             String str = formatter.format(curDate);
             mFile = new File(new File(SUB_DIR_PATH[0]), "FS_" + str + ".jpg");
+            // 通过Handler发送消息
             mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile, mUIHandler, curZoom));
+            */
+            //mBackgroundHandler.post(new BitmapUploadUtil(reader.acquireNextImage(), mFile,mUIHandler,curZoom));
         }
     };
 }

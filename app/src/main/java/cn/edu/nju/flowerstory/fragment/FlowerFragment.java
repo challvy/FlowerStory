@@ -53,8 +53,6 @@ public class FlowerFragment extends Fragment  {
     public ImageView mImageView;
 
     public static Bitmap mBitmap;
-
-    Toolbar toolbar;
     private ProgressBar mProgressBar;
     RecyclerView mRecyclerView;
 
@@ -219,7 +217,7 @@ public class FlowerFragment extends Fragment  {
         switch (requestCode) {
             case TAKE_PHOTO:
                 bitmap = BitmapFactory.decodeFile(file.getPath());
-                mImageView.setImageBitmap(bitmap);/*
+                mImageView.setImageBitmap(bitmap);
                 Intent intent = new Intent("com.android.camera.action.CROP");
                 intent.setDataAndType(imageUri, "image/*");
                 intent.putExtra("scale", true);
@@ -227,7 +225,7 @@ public class FlowerFragment extends Fragment  {
                 intent.putExtra("crop", "true");
                 intent.putExtra("aspectX", 1);
                 intent.putExtra("aspectY", 1);
-                startActivityForResult(intent, CUT_PHOTO);*/
+                startActivityForResult(intent, CUT_PHOTO);
                 break;
             case CUT_PHOTO:
                 Intent it = new Intent();
@@ -241,9 +239,6 @@ public class FlowerFragment extends Fragment  {
                 if (resultCode == RESULT_OK) {
                     selectPic(data);
                 }
-                break;
-            case CAMERA:
-                System.out.print(" ");
                 break;
         }
     }

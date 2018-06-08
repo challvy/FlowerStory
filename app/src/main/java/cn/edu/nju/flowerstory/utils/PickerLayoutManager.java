@@ -68,25 +68,23 @@ public class PickerLayoutManager extends LinearLayoutManager {
     @Override
     public void onScrollStateChanged(int state) {
         super.onScrollStateChanged(state);
-        //if (state == 0) {
-            if (onScrollStopListener != null) {
-                float lastHeight = 0f;
-                for (int i = 0; i < getChildCount(); i++) {
-                    if (lastHeight < getChildAt(i).getScaleY()) {
-                        lastHeight = getChildAt(i).getScaleY();
-                    }
-                }
-                for (int i = 0; i < getChildCount(); i++) {
-                    if(getChildAt(i).isSelected()) {
-                        onScrollStopListener.selectedView(getChildAt(i));
-                        getChildAt(i).setAlpha(1.0f);
-                        curSelectedIndex = i;
-                    } else {
-                        getChildAt(i).setAlpha(0.5f);
-                    }
+        if (onScrollStopListener != null) {
+            float lastHeight = 0f;
+            for (int i = 0; i < getChildCount(); i++) {
+                if (lastHeight < getChildAt(i).getScaleY()) {
+                    lastHeight = getChildAt(i).getScaleY();
                 }
             }
-        //}
+            for (int i = 0; i < getChildCount(); i++) {
+                if(getChildAt(i).isSelected()) {
+                    onScrollStopListener.selectedView(getChildAt(i));
+                    getChildAt(i).setAlpha(1.0f);
+                    curSelectedIndex = i;
+                } else {
+                    getChildAt(i).setAlpha(0.5f);
+                }
+            }
+        }
     }
 
     public float getScaleDownBy() {

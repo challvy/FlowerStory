@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new UserFragment());
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(3);
-        mViewPager.setCurrentItem(1);
+        mViewPager.setCurrentItem(MAIN_VIEW_PAGER_CURRENT_ITEM);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {

@@ -102,8 +102,6 @@ public class SearchActivity extends AppCompatActivity {
                 //initData();
                 Cursor cursor = TextUtils.isEmpty(s) ? null : null;
 
-
-
                 if (mSearchView.getSuggestionsAdapter() == null) {
                     //mSearchView.setSuggestionsAdapter(new SimpleCursorAdapter(this, R.layout.search_edit_frame, cursor, new String[]{"name"}, new int[]{R.id.text1}));
                 } else {
@@ -111,7 +109,6 @@ public class SearchActivity extends AppCompatActivity {
                     mSearchView.getSuggestionsAdapter().changeCursor(cursor);
                 }
                 //toolbar.setAdapter(cursor);
-
                 return false;
             }
         });
