@@ -20,11 +20,12 @@ Flower Story £¬ÊÇÄÏ¾©´óÑ§´óÑ§Éú´´ĞÂÏîÄ¿×é¡°¹Û»¨ÎïÓï¡±µÄ¹¤³ÌÏîÄ¿£¬ÊÇÒ»¿î×¨Îª°®»¨Ê
 
   ¾«È·Ê¶±ğ»¨»Ü²¡³æº¦£¬²¢Ìá¹©½â¾ö·½°¸½ö¹©²Î¿¼
 
-![FlowerStory-1](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory-1.png)
+![FlowerStory-1](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory1.png)
 
-![FlowerStory-2](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory-2.png)
+![FlowerStory-2](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory2.png)
 
 ## Environment
+
 * Gradle
 
   ```
@@ -47,15 +48,15 @@ Flower Story £¬ÊÇÄÏ¾©´óÑ§´óÑ§Éú´´ĞÂÏîÄ¿×é¡°¹Û»¨ÎïÓï¡±µÄ¹¤³ÌÏîÄ¿£¬ÊÇÒ»¿î×¨Îª°®»¨Ê
   implementation 'com.android.support:appcompat-v7:27.1.1'
   implementation 'com.android.support:design:27.1.1'
   implementation 'com.android.support:cardview-v7:27.1.1'
-  implementation 'com.squareup.okhttp3:okhttp:3.10.0'£¨ÔİÎ´ÓÃµ½£©
+  implementation 'com.squareup.okhttp3:okhttp:3.10.0'
   ```
 
 
 ## Version
 
-Version 0.2
+Version 0.3
 
 - ½çÃæÉè¼Æ
-- Óë±¾µØºó¶Ë¼òµ¥Á¬½Ó
+- Óë±¾µØºó¶Ë¼òµ¥Êı¾İ´«ËÍ
 
 ## End
