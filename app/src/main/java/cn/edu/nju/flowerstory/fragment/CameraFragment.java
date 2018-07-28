@@ -49,6 +49,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,9 +89,10 @@ import static cn.edu.nju.flowerstory.utils.BitmapUtil.cropImage;
 import static cn.edu.nju.flowerstory.utils.BitmapUtil.saveBitmap;
 import static cn.edu.nju.flowerstory.utils.BitmapUtil.sizeBitmap;
 
-public class CameraFragment extends Fragment implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+public class CameraFragment extends Fragment implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback, SeekBar.OnSeekBarChangeListener {
     public Bitmap mBitmap;
 
+    private SeekBar mSeekbar;
     private AutoFitTextureView mTextureView;
     private View imageViewBG;
     private ImageView mImageViewRecentPic;
@@ -113,7 +115,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private CameraDevice mCameraDevice;
     private Size mPreviewSize;
 
-    private int maxRealRadio;
+    private double maxRealRadio;
     private Rect maxZoomrect;
     private Rect picRect;
     double curZoom=1;
@@ -197,6 +199,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
         Log.i(TAG,"onViewCreated");
 
+        mSeekbar = view.findViewById(R.id.seekbar);
         mButtonPicture = view.findViewById(R.id.picture);
         mTextureView =  view.findViewById(R.id.texture);
         imageViewBG = view.findViewById(R.id.imageViewBG);
@@ -213,6 +216,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         mImageViewRecentPic.setBackgroundColor(0xffffff);
         mView.setAlpha(0.3f);
 
+        mSeekbar.setOnSeekBarChangeListener(this);
         mImageViewRecentPic.setOnClickListener(this);
         mButtonPicture.setOnClickListener(this);
         mImageViewChoose.setOnClickListener(this);
@@ -485,6 +489,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                         } else if (curZoom > maxRealRadio) {
                             curZoom = maxRealRadio;
                         }
+                        int process = (int)((curZoom-1)/(maxRealRadio-1)*100);
+                        if(process<0){
+                            process = 0;
+                        } else if(process>100){
+                            process = 100;
+                        }
+                        mSeekbar.setProgress(process);
                         picRect.top = (int) (maxZoomrect.top / (curZoom));
                         picRect.left = (int) (maxZoomrect.left / (curZoom));
                         picRect.right = (int) (maxZoomrect.right / (curZoom));
@@ -679,6 +690,26 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        curZoom = 1 + (maxRealRadio-1) * progress/100;
+        //lastZoom = curZoom;
+        picRect.top = (int) (maxZoomrect.top / (curZoom));
+        picRect.left = (int) (maxZoomrect.left / (curZoom));
+        picRect.right = (int) (maxZoomrect.right / (curZoom));
+        picRect.bottom = (int) (maxZoomrect.bottom / (curZoom));
+        Message.obtain(mUIHandler, CAMERA_MOVE_FOCK).sendToTarget();
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        lastZoom = curZoom;
     }
 
     /**

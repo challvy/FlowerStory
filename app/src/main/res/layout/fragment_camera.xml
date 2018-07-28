@@ -33,6 +33,16 @@
         android:gravity="bottom"
         android:orientation="vertical">
 
+        <SeekBar
+            android:id="@+id/seekbar"
+            android:layout_above="@+id/result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="40dp"
+            android:max="100"
+            android:progress="0"
+            tools:targetApi="o" />
+
         <RelativeLayout
             android:id="@+id/result"
             android:layout_width="match_parent"
@@ -157,6 +167,8 @@
                 android:paddingHorizontal="180dp"
                 tools:targetApi="o" />
         </RelativeLayout>
+
+
 
     </RelativeLayout>
 
