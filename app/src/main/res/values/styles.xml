@@ -16,6 +16,7 @@
         <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:textColorHint">#cacaca</item>
     </style>
 
     <style name="AppItemTheme" parent="AppTheme">

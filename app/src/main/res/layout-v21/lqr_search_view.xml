@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/search_bar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -70,7 +71,8 @@
                   android:dropDownHeight="wrap_content"
                   android:dropDownAnchor="@id/search_edit_frame"
                   android:dropDownVerticalOffset="0dip"
-                  android:dropDownHorizontalOffset="0dip" />
+                  android:dropDownHorizontalOffset="0dip"
+                tools:ignore="NestedWeights" />
 
             <ImageView
                 android:id="@+id/search_close_btn"
@@ -108,8 +110,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical"
-                android:paddingLeft="16dip"
-                android:paddingRight="16dip"
+                android:paddingLeft="0dip"
+                android:paddingRight="0dip"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:visibility="gone"
                 android:focusable="true"

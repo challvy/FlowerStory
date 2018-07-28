@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -72,7 +73,8 @@ public class SearchActivity extends AppCompatActivity {
         //mSearchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
         mSearchView.onActionViewExpanded();
         mSearchView.setIconified(false);
-        mSearchView.setQueryHint("请输入花的名称...");
+
+        mSearchView.setQueryHint("搜索");
 
         LinearLayout search_edit_frame = (LinearLayout) mSearchView.findViewById(R.id.search_edit_frame);
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) search_edit_frame.getLayoutParams();
@@ -94,6 +96,7 @@ public class SearchActivity extends AppCompatActivity {
                         mRecyclerView.setVisibility(View.INVISIBLE);
                     }
                 }
+                mSearchView.clearFocus();
                 return true;
             }
 

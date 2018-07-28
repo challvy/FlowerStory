@@ -125,6 +125,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private Uri imageUri;
     private Bitmap albumBitmap;
 
+    // 辅助逻辑标志
+
+    // 是否点击相册选择图片标志
+    boolean selectPhoto = false;
+    // 相册能否关闭
+    boolean close = false;
+
     /**
      * A {@link Semaphore} to prevent the app from exiting before closing the camera.
      */
@@ -251,9 +258,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     @Override
     public void onResume() {
         super.onResume();
+        flagToken = false;
+        Log.i(TAG, "onResume");
         if(!selectPhoto) {
             close = true;
-            Log.i(TAG, "onResume");
 
             startBackgroundThread();
             if (mTextureView.isAvailable()) {
@@ -281,9 +289,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     @Override
     public void onPause() {
         super.onPause();
+        lastZoom = 0;
         if(close) {
             close = false;
-            lastZoom = 0;
             closeCamera();
             stopBackgroundThread();
         }
@@ -295,7 +303,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             case R.id.picture: {
                 if(!mButtonPicture.isSelected()) {
                     mButtonPicture.setSelected(true);
-                    mImageViewRecentPic.setVisibility(View.GONE);
+                    //mImageViewRecentPic.setVisibility(View.GONE);
                     imageViewBG.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.GONE);
                     // 拍照后修改标志 顺序不能变
@@ -323,7 +331,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             case R.id.imageViewRecentPic:{
                 Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);//Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 albumIntent.setType("image/*");
-                //startActivity(albumIntent);
                 selectPhoto = true;
                 startActivityForResult(albumIntent, SELECT_PHOTO);
                 break;
@@ -868,7 +875,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     if(!flagToken) {
                         mPreviewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION, picRect);
                         try {
-                            mCameraCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+                            mCameraCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, null);
                         } catch (CameraAccessException e) {
                             e.printStackTrace();
                         }
@@ -963,10 +970,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             Log.i(TAG, "onOpened");
             mCameraOpenCloseLock.release();
             // 开启预览
-            //if(!flagToken) {
-                mCameraDevice = cameraDevice;
-                createCameraPreviewSession();
-            //}
+            mCameraDevice = cameraDevice;
+            createCameraPreviewSession();
         }
         @Override
         public void onDisconnected(@NonNull CameraDevice cameraDevice) {
@@ -1060,9 +1065,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
-
-    boolean selectPhoto = false;
-    boolean close = false;
 
     /**
      * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a {@link TextureView}.

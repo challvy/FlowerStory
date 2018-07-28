@@ -55,7 +55,7 @@ public class FloatWindowUtil {
             layoutParams.width = mFloatWindowView.width;
             layoutParams.height = mFloatWindowView.height;
             layoutParams.x += ScreenSizeUtil.getScreenWidth() - ScreenSizeUtil.dp2px(72);
-            layoutParams.y += ScreenSizeUtil.getScreenHeight() - ScreenSizeUtil.dp2px(110);
+            layoutParams.y += ScreenSizeUtil.getScreenHeight() - ScreenSizeUtil.dp2px(105);
             layoutParams.gravity = Gravity.TOP | Gravity.LEFT;
             if (Build.VERSION.SDK_INT < 23) {
                 layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
