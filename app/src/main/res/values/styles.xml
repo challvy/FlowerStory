@@ -2,6 +2,7 @@
 
     <style name="AppTheme.splash" parent="AppTheme">
         <item name="android:windowBackground">@mipmap/splash</item>
+        <item name="android:windowFullscreen">true</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
