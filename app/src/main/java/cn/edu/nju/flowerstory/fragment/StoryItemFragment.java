@@ -43,11 +43,12 @@ public class StoryItemFragment extends Fragment {
     private Handler mHandler = new Handler();
 
     private int mProgressStatus;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layout_flowers, container, false);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBarFlower);
-        final SwipeRefreshLayout mRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refreshFlowersLayout);
+        mProgressBar = view.findViewById(R.id.progressBarFlower);
+        final SwipeRefreshLayout mRefreshLayout = view.findViewById(R.id.refreshFlowersLayout);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

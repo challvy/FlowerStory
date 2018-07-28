@@ -51,6 +51,12 @@ Flower Story £¬ÊÇÄÏ¾©´óÑ§´óÑ§Éú´´ÐÂÏîÄ¿×é¡°¹Û»¨ÎïÓï¡±µÄ¹¤³ÌÏîÄ¿£¬ÊÇÒ»¿î×¨Îª°®»¨Ê
   implementation 'com.squareup.okhttp3:okhttp:3.10.0'
   ```
 
+* Android Version
+
+  ```java
+  Android °æ±¾ >= 6.0.1
+  ```
+
 
 ## Version
 

@@ -19,7 +19,7 @@
     </FrameLayout>
 
     <cn.edu.nju.flowerstory.view.OverlayerView
-        android:id="@+id/imageView2"
+        android:id="@+id/overlayer_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,10 +26,10 @@ import cn.edu.nju.flowerstory.adapter.RecognitionItemAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.model.FlowerModel;
 
-import static cn.edu.nju.flowerstory.app.Constants.*;
+import static cn.edu.nju.flowerstory.app.Constants.FLOWER;
+import static cn.edu.nju.flowerstory.app.Constants.FLOWERD;
 
-
-public class RecognitionActivity extends AppCompatActivity {
+public class RecognitionMoreActivity extends AppCompatActivity {
 
     public static Bitmap mBitmap;
 
@@ -108,18 +108,18 @@ public class RecognitionActivity extends AppCompatActivity {
     }
 
     private void initView(){
-        setContentView(R.layout.activity_recognition);
+        setContentView(R.layout.activity_recognitionmore);
 
-        toolbar = findViewById(R.id.mToolbarRec);
+        toolbar = (Toolbar) findViewById(R.id.mToolbarRecMore);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        mProgressBar = findViewById(R.id.progressBar);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBarMore);
 
-        final SwipeRefreshLayout mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
+        final SwipeRefreshLayout mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayoutMore);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -132,7 +132,7 @@ public class RecognitionActivity extends AppCompatActivity {
             }
         });
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recognition_recycler_view);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recognitionmore_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
     }
 

@@ -52,6 +52,12 @@
             android:theme="@style/AppItemTheme">
         </activity>
         <activity
+            android:name=".activity.RecognitionMoreActivity"
+            android:label="@string/moreresult"
+            android:parentActivityName=".activity.CameraActivity"
+            android:theme="@style/AppItemTheme">
+        </activity>
+        <activity
             android:name=".activity.SearchActivity"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">

@@ -22,6 +22,7 @@ public class Constants {
     public static final int CUT_PHOTO = 2;
     public static final int SELECT_PHOTO = 3;
     public static final int CAMERA = 4;
+    public static final int CUT_PHOTO_DONE = 5;
 
     public static final int PERMISSIONS_GRANTED = 0;
     public static final int PERMISSIONS_DENIED = 1;

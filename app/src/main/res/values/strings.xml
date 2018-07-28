@@ -2,6 +2,7 @@
     <string name="app_name">观花物语</string>
     <string name="detail">观花详情</string>
     <string name="result">识别结果</string>
+    <string name="moreresult">更多结果</string>
     <string name="favr">收藏</string>
     <string name="share">分享</string>
     <string name="search">搜索</string>

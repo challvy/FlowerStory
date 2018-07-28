@@ -23,8 +23,7 @@ public class DisplayUtil {
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
         int w_screen = dm.widthPixels;
         int h_screen = dm.heightPixels;
-        Log.i(TAG, "Screen---Width = " + w_screen + " Height = " + h_screen
-                + " densityDpi = " + dm.densityDpi);
+        Log.i(TAG, "Screen---Width = " + w_screen + " Height = " + h_screen + " densityDpi = " + dm.densityDpi);
         return new Point(w_screen, h_screen);
 
     }

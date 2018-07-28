@@ -69,12 +69,12 @@ public class FlowerDetailActivity extends AppCompatActivity {
     private void initView(){
         setContentView(R.layout.activity_flower_detail);
 
-        mScrollView = (ScrollView) findViewById(R.id.recognition_recycler_view);
-        mTextViewTittle = (TextView) findViewById(R.id.tittle);
-        mImageView = (ImageView) findViewById(R.id.imageViewDetail);
-        mTextViewPhotoDetail = (TextView) findViewById(R.id.photodetail);
-        mTextViewDetail = (TextView) findViewById(R.id.detail);
-        toolbar = (Toolbar) findViewById(R.id.mToolbarDetail);
+        mScrollView = findViewById(R.id.recognition_recycler_view);
+        mTextViewTittle = findViewById(R.id.tittle);
+        mImageView = findViewById(R.id.imageViewDetail);
+        mTextViewPhotoDetail = findViewById(R.id.photodetail);
+        mTextViewDetail = findViewById(R.id.detail);
+        toolbar = findViewById(R.id.mToolbarDetail);
 
         toolbar.setTitle(R.string.detail);
         toolbar.inflateMenu(R.menu.menu_favr);

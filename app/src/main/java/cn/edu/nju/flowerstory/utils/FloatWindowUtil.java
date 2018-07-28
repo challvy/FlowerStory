@@ -54,8 +54,8 @@ public class FloatWindowUtil {
             layoutParams = new WindowManager.LayoutParams();
             layoutParams.width = mFloatWindowView.width;
             layoutParams.height = mFloatWindowView.height;
-            layoutParams.x += ScreenSizeUtil.getScreenWidth();
-            layoutParams.y += ScreenSizeUtil.getScreenHeight() - ScreenSizeUtil.dp2px(134);
+            layoutParams.x += ScreenSizeUtil.getScreenWidth() - ScreenSizeUtil.dp2px(72);
+            layoutParams.y += ScreenSizeUtil.getScreenHeight() - ScreenSizeUtil.dp2px(110);
             layoutParams.gravity = Gravity.TOP | Gravity.LEFT;
             if (Build.VERSION.SDK_INT < 23) {
                 layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
@@ -100,6 +100,7 @@ public class FloatWindowUtil {
                     moveX = event.getRawX();
                     moveY = event.getRawY();
                     break;
+                    /*
                 case MotionEvent.ACTION_MOVE:
                     float x = event.getRawX() - moveX;
                     float y = event.getRawY() - moveY;
@@ -113,7 +114,7 @@ public class FloatWindowUtil {
                     windowManager.updateViewLayout(mFloatWindowView, layoutParams);
                     moveX = event.getRawX();
                     moveY = event.getRawY();
-                    break;
+                    break;*/
                 case MotionEvent.ACTION_UP:
                     float endX = event.getRawX();
                     if (endX < ScreenSizeUtil.getScreenWidth() / 2) {

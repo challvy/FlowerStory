@@ -68,15 +68,28 @@ public class FlowerFragment extends Fragment  {
 
     FloatWindowUtil mFloatWindowUtil;
 
+    public void hideFloatWindow(){
+        mFloatWindowUtil.hideContactView();
+    }
+
+    public void showFloatWindow(){
+        mFloatWindowUtil.showContactView();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_flower, container, false);
-        //mImageView = v.findViewById(R.id.imageViewFlowerPhoto);
-        mProgressBar = v.findViewById(R.id.progressBarFlower);
-        mRecyclerView = (RecyclerView) v.findViewById(R.id.flower_recycler_view);
+        View view = inflater.inflate(R.layout.fragment_flower, container, false);
+        //mImageView = view.findViewById(R.id.imageViewFlowerPhoto);
+        mProgressBar = view.findViewById(R.id.progressBarFlower);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.flower_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), GridLayoutManager.VERTICAL, false));
 
-        final SwipeRefreshLayout mRefreshLayout = v.findViewById(R.id.refreshLayoutFlower);
+        final SwipeRefreshLayout mRefreshLayout = view.findViewById(R.id.refreshLayoutFlower);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -90,7 +103,6 @@ public class FlowerFragment extends Fragment  {
         });
 
         mFloatWindowUtil = new FloatWindowUtil(getContext(), this, getActivity());
-        mFloatWindowUtil.hideContactView();
 
         loading();
         Resources res = this.getResources();
@@ -121,7 +133,7 @@ public class FlowerFragment extends Fragment  {
             }
         });
         mRecyclerView.setAdapter(mAdapter);
-        return v;
+        return view;
     }
 
     private void loading(){
@@ -164,48 +176,6 @@ public class FlowerFragment extends Fragment  {
         } else {
             mFloatWindowUtil.hideContactView();
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        /*
-        ImageButton btn_takePhoto = getActivity().findViewById(R.id.crime_camera_takePictureButton);
-        ImageButton btn_album = getActivity().findViewById(R.id.crime_camera_gallaryButton);
-        ImageButton btn_recognition = getActivity().findViewById(R.id.crime_recognition_button);
-
-        btn_album.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent albumIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(albumIntent, SELECT_PHOTO);
-            }
-        });
-
-        btn_recognition.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), RecognitionActivity.class);
-                startActivityForResult(intent,0);
-            }
-        });
-
-        btn_takePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
-                Date curDate =  new Date(System.currentTimeMillis());
-                String str = formatter.format(curDate);
-                file = new File(new File(SUB_DIR_PATH[0]), "FS_" + str + ".jpg");
-                imageUri = Uri.fromFile(file);
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                    startActivityForResult(intent, TAKE_PHOTO);
-                }
-            }
-        });*/
     }
 
     @Override

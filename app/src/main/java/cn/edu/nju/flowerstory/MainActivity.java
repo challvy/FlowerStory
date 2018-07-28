@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean mIsExit;
     boolean isRequireCheck = true;
 
+    FlowerFragment mFlowerFragment = new FlowerFragment();
+
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +111,27 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.mipmap.ic_menu_left);
         }
+        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View view, float v) {
+            }
+            @Override
+            public void onDrawerOpened(View view) {
+                if(mViewPager.getCurrentItem()==0){
+                    mFlowerFragment.hideFloatWindow();
+                }
+            }
+            @Override
+            public void onDrawerClosed(View view) {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
+                if(mViewPager.getCurrentItem()==0){
+                    mFlowerFragment.showFloatWindow();
+                }
+            }
+            @Override
+            public void onDrawerStateChanged(int i) {
+            }
+        });
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 drawerLayout.openDrawer(Gravity.LEFT);
@@ -119,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
                     case R.id.head_portrait:
-                        System.out.print("");
                         break;
                 }
                 drawerLayout.closeDrawers();
@@ -127,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         headerLayout = navigationView.inflateHeaderView(R.layout.layout_header);
-        headPortrait = (ImageView) headerLayout.findViewById(R.id.head_portrait);
+        headPortrait = headerLayout.findViewById(R.id.head_portrait);
         headPortrait.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // TODO: Add User Activity
@@ -135,10 +157,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
-        story = (ImageView) findViewById(R.id.story);
-        camera = (ImageView) findViewById(R.id.camera);
-        user = (ImageView) findViewById(R.id.user);
+        mViewPager = findViewById(R.id.viewpager);
+        story = findViewById(R.id.story);
+        camera = findViewById(R.id.camera);
+        user = findViewById(R.id.user);
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         tabs.add(user);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new FlowerFragment());
+        adapter.addFragment(mFlowerFragment);
         adapter.addFragment(new StoryFragment());
         adapter.addFragment(new UserFragment());
         mViewPager.setAdapter(adapter);
@@ -184,6 +206,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        drawerLayout.bringToFront();
     }
 
     private void switchTabs(int position) {
