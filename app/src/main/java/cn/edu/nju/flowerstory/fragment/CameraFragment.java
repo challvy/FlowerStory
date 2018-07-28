@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -122,6 +121,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
 
     int minCompensationRange = 0;
     int maxCompensationRange = 2;
+
+    private Uri imageUri;
+    private Bitmap albumBitmap;
 
     /**
      * A {@link Semaphore} to prevent the app from exiting before closing the camera.
@@ -249,32 +251,42 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     @Override
     public void onResume() {
         super.onResume();
-        Log.i(TAG,"onResume");
+        if(!selectPhoto) {
+            close = true;
+            Log.i(TAG, "onResume");
 
-        startBackgroundThread();
-        if (mTextureView.isAvailable()) {
-            openCamera(mTextureView.getWidth(), mTextureView.getHeight());
-        } else {
-            mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
+            startBackgroundThread();
+            if (mTextureView.isAvailable()) {
+                openCamera(mTextureView.getWidth(), mTextureView.getHeight());
+            } else {
+                mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
+            }
+            mTextureView.setOnTouchListener(textTureOntuchListener);
+
+            mButtonPicture.setSelected(false);
+            mButtonPicture.setBackgroundResource(R.mipmap.icon_shutter);
+            mImageViewResult.setVisibility(View.INVISIBLE);
+            mView.setVisibility(View.INVISIBLE);
+            mTextViewMoreResult.setVisibility(View.INVISIBLE);
+            mTextViewFlower.setVisibility(View.INVISIBLE);
+            mTextViewAbstract.setVisibility(View.INVISIBLE);
+            mTextViewConfidence.setVisibility(View.INVISIBLE);
+
+            mImageViewRecentPic.setVisibility(View.VISIBLE);
+            imageViewBG.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
-        mTextureView.setOnTouchListener(textTureOntuchListener);
-
-        mButtonPicture.setSelected(false);
-        mButtonPicture.setBackgroundResource(R.mipmap.icon_shutter);
-        mImageViewResult.setVisibility(View.INVISIBLE);
-        mView.setVisibility(View.INVISIBLE);
-        mTextViewMoreResult.setVisibility(View.INVISIBLE);
-        mTextViewFlower.setVisibility(View.INVISIBLE);
-        mTextViewAbstract.setVisibility(View.INVISIBLE);
-        mTextViewConfidence.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        lastZoom = 0;
-        closeCamera();
-        stopBackgroundThread();
+        if(close) {
+            close = false;
+            lastZoom = 0;
+            closeCamera();
+            stopBackgroundThread();
+        }
     }
 
     @Override
@@ -312,6 +324,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                 Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);//Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 albumIntent.setType("image/*");
                 //startActivity(albumIntent);
+                selectPhoto = true;
                 startActivityForResult(albumIntent, SELECT_PHOTO);
                 break;
             }
@@ -330,54 +343,75 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_CANCELED){
+            // 从相册中取消选择图片，置false
+            selectPhoto = false;
             return;
         }
         switch (requestCode) {
             case SELECT_PHOTO: {
                 if (resultCode == RESULT_OK) {
-                    //flagToken = true;
                     Intent intent = new Intent("com.android.camera.action.CROP");
                     File selectFile = new File(selectPic(data));
-                    Uri imageUri = Uri.fromFile(selectFile);
+                    imageUri = Uri.fromFile(selectFile);
                     intent.setDataAndType(data.getData(), "image/*");
                     intent.putExtra("scale", true);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                     intent.putExtra("crop", "true");
                     intent.putExtra("aspectX", 1);
                     intent.putExtra("aspectY", 1);
-                    //Message.obtain(mUIHandler, CAMERA_RESULT, "玫瑰").sendToTarget();
                     startActivityForResult(intent, CUT_PHOTO);
-                    //Message.obtain(mUIHandler, CAMERA_SELECTED).sendToTarget();
                 }
                 break;
             }
             case CUT_PHOTO: {
-                Intent intent = new Intent("com.android.camera.action.CROP");
-                //intent.setAction(Intent.ACTION_GET_CONTENT); //ACTION_MEDIA_SCANNER_SCAN_FILE
+                Intent it = new Intent();
+                it.setAction(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                it.setData(imageUri);
+                getActivity().sendBroadcast(it);
+                try {
+                    albumBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+                    Date curDate =  new Date(System.currentTimeMillis());
+                    String str = formatter.format(curDate);
 
-                intent.setDataAndType(data.getData(), "image/*");
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                //intent.setData(data.getData());
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoOutputUri = Uri.parse("file:////sdcard/image_output.jpg"));
-                startActivityForResult(intent, CUT_PHOTO_DONE);
-                //getActivity().sendBroadcast(intent);
-                //flagToken = false;
-                break;
-            }
-            case CUT_PHOTO_DONE: {
-                File file = new File(photoOutputUri.getPath());
-                if(file.exists()) {
-                    Bitmap bitmap = BitmapFactory.decodeFile(photoOutputUri.getPath());
-                    //pictureImageView.setImageBitmap(bitmap);
-                    //file.delete(); // 选取完后删除照片
-                } else {
-                    ;//Toast.makeText(this, "找不到照片", Toast.LENGTH_SHORT).show();
+                    int width = albumBitmap.getWidth();
+                    int height = albumBitmap.getHeight();
+
+                    // 设置想要的大小
+                    int newWidth = (int)(width/(curZoom)*0.8);
+                    int newHeight = (int)(height/(curZoom)*0.8);
+                    Bitmap newbm = Bitmap.createBitmap(albumBitmap, (width-newWidth)/2, (height-newHeight)/2, newWidth, newHeight);
+                    Bitmap newbm1 = cropImage(newbm);
+                    Bitmap newbm2 = sizeBitmap(newbm1, 300, 300);
+                    File mmFile = saveBitmap(newbm2,SUB_DIR_PATH[0]+"FS_" + str + ".jpg",100);
+
+                    // Post
+                    OkHttpClient mOkHttpClient = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url("http://47.106.159.26/recognition")
+                            //.url("http://10.0.2.2:8080/recognition") //localhost
+                            .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, mmFile))
+                            .build();
+                    Call call = mOkHttpClient.newCall(request);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call arg0, IOException e) {
+                            System.out.println(e.toString());
+                        }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            Message.obtain(mUIHandler, CAMERA_SELECTED, response.body().string()).sendToTarget();
+                            //System.out.println(response.body().string());
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+                selectPhoto = false;
                 break;
             }
         }
     }
-    private Uri photoOutputUri = null;
 
     private String selectPic(Intent intent) {
         Uri selectImageUri = intent.getData();
@@ -557,10 +591,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             // CaptureRequest添加imageReaderSurface，不加的话就会导致ImageReader的onImageAvailable()方法不会回调
             mCaptureRequestBuilder.addTarget(mImageReader.getSurface());
 
-            mCaptureRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
-
-            //mCaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            //setAutoFlash(mCaptureRequestBuilder);
+            mCaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+            setAutoFlash(mCaptureRequestBuilder);
 
             // 获取屏幕方向
             int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
@@ -573,10 +605,11 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             // 开始拍照
             mCameraCaptureSession.capture(mCaptureRequestBuilder.build(),
                     // 这个回调接口用于拍照结束时重启预览，因为拍照会导致预览停止
+                    // 但这里不需要自动恢复预览
                     new CameraCaptureSession.CaptureCallback() {
                         @Override
                         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-                            showToast("Saved");
+                            //showToast("Saved");
                             Log.d(TAG, "Saved");
                             //unlockFocus();
                         }
@@ -851,20 +884,28 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     mTextViewFlower.setVisibility(View.VISIBLE);
                     mTextViewAbstract.setVisibility(View.VISIBLE);
                     mTextViewConfidence.setVisibility(View.VISIBLE);
-                    /*
-                    ArrayList<String> s = (ArrayList<String>) message.obj;
-                    for (String a : s) {
-                        String tmp = a;
-                    }*/
-                    //mImageViewRecentPic.setImageBitmap((Bitmap)message.obj);
                     break;
-                case CAMERA_SELECTED:
-                    /*
-                    lastZoom = 0;
-                    closeCamera();
-                    stopBackgroundThread();
-                    */
+                case CAMERA_SELECTED: {
+                    mTextViewAbstract.setText(message.obj.toString());
+                    mImageViewRecentPic.setImageBitmap(albumBitmap);
+                    try {
+                        mCameraCaptureSession.stopRepeating();
+                        mCameraCaptureSession.abortCaptures();
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                    mButtonPicture.setSelected(true);
+                    mRecyclerView.setVisibility(View.GONE);
+                    flagToken = true;
+                    mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
+                    mImageViewResult.setVisibility(View.VISIBLE);
+                    mView.setVisibility(View.VISIBLE);
+                    mTextViewMoreResult.setVisibility(View.VISIBLE);
+                    mTextViewFlower.setVisibility(View.VISIBLE);
+                    mTextViewAbstract.setVisibility(View.VISIBLE);
+                    mTextViewConfidence.setVisibility(View.VISIBLE);
                     break;
+                }
             }
             return true;
         }
@@ -990,20 +1031,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                             mCameraCaptureSession = cameraCaptureSession;
                             try {
-                                /*
-                                mPreviewRequestBuilder.set(CaptureRequest.SENSOR_SENSITIVITY, CaptureRequest.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_RGB);
                                 mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-                                //mPreviewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, (long)10000000.000);
-                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, 10000);
-                                //mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_LOCK, false);
-                                //mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
-                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
-                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
-                                mPreviewRequestBuilder.set(CaptureRequest.SENSOR_EXPOSURE_TIME, (long)100000000.0);
-                                */
-                                //mPreviewRequestBuilder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_USE_SCENE_MODE);
-                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_SCENE_MODE, CaptureRequest.CONTROL_SCENE_MODE_NIGHT);
-                                //setAutoFlash(mPreviewRequestBuilder);
+                                setAutoFlash(mPreviewRequestBuilder);
 
                                 // 设置反复捕获数据的请求，这样预览界面就会一直有数据显示
                                 // 捕获请求mPreviewRequestBuilder.build()
@@ -1032,15 +1061,20 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
 
+    boolean selectPhoto = false;
+    boolean close = false;
+
     /**
      * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a {@link TextureView}.
      */
     private final TextureView.SurfaceTextureListener mSurfaceTextureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture texture, int width, int height) {
-            Log.i(TAG, "onSurfaceTextureAvailable");
-            // 当SurefaceTexture可用的时候，打开相机
-            openCamera(width, height);
+            if(!selectPhoto) {
+                Log.i(TAG, "onSurfaceTextureAvailable");
+                // 当SurefaceTexture可用的时候，打开相机
+                openCamera(width, height);
+            }
         }
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture texture, int width, int height) {
