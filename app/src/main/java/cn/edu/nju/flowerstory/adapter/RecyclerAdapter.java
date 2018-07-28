@@ -49,6 +49,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         this.items = items;
     }
 
+    public void setItems(List<FlowerModel> items) {
+        this.items = items;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_recyclerview, parent,false);

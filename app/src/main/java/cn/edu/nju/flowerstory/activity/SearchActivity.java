@@ -60,6 +60,9 @@ public class SearchActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.canScrollVertically();
+
+        initData();
+        mAdapter.setItems(new ArrayList<FlowerModel>());
     }
 
     @Override
@@ -102,6 +105,9 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
+                if(s.isEmpty()){
+                    mAdapter.setItems(new ArrayList<FlowerModel>());
+                }
                 //initData();
                 Cursor cursor = TextUtils.isEmpty(s) ? null : null;
 
