@@ -1,35 +1,15 @@
 # FlowerStory
 
-An Android Project about Flower Recognition
-
 ## Introduce
 
-Flower Story £¬ÊÇÄÏ¾©´óÑ§´óÑ§Éú´´ĞÂÏîÄ¿×é¡°¹Û»¨ÎïÓï¡±µÄ¹¤³ÌÏîÄ¿£¬ÊÇÒ»¿î×¨Îª°®»¨Ê¶»¨Ñø»¨¶øÔìµÄApp¡£
-
-±¾AppÔ¤¼Æ½«Ìá¹©ÒÔÏÂ¹¦ÄÜ£º
-
-* °®»¨£ºÍ¼Æ¬ÃÀ»¯
-
-  ÔÚ±¾µØ¼´¿É¶ÔÍ¼Ïñ½øĞĞÃÀ»¯´¦Àí
-
-* Ê¶»¨£º»¨»ÜÊ¶±ğ
-
-  ¶Ô»¨»Ü½øĞĞÅÄÕÕ£¬²¢ÁªÍøÉÏ´«Êı¾İ¼´¿ÉµÃµ½Ê¶±ğ½á¹ûÒÔ¼°Ïà¹Ø°Ù¿ÆÖªÊ¶
-
-* Ñø»¨£º¼²²¡Ê¶±ğ
-
-  ¾«È·Ê¶±ğ»¨»Ü²¡³æº¦£¬²¢Ìá¹©½â¾ö·½°¸½ö¹©²Î¿¼
-
-![FlowerStory-1](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory1.png)
-
-![FlowerStory-2](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory2.png)
+Flower Story is an Android App project that provides flower recognition service. However, the recognition service is on the server but not on this App. The apk file is [here](https://github.com/challvy/FlowerStory/raw/master/README_RES/apk/FlowerStory.apk).
 
 ## Environment
 
 * Gradle
 
   ```
-  gradle: 3.1.2
+  gradle: 3.1.3
   distributionUrl=http\://services.gradle.org/distributions/gradle-4.4-all.zip
   ```
 
@@ -51,18 +31,12 @@ Flower Story £¬ÊÇÄÏ¾©´óÑ§´óÑ§Éú´´ĞÂÏîÄ¿×é¡°¹Û»¨ÎïÓï¡±µÄ¹¤³ÌÏîÄ¿£¬ÊÇÒ»¿î×¨Îª°®»¨Ê
   implementation 'com.squareup.okhttp3:okhttp:3.10.0'
   ```
 
-* Android Version
+* Android Version of User's Phone
 
   ```java
-  Android °æ±¾ >= 6.0.1
+  Android Version >= 6.0.1
   ```
 
-
-## Version
-
-Version 0.3
-
-- ½çÃæÉè¼Æ
-- Óë±¾µØºó¶Ë¼òµ¥Êı¾İ´«ËÍ
-
 ## End
+
+If you have any problem, please contact me @ [challvy.tee@gmail.com](Challvy Tee).

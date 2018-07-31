@@ -307,7 +307,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             case R.id.picture: {
                 if(!mButtonPicture.isSelected()) {
                     mButtonPicture.setSelected(true);
-                    //mImageViewRecentPic.setVisibility(View.GONE);
+                    mImageViewRecentPic.setVisibility(View.GONE);
                     imageViewBG.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.GONE);
                     // 拍照后修改标志 顺序不能变
