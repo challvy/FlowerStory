@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -29,7 +30,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK;
+import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_FAILURE;
+import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS;
 
 
 /**
@@ -51,7 +53,7 @@ public class StoryItemFragment extends StoryItemBaseFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(TAG, id+"\tonCreateView()--------------------------------");
+        Log.i(TAG, id+"\tonCreateView()");
         View view = inflater.inflate(R.layout.layout_flowers, container, false);
         mRefreshLayout = view.findViewById(R.id.refreshFlowersLayout);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -71,7 +73,7 @@ public class StoryItemFragment extends StoryItemBaseFragment {
     }
 
     private void loadData(){
-        Log.i(TAG, id+"\tloadData()--------------------------------");
+        Log.i(TAG, id+"\tloadData()");
         // 加载开始 开始刷新
         mRefreshLayout.setRefreshing(true);
         new Thread(new Runnable() {
@@ -84,12 +86,13 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                     @Override
                     public void onFailure(Call arg0, IOException e) {
                         Log.i(TAG, e.toString());
+                        Message.obtain(mUIHandler, HANDLER_CALLBACK_FAILURE).sendToTarget();
                     }
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         Log.i(TAG, "Callback.onResponse()");
                         String jsonData = response.body().string();
-                        Message.obtain(mUIHandler, HANDLER_CALLBACK, jsonData).sendToTarget();
+                        Message.obtain(mUIHandler, HANDLER_CALLBACK_SUCCESS, jsonData).sendToTarget();
                     }
                 });
             }
@@ -97,7 +100,7 @@ public class StoryItemFragment extends StoryItemBaseFragment {
     }
 
     private void initData(){
-        Log.i(TAG, id+"\tinitData()--------------------------------");
+        Log.i(TAG, id+"\tinitData()");
 
         // 创建UI主线程，同时设置消息回调
         mUIHandler = new Handler(new InnerCallBack());
@@ -127,8 +130,8 @@ public class StoryItemFragment extends StoryItemBaseFragment {
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what) {
-                case HANDLER_CALLBACK:
-                    Log.i(TAG,"Handler.Callback.handleMessage()");
+                case HANDLER_CALLBACK_SUCCESS: {
+                    Log.i(TAG, "Handler.Callback.handleMessage()");
                     try {
                         JSONObject obj = new JSONObject(message.obj.toString());
                         FlowerModel flowerModel = new FlowerModel();
@@ -136,11 +139,18 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                         flowerModel.setName(name);
                         mAdapter.setItems(Arrays.asList(flowerModel));
                         mAdapter.notifyDataSetChanged();
-                        // 加载完成结束刷新
+                        // 加载完成 结束刷新
                         mRefreshLayout.setRefreshing(false);
                     } catch (Exception e) {
                         Log.i(TAG, e.getMessage());
                     }
+                    break;
+                }
+                case HANDLER_CALLBACK_FAILURE: {
+                    // 加载失敗 结束刷新
+                    mRefreshLayout.setRefreshing(false);
+                    Toast.makeText(getActivity(), "网络开了小差", Toast.LENGTH_SHORT).show();
+                }
             }
             return true;
         }

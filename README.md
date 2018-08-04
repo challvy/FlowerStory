@@ -1,19 +1,21 @@
 # FlowerStory
 
+[![Download](https://img.shields.io/badge/Download-v1.0.0-ff8080.svg) ](https://github.com/challvy/FlowerStory/raw/master/README_RES/apk/FlowerStory.apk)
+
 ## Introduce
 
-Flower Story is an Android App project that provides flower recognition service. However, the recognition service is on the server but not on this App. The apk file is [here](https://github.com/challvy/FlowerStory/raw/master/README_RES/apk/FlowerStory.apk).
+Flower Story is an Android App project that provides flower recognition service. However, the recognition service is on the server but not on this App.
 
 ## Environment
 
-* Gradle
+- Gradle
 
   ```
   gradle: 3.1.3
   distributionUrl=http\://services.gradle.org/distributions/gradle-4.4-all.zip
   ```
 
-* AndroidSDK
+- AndroidSDK
 
   ```
   compileSdkVersion: 27
@@ -22,7 +24,7 @@ Flower Story is an Android App project that provides flower recognition service.
   targetSdkVersion 27
   ```
 
-* Dependencies
+- Dependencies
 
   ```java
   implementation 'com.android.support:appcompat-v7:27.1.1'
@@ -31,7 +33,7 @@ Flower Story is an Android App project that provides flower recognition service.
   implementation 'com.squareup.okhttp3:okhttp:3.10.0'
   ```
 
-* Android Version of User's Phone
+- Android Version of User's Phone
 
   ```java
   Android Version >= 6.0.1
@@ -39,4 +41,4 @@ Flower Story is an Android App project that provides flower recognition service.
 
 ## End
 
-If you have any problem, please contact me @ [challvy.tee@gmail.com](Challvy Tee).
+If you have any problem, please contact [Challvy Tee](challvy.tee@gmail.com).
