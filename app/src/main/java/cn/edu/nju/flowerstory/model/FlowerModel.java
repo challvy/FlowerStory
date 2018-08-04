@@ -8,13 +8,26 @@ import android.graphics.Bitmap;
  */
 public class FlowerModel {
 
-    private int id;
+    private String id;
     private String name;
-    private Bitmap bitmap;
+    private String taxonomy;
+    private String morphological_character;
+    private String growth_habit;
+    private String distribution_range;
+    private String plant_diseases_insect_pests;
+    private String culture;
+    private String bitmap_res;
+    private String bitmap_description;
+
     private String imageDetail;
     private String detail;
+    private Bitmap bitmap;
 
-    public FlowerModel(int id, String name, Bitmap bitmap, String imageDetail, String detail) {
+    public FlowerModel(){
+
+    }
+
+    public FlowerModel(String id, String name, Bitmap bitmap, String imageDetail, String detail) {
         this.id = id;
         this.name = name;
         this.bitmap = bitmap;
@@ -22,11 +35,11 @@ public class FlowerModel {
         this.detail = detail;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

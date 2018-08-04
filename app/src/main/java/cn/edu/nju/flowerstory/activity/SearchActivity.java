@@ -138,17 +138,17 @@ public class SearchActivity extends AppCompatActivity {
     private void initData(){
         Resources res = this.getResources();
         final List<FlowerModel> data = new ArrayList<FlowerModel>(Arrays.asList(
-                new FlowerModel(1, "玫瑰", BitmapFactory.decodeResource(res, R.mipmap.rose), FLOWERD[0], FLOWER[0]),
-                new FlowerModel(2, "兰花", BitmapFactory.decodeResource(res, R.mipmap.orchid), FLOWERD[1], FLOWER[1]),
-                new FlowerModel(3, "牡丹", BitmapFactory.decodeResource(res, R.mipmap.peony), FLOWERD[2], FLOWER[2]),
-                new FlowerModel(4, "向日葵", BitmapFactory.decodeResource(res, R.mipmap.sunflower), FLOWERD[3], FLOWER[3]),
-                new FlowerModel(5, "樱花", BitmapFactory.decodeResource(res, R.mipmap.cerasus), FLOWERD[4], FLOWER[4]),
-                new FlowerModel(6, "油菜花", BitmapFactory.decodeResource(res, R.mipmap.brassicacampestris), FLOWERD[5], FLOWER[5])
+                new FlowerModel("1", "玫瑰", BitmapFactory.decodeResource(res, R.mipmap.rose), FLOWERD[0], FLOWER[0]),
+                new FlowerModel("2", "兰花", BitmapFactory.decodeResource(res, R.mipmap.orchid), FLOWERD[1], FLOWER[1]),
+                new FlowerModel("3", "牡丹", BitmapFactory.decodeResource(res, R.mipmap.peony), FLOWERD[2], FLOWER[2]),
+                new FlowerModel("4", "向日葵", BitmapFactory.decodeResource(res, R.mipmap.sunflower), FLOWERD[3], FLOWER[3]),
+                new FlowerModel("5", "樱花", BitmapFactory.decodeResource(res, R.mipmap.cerasus), FLOWERD[4], FLOWER[4]),
+                new FlowerModel("6", "油菜花", BitmapFactory.decodeResource(res, R.mipmap.brassicacampestris), FLOWERD[5], FLOWER[5])
         ));
         mAdapter = new RecyclerAdapter(data);
-        mAdapter.setItemClikListener(new RecyclerAdapter.OnItemClickListener() {
+        mAdapter.setItemClickListener(new RecyclerAdapter.OnItemClickListener() {
             @Override
-            public void onItemClik(View view, int position) {
+            public void onItemClick(View view, int position) {
                 //Toast.makeText(getApplicationContext(), "点击了" + position, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), FlowerDetailActivity.class);
                 intent.putExtra(FlowerDetailActivity.RETURN_INFO, position);
@@ -158,7 +158,7 @@ public class SearchActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onItemLongClik(View view, int position) {
+            public void onItemLongClick(View view, int position) {
                 //Toast.makeText(getContext(), "长按点击了" + position, Toast.LENGTH_LONG).show();
             }
         });

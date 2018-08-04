@@ -12,26 +12,11 @@
         app:layout_constraintTop_toBottomOf="@+id/mToolbarRec"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/flowerRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent"/>
 
-            <ProgressBar
-                android:id="@+id/progressBarFlower"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:progressTint="@color/colorPrimary"
-                android:progressTintMode="src_atop"
-                android:theme="@style/Widget.AppCompat.ProgressBar.Horizontal" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/flowerRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-        </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

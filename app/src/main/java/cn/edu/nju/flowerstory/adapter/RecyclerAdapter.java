@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cn.edu.nju.flowerstory.R;
@@ -31,22 +33,26 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         ViewHolder(View itemView, RecyclerAdapter adapter) {
             super(itemView);
             mAdapter = new SoftReference<RecyclerAdapter>(adapter);
-            mImageView = (ImageView) itemView.findViewById(R.id.imageView);
-            tittle = (TextView) itemView.findViewById(R.id.text);
+            mImageView = itemView.findViewById(R.id.imageView);
+            tittle = itemView.findViewById(R.id.text);
         }
     }
 
-    public interface OnItemClickListener {
-        void onItemClik(View view,int position);
-        void onItemLongClik(View view,int position);
-    }
-
-    public void setItemClikListener(OnItemClickListener mOnItemClikListener ){
-        this.mOnItemClickListener = mOnItemClikListener;
+    public RecyclerAdapter(){
+        items = new ArrayList<FlowerModel>();
     }
 
     public RecyclerAdapter(List<FlowerModel> items) {
         this.items = items;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view,int position);
+        void onItemLongClick(View view,int position);
+    }
+
+    public void setItemClickListener(OnItemClickListener mOnItemClickListener ){
+        this.mOnItemClickListener = mOnItemClickListener;
     }
 
     public void setItems(List<FlowerModel> items) {
@@ -63,14 +69,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public void onBindViewHolder(final ViewHolder holder, int position) {
         FlowerModel item = items.get(position);
         holder.mImageView.setImageBitmap(item.getBitmap());
-        String tittle = item.getName()+"\t"+item.getImageDetail();
+        String tittle = item.getName();
         holder.tittle.setText(tittle);
         if(mOnItemClickListener !=null){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int pos=holder.getLayoutPosition();
-                    mOnItemClickListener.onItemClik(holder.itemView,pos);
+                    mOnItemClickListener.onItemClick(holder.itemView,pos);
                 }
             });
 
@@ -78,7 +84,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 @Override
                 public boolean onLongClick(View v) {
                     int pos=holder.getLayoutPosition();
-                    mOnItemClickListener.onItemLongClik(holder.itemView,pos);
+                    mOnItemClickListener.onItemLongClick(holder.itemView,pos);
                     return false;
                 }
             });
