@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,9 +36,10 @@ import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK;
  *
  * Created by Administrator on 2018/3/23 0023.
  */
-public class StoryItemFragment extends Fragment {
+public class StoryItemFragment extends StoryItemBaseFragment {
 
-    private String TAG = "StoryItemFragment";
+    private String TAG = StoryItemFragment.class.getSimpleName();
+    private int id;
     private Handler mUIHandler;
 
     OkHttpClient mOkHttpClient;
@@ -51,13 +51,14 @@ public class StoryItemFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i(TAG, id+"\tonCreateView()--------------------------------");
         View view = inflater.inflate(R.layout.layout_flowers, container, false);
         mRefreshLayout = view.findViewById(R.id.refreshFlowersLayout);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 Log.i(TAG, "SwipeRefreshLayout.OnRefreshListener().onRefresh()");
-                loading();
+                loadData();
             }
         });
         mRecyclerView = view.findViewById(R.id.flowerRecyclerView);
@@ -66,12 +67,13 @@ public class StoryItemFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.canScrollVertically();
-
-        initData();
         return view;
     }
 
-    private void loading(){
+    private void loadData(){
+        Log.i(TAG, id+"\tloadData()--------------------------------");
+        // 加载开始 开始刷新
+        mRefreshLayout.setRefreshing(true);
         new Thread(new Runnable() {
             public void run() {
                 Request request = new Request.Builder()
@@ -95,7 +97,7 @@ public class StoryItemFragment extends Fragment {
     }
 
     private void initData(){
-        Log.i(TAG, "initData()");
+        Log.i(TAG, id+"\tinitData()--------------------------------");
 
         // 创建UI主线程，同时设置消息回调
         mUIHandler = new Handler(new InnerCallBack());
@@ -103,7 +105,7 @@ public class StoryItemFragment extends Fragment {
         mOkHttpClient = new OkHttpClient();
 
         mAdapter = new RecyclerAdapter();
-        loading();
+        loadData();
         mAdapter.setItemClickListener(new RecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -133,6 +135,7 @@ public class StoryItemFragment extends Fragment {
                         String name = obj.get("name").toString();
                         flowerModel.setName(name);
                         mAdapter.setItems(Arrays.asList(flowerModel));
+                        mAdapter.notifyDataSetChanged();
                         // 加载完成结束刷新
                         mRefreshLayout.setRefreshing(false);
                     } catch (Exception e) {
@@ -141,6 +144,15 @@ public class StoryItemFragment extends Fragment {
             }
             return true;
         }
+    }
+
+    @Override
+    protected void onFragmentFirstVisible() {
+        initData();
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 
 }
