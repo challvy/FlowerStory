@@ -20,7 +20,12 @@
     </style>
 
     <style name="AppItemTheme" parent="AppTheme">
-        <item name="android:windowAnimationStyle">@style/default_animation</item>
+        <item name="android:windowAnimationStyle">@style/animation</item>
+    </style>
+
+    <style name="DetailTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowAnimationStyle">@style/detail_animation</item>
     </style>
 
     <style name="FullscreenTheme" parent="AppTheme">
@@ -72,6 +77,15 @@
 
         <item name="android:activityCloseExitAnimation">@anim/out_from_left</item>
         <item name="android:activityOpenEnterAnimation">@anim/in_from_left</item>
+    </style>
+
+    <style name="animation" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/in_from_left</item>
+    </style>
+
+    <!-- 左右跳转动画 -->
+    <style name="detail_animation" parent="@android:style/Animation.Activity">
+
     </style>
 
     <style name="MaterialTheme" parent="Theme.AppCompat.Light.NoActionBar">

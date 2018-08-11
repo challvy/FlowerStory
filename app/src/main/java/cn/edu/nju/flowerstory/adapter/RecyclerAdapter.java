@@ -32,7 +32,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         ViewHolder(View itemView, RecyclerAdapter adapter) {
             super(itemView);
-            mAdapter = new SoftReference<RecyclerAdapter>(adapter);
+            mAdapter = new SoftReference<>(adapter);
             mImageView = itemView.findViewById(R.id.imageView);
             tittle = itemView.findViewById(R.id.text);
         }

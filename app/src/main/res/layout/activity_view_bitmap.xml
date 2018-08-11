@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.ViewBitmapActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <cn.edu.nju.flowerstory.view.TouchImageView
+            android:id="@+id/imageViewDetailView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ffffff" />
+
+        <ImageView
+            android:id="@+id/imageViewReturn"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="start|top"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="39dp"
+            android:padding="5dp"
+            app:srcCompat="@mipmap/ic_return"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="16dp" />
+
+    </FrameLayout>
+
+
+
+</android.support.constraint.ConstraintLayout>

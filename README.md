@@ -1,6 +1,8 @@
 # FlowerStory
 
-[![Download](https://img.shields.io/badge/Download-v1.0.0-ff8080.svg) ](https://github.com/challvy/FlowerStory/raw/master/README_RES/apk/FlowerStory.apk)
+[![Download](https://img.shields.io/badge/Download-v1.0.0-ff8080.svg) ](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory.apk)
+
+The project isn't able to run on your Android Studio since the server end is to be done.
 
 ## Introduce
 
@@ -39,6 +41,10 @@ Flower Story is an Android App project that provides flower recognition service.
   Android Version >= 6.0.1
   ```
 
-## End
+## Demo
 
-If you have any problem, please contact [Challvy Tee](challvy.tee@gmail.com).
+![FlowerStory](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory.gif) 
+
+##End
+
+If you have any problem, please contact challvy.tee@gmail.com.

@@ -67,4 +67,7 @@ public class FlowerModel {
         this.detail = detail;
     }
 
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
 }

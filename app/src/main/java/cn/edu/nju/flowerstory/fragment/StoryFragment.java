@@ -72,4 +72,8 @@ public class StoryFragment extends Fragment {
         return view;
     }
 
+    public void setItem(int position){
+        tabViewpager.setCurrentItem(position);
+    }
+
 }

@@ -399,8 +399,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     // Post
                     OkHttpClient mOkHttpClient = new OkHttpClient();
                     Request request = new Request.Builder()
-                            .url("http://47.106.159.26/recognition")
-                            //.url("http://10.0.2.2:8080/recognition") //localhost
+                            //.url("http://47.106.159.26/recognition")
+                            .url("http://10.0.2.2:8080/recognition") //localhost
                             .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, mmFile))
                             .build();
                     Call call = mOkHttpClient.newCall(request);
@@ -885,8 +885,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     // Post
                     OkHttpClient mOkHttpClient = new OkHttpClient();
                     Request request = new Request.Builder()
-                            .url("http://47.106.159.26/recognition")
-                            //.url("http://10.0.2.2:8080/recognition") //localhost
+                            //.url("http://47.106.159.26/recognition")
+                            .url("http://10.0.2.2:8080/recognition") //localhost
                             .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, mmFile))
                             .build();
                     Call call = mOkHttpClient.newCall(request);

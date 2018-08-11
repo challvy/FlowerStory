@@ -5,7 +5,7 @@
     android:background="?android:attr/selectableItemBackgroundBorderless">
 
     <item
-        android:id="@+id/nav_share"
+        android:id="@+id/nav_favr"
         android:icon="@drawable/ic_action_favorite"
         android:title="@string/favr"/>
     <item

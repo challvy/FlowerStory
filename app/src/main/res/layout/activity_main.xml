@@ -61,7 +61,7 @@
                     android:layout_toEndOf="@id/story"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:padding="7dp"
-                    android:src="@drawable/user_selector" />
+                    android:src="@drawable/map_selector" />
 
             </RelativeLayout>
 

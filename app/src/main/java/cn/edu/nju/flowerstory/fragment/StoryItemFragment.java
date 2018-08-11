@@ -1,6 +1,8 @@
 package cn.edu.nju.flowerstory.fragment;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -50,6 +52,9 @@ public class StoryItemFragment extends StoryItemBaseFragment {
     SwipeRefreshLayout mRefreshLayout;
     RecyclerAdapter mAdapter;
     int mPosition;
+
+    private final int GET_BITMAP = 3;
+    FlowerModel flowerModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -124,6 +129,7 @@ public class StoryItemFragment extends StoryItemBaseFragment {
         });
         mRecyclerView.setAdapter(mAdapter);
         mPosition = getArguments().getInt("position");
+        flowerModel = new FlowerModel();
     }
 
     private class InnerCallBack implements Handler.Callback {
@@ -134,9 +140,27 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                     Log.i(TAG, "Handler.Callback.handleMessage()");
                     try {
                         JSONObject obj = new JSONObject(message.obj.toString());
-                        FlowerModel flowerModel = new FlowerModel();
                         String name = obj.get("name").toString();
                         flowerModel.setName(name);
+                        String uri = obj.get("bitmap").toString();
+                        // Get
+                        OkHttpClient mOkHttpClient = new OkHttpClient();
+                        Request request = new Request.Builder()
+                                .url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
+                                .build();
+                        Call call = mOkHttpClient.newCall(request);
+                        call.enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call arg0, IOException e) {
+                                System.out.println(e.toString());
+                            }
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                byte[] data = response.body().bytes();
+                                Message.obtain(mUIHandler, GET_BITMAP, data).sendToTarget();
+                            }
+                        });
+
                         mAdapter.setItems(Arrays.asList(flowerModel));
                         mAdapter.notifyDataSetChanged();
                         // 加载完成 结束刷新
@@ -149,7 +173,15 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                 case HANDLER_CALLBACK_FAILURE: {
                     // 加载失敗 结束刷新
                     mRefreshLayout.setRefreshing(false);
-                    Toast.makeText(getActivity(), "网络开了小差", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "糟糕,网络开了小差", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                case GET_BITMAP: {
+                    byte[] data = ((byte[]) message.obj);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                    flowerModel.setBitmap(bitmap);
+                    mAdapter.notifyDataSetChanged();
+                    break;
                 }
             }
             return true;

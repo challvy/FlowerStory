@@ -16,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -40,6 +41,8 @@ import static cn.edu.nju.flowerstory.app.Constants.*;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final String TAG = MainActivity.class.getSimpleName();
+
     NavigationView navigationView;
     View headerLayout;
     ImageView headPortrait;
@@ -49,11 +52,13 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<ImageView> tabs = new ArrayList<>();
 
     ViewPager mViewPager;
+    ViewPagerAdapter adapter;
 
     private boolean mIsExit;
     boolean isRequireCheck = true;
 
     FlowerFragment mFlowerFragment = new FlowerFragment();
+    StoryFragment mStoryFragment = new StoryFragment();
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -134,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         });
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                drawerLayout.openDrawer(Gravity.LEFT);
+                drawerLayout.openDrawer(Gravity.START);
             }
         });
         navigationView = findViewById(R.id.navigation);
@@ -143,6 +148,11 @@ public class MainActivity extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
                     case R.id.head_portrait:
                         break;
+                    case R.id.nav_favr:
+                        switchTabs(1);
+                        mViewPager.setCurrentItem(1);
+                        mStoryFragment.setItem(4);
+                        Log.i(TAG, "setNavigationItemSelectedListener");
                 }
                 drawerLayout.closeDrawers();
                 return false;
@@ -186,9 +196,9 @@ public class MainActivity extends AppCompatActivity {
         tabs.add(story);
         tabs.add(user);
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mFlowerFragment);
-        adapter.addFragment(new StoryFragment());
+        adapter.addFragment(mStoryFragment);
         adapter.addFragment(new UserFragment());
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(3);
