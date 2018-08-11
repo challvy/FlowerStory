@@ -43,7 +43,11 @@ Flower Story is an Android App project that provides flower recognition service.
 
 ## Demo
 
-![FlowerStory](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory.gif){:height="100px"} 
+<div align=center>
+
+<img src="https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory.gif" width="40%"/> 
+
+</div>
 
 ##End
 
