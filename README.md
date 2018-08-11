@@ -49,6 +49,6 @@ Flower Story is an Android App project that provides flower recognition service.
 
 </div>
 
-##End
+## End
 
 If you have any problem, please contact challvy.tee@gmail.com.
