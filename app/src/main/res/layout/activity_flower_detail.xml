@@ -18,7 +18,7 @@
     </android.support.v7.widget.Toolbar>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="false"
         android:orientation="vertical"
@@ -36,7 +36,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="Tittle"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#333333" />
 
@@ -53,7 +52,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Photo Description"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#2E3092" />
 
@@ -63,7 +61,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:lineSpacingMultiplier="1.25"
-                android:text="Description"
                 android:textColor="#333333"
                 android:textSize="16sp" />
 

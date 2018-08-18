@@ -26,9 +26,6 @@ import cn.edu.nju.flowerstory.adapter.RecognitionItemAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.model.FlowerModel;
 
-import static cn.edu.nju.flowerstory.app.Constants.FLOWER;
-import static cn.edu.nju.flowerstory.app.Constants.FLOWERD;
-
 public class RecognitionMoreActivity extends AppCompatActivity {
 
     public static Bitmap mBitmap;
@@ -73,9 +70,6 @@ public class RecognitionMoreActivity extends AppCompatActivity {
         //File file = new File(new File(infoString),"");
         //Bitmap mBitmap = BitmapFactory.decodeFile(file.getPath());
         //TODO: Upload file to server.
-        if(FlowerFragment.getBitmap()!=null){
-            //Upload;
-        }
     }
 
     private void loading(){
@@ -139,16 +133,8 @@ public class RecognitionMoreActivity extends AppCompatActivity {
     private void initData() throws Exception {
         getRETURN_INFO();
         loading();
-        Resources res = this.getResources();
-        final List<FlowerModel> data = new ArrayList<FlowerModel>(Arrays.asList(
-                new FlowerModel("1", "玫瑰", BitmapFactory.decodeResource(res, R.mipmap.rose), FLOWERD[0], FLOWER[0]),
-                new FlowerModel("2", "兰花", BitmapFactory.decodeResource(res, R.mipmap.orchid), FLOWERD[1], FLOWER[1]),
-                new FlowerModel("3", "牡丹", BitmapFactory.decodeResource(res, R.mipmap.peony), FLOWERD[2], FLOWER[2]),
-                new FlowerModel("4", "向日葵", BitmapFactory.decodeResource(res, R.mipmap.sunflower), FLOWERD[3], FLOWER[3]),
-                new FlowerModel("5", "樱花", BitmapFactory.decodeResource(res, R.mipmap.cerasus), FLOWERD[4], FLOWER[4]),
-                new FlowerModel("6", "油菜花", BitmapFactory.decodeResource(res, R.mipmap.brassicacampestris), FLOWERD[5], FLOWER[5])
-        ));
 
+        /*
         mAdapter = new RecognitionItemAdapter(data);
         mAdapter.setItemClikListener(new RecognitionItemAdapter.OnItemClickListener() {
             @Override
@@ -167,6 +153,7 @@ public class RecognitionMoreActivity extends AppCompatActivity {
             }
         });
         mRecyclerView.setAdapter(mAdapter);
+        */
     }
 
 }

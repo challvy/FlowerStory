@@ -30,6 +30,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import cn.edu.nju.flowerstory.activity.SearchActivity;
+import cn.edu.nju.flowerstory.activity.UserActivity;
+import cn.edu.nju.flowerstory.activity.ViewBitmapActivity;
 import cn.edu.nju.flowerstory.adapter.ViewPagerAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.fragment.StoryFragment;
@@ -146,13 +148,16 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-                    case R.id.head_portrait:
+                    case R.id.head_portrait: {
                         break;
-                    case R.id.nav_favr:
+                    }
+                    case R.id.nav_favr: {
                         switchTabs(1);
                         mViewPager.setCurrentItem(1);
                         mStoryFragment.setItem(4);
                         Log.i(TAG, "setNavigationItemSelectedListener");
+                        break;
+                    }
                 }
                 drawerLayout.closeDrawers();
                 return false;
@@ -162,7 +167,9 @@ public class MainActivity extends AppCompatActivity {
         headPortrait = headerLayout.findViewById(R.id.head_portrait);
         headPortrait.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // TODO: Add User Activity
+                Intent intent = new Intent(getApplication(), UserActivity.class);
+                startActivity(intent);
+                Log.i("MainActivity","head_protrait");
                 drawerLayout.closeDrawers();
             }
         });

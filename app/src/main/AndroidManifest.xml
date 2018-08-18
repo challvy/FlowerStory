@@ -47,38 +47,40 @@
             android:allowBackup="true"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
-            tools:ignore="RtlEnabled"/>
+            tools:ignore="RtlEnabled" />
         <activity
             android:name=".activity.RecognitionActivity"
             android:label="@string/result"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppItemTheme"/>
+            android:theme="@style/AppItemTheme" />
         <activity
             android:name=".activity.RecognitionMoreActivity"
             android:label="@string/moreresult"
             android:parentActivityName=".activity.CameraActivity"
-            android:theme="@style/AppItemTheme"/>
+            android:theme="@style/AppItemTheme" />
         <activity
             android:name=".activity.SearchActivity"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".activity.FlowerDetailActivity"
             android:label="@string/detail"
             android:parentActivityName=".activity.RecognitionActivity"
-            android:theme="@style/AppItemTheme"/>
+            android:theme="@style/AppItemTheme" />
         <activity
             android:name=".activity.CameraActivity"
             android:label="@string/takephoto"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/MaterialTheme"/>
+            android:theme="@style/MaterialTheme" />
         <activity
             android:name=".activity.CameraOnePictureActivity"
             android:parentActivityName=".activity.CameraActivity"
-            android:theme="@style/MaterialTheme"/>
+            android:theme="@style/MaterialTheme" />
         <activity
             android:name=".activity.ViewBitmapActivity"
-            android:theme="@style/DetailTheme"/>
+            android:theme="@style/DetailTheme" />
+        <activity android:name=".activity.UserActivity"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

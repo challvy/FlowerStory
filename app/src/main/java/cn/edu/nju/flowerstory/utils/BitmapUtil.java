@@ -41,15 +41,13 @@ public class BitmapUtil {
     }
 
     public static File saveBitmap(Bitmap b, String absolutePath, int quality, Bitmap.CompressFormat format) {
-        String fileName = absolutePath;
-        File f = new File(fileName);
+        File f = new File(absolutePath);
         try {
-            f.createNewFile();
+            //f.createNewFile();
             FileOutputStream fOut = new FileOutputStream(f);
             b.compress(format, quality, fOut);
-            fOut.flush();
+            //fOut.flush();
             fOut.close();
-            //return true;
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }

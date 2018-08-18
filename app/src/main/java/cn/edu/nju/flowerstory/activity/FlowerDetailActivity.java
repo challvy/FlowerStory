@@ -119,13 +119,13 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
         mUIHandler = new Handler(new InnerCallBack());
 
         // TODO: 这里传进来的是花的名字，加到"http://10.0.2.2:8080/knowledge/"后面
-        int infoInt = getIntent().getIntExtra(RETURN_INFO, 0);
+        String infoInt = getIntent().getStringExtra(RETURN_INFO);
 
         // Post
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
-                //.url("http://47.106.159.26/recognition")
-                .url("http://10.0.2.2:8080/knowledge/rose") //localhost
+                .url("http://47.106.159.26/knowledge/" + infoInt)
+                //.url("http://10.0.2.2:8080/knowledge/" + infoInt) //localhost
                 .build();
         Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
@@ -196,7 +196,8 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
                         // Get
                         OkHttpClient mOkHttpClient = new OkHttpClient();
                         Request request = new Request.Builder()
-                                .url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
+                                .url("http://47.106.159.26/knowledge/bitmap/" + uri)
+                                //.url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
                                 .build();
                         Call call = mOkHttpClient.newCall(request);
                         call.enqueue(new Callback() {

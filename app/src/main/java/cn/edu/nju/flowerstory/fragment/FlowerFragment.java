@@ -52,7 +52,6 @@ public class FlowerFragment extends Fragment  {
 
     public ImageView mImageView;
 
-    public static Bitmap mBitmap;
     private ProgressBar mProgressBar;
     RecyclerView mRecyclerView;
 
@@ -60,11 +59,6 @@ public class FlowerFragment extends Fragment  {
 
     private int mProgressStatus = 0;
     private Handler mHandler = new Handler();
-
-
-    private Uri imageUri;
-    private File file;
-    private static Bitmap bitmap;
 
     FloatWindowUtil mFloatWindowUtil;
 
@@ -86,7 +80,7 @@ public class FlowerFragment extends Fragment  {
         View view = inflater.inflate(R.layout.fragment_flower, container, false);
         //mImageView = view.findViewById(R.id.imageViewFlowerPhoto);
         mProgressBar = view.findViewById(R.id.progressBarFlower);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.flower_recycler_view);
+        mRecyclerView = view.findViewById(R.id.flower_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), GridLayoutManager.VERTICAL, false));
 
         final SwipeRefreshLayout mRefreshLayout = view.findViewById(R.id.refreshLayoutFlower);
@@ -105,16 +99,8 @@ public class FlowerFragment extends Fragment  {
         mFloatWindowUtil = new FloatWindowUtil(getContext(), this, getActivity());
 
         loading();
-        Resources res = this.getResources();
-        final List<FlowerModel> data = new ArrayList<FlowerModel>(Arrays.asList(
-                new FlowerModel("1", "玫瑰", BitmapFactory.decodeResource(res, R.mipmap.rose), FLOWERD[0], FLOWER[0]),
-                new FlowerModel("2", "兰花", BitmapFactory.decodeResource(res, R.mipmap.orchid), FLOWERD[1], FLOWER[1]),
-                new FlowerModel("3", "牡丹", BitmapFactory.decodeResource(res, R.mipmap.peony), FLOWERD[2], FLOWER[2]),
-                new FlowerModel("4", "向日葵", BitmapFactory.decodeResource(res, R.mipmap.sunflower), FLOWERD[3], FLOWER[3]),
-                new FlowerModel("5", "樱花", BitmapFactory.decodeResource(res, R.mipmap.cerasus), FLOWERD[4], FLOWER[4]),
-                new FlowerModel("6", "油菜花", BitmapFactory.decodeResource(res, R.mipmap.brassicacampestris), FLOWERD[5], FLOWER[5])
-        ));
 
+        /*
         mAdapter = new RecognitionItemAdapter(data);
         mAdapter.setItemClikListener(new RecognitionItemAdapter.OnItemClickListener() {
             @Override
@@ -133,6 +119,7 @@ public class FlowerFragment extends Fragment  {
             }
         });
         mRecyclerView.setAdapter(mAdapter);
+        */
         return view;
     }
 
@@ -176,56 +163,6 @@ public class FlowerFragment extends Fragment  {
         } else {
             mFloatWindowUtil.hideContactView();
         }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_CANCELED){
-            return;
-        }
-        switch (requestCode) {
-            case TAKE_PHOTO:
-                bitmap = BitmapFactory.decodeFile(file.getPath());
-                mImageView.setImageBitmap(bitmap);
-                Intent intent = new Intent("com.android.camera.action.CROP");
-                intent.setDataAndType(imageUri, "image/*");
-                intent.putExtra("scale", true);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                intent.putExtra("crop", "true");
-                intent.putExtra("aspectX", 1);
-                intent.putExtra("aspectY", 1);
-                startActivityForResult(intent, CUT_PHOTO);
-                break;
-            case CUT_PHOTO:
-                Intent it = new Intent();
-                it.setAction(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-                it.setData(imageUri);
-                getActivity().sendBroadcast(it);
-                bitmap = BitmapFactory.decodeFile(file.getPath());
-                mImageView.setImageBitmap(bitmap);
-                break;
-            case SELECT_PHOTO:
-                if (resultCode == RESULT_OK) {
-                    selectPic(data);
-                }
-                break;
-        }
-    }
-
-    private void selectPic(Intent intent) {
-        Uri selectImageUri = intent.getData();
-        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getActivity().getContentResolver().query(selectImageUri, filePathColumn, null, null, null);
-        cursor.moveToFirst();
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String picturePath = cursor.getString(columnIndex);
-        cursor.close();
-        mImageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-    }
-
-    public static Bitmap getBitmap() {
-        return bitmap;
     }
 
 }

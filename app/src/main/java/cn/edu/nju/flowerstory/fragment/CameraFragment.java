@@ -64,13 +64,19 @@ import cn.edu.nju.flowerstory.utils.PickerLayoutManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,7 +115,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private boolean flagToken = false;
     private String mCameraId;
     private static final String TAG = "CameraFragment.java";
-    public static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown; charset=utf-8");
+    public static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("image/jpeg; charset=utf-16");
 
     private CameraCaptureSession mCameraCaptureSession;
     private CameraDevice mCameraDevice;
@@ -399,8 +405,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     // Post
                     OkHttpClient mOkHttpClient = new OkHttpClient();
                     Request request = new Request.Builder()
-                            //.url("http://47.106.159.26/recognition")
-                            .url("http://10.0.2.2:8080/recognition") //localhost
+                            .url("http://47.106.159.26/recognition")
+                            //.url("http://10.0.2.2:8080/recognition") //localhost
                             .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, mmFile))
                             .build();
                     Call call = mOkHttpClient.newCall(request);
@@ -860,6 +866,25 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     }
     Range <Integer> range;
 
+    public static byte[] getFileToByte(File file) {
+        byte[] by = new byte[(int) file.length()];
+        try {
+            InputStream is = new FileInputStream(file);
+            ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
+            byte[] bb = new byte[2048];
+            int ch;
+            ch = is.read(bb);
+            while (ch != -1) {
+                bytestream.write(bb, 0, ch);
+                ch = is.read(bb);
+            }
+            by = bytestream.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return by;
+    }
+    private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
     private class InnerCallBack implements Handler.Callback {
         @Override
         public boolean handleMessage(Message message) {
@@ -880,27 +905,45 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     Bitmap newbm = Bitmap.createBitmap(mBitmap, (width-newWidth)/2, (height-newHeight)/2, newWidth, newHeight);
                     Bitmap newbm1 = cropImage(newbm);
                     Bitmap newbm2 = sizeBitmap(newbm1, 300, 300);
-                    File mmFile = saveBitmap(newbm2,SUB_DIR_PATH[0]+"FS_" + str + ".jpg",100);
 
-                    // Post
-                    OkHttpClient mOkHttpClient = new OkHttpClient();
-                    Request request = new Request.Builder()
-                            //.url("http://47.106.159.26/recognition")
-                            .url("http://10.0.2.2:8080/recognition") //localhost
-                            .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, mmFile))
-                            .build();
-                    Call call = mOkHttpClient.newCall(request);
-                    call.enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call arg0, IOException e) {
-                            System.out.println(e.toString());
+                    File mmFile = saveBitmap(newbm2,SUB_DIR_PATH[0]+"FS_" + str + ".jpg",100);
+                    byte [] buffer = getFileToByte(mmFile);
+
+                    /*
+                    File mmFile = new File(SUB_DIR_PATH[0]+"FS_" + str + ".jpg");
+                    try {
+                        FileOutputStream out = new FileOutputStream(mmFile);
+                        if (newbm2.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
+                            out.flush();
+                            out.close();
                         }
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            Message.obtain(mUIHandler, CAMERA_RESULT, response.body().string()).sendToTarget();
-                            //System.out.println(response.body().string());
-                        }
-                    });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }*/
+
+                    if(mmFile.exists()) {
+                        // Post
+                        OkHttpClient mOkHttpClient = new OkHttpClient();
+                        Request request = new Request.Builder()
+                                .url("http://47.106.159.26/recognition")
+                                //.url("http://10.0.2.2:8080/recognition") //localhost
+                                .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, buffer))
+                                .build();
+
+                        Call call = mOkHttpClient.newCall(request);
+                        call.enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call arg0, IOException e) {
+                                System.out.println(e.toString());
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                Message.obtain(mUIHandler, CAMERA_RESULT, response.body().string()).sendToTarget();
+                                //System.out.println(response.body().string());
+                            }
+                        });
+                    }
                     break;
                 case CAMERA_MOVE_FOCK:
                     if(!flagToken) {
@@ -913,6 +956,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     }
                     break;
                 case CAMERA_RESULT:
+                    Log.i(TAG,"CAMERA_RESULT\t" + message.obj.toString());
                     mTextViewAbstract.setText(message.obj.toString());
                     mImageViewRecentPic.setImageBitmap(mTextureView.getBitmap());
                     mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);

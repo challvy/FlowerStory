@@ -31,9 +31,6 @@ import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.adapter.RecyclerAdapter;
 import cn.edu.nju.flowerstory.model.FlowerModel;
 
-import static cn.edu.nju.flowerstory.app.Constants.FLOWER;
-import static cn.edu.nju.flowerstory.app.Constants.FLOWERD;
-
 public class SearchActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
@@ -136,15 +133,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void initData(){
-        Resources res = this.getResources();
-        final List<FlowerModel> data = new ArrayList<FlowerModel>(Arrays.asList(
-                new FlowerModel("1", "玫瑰", BitmapFactory.decodeResource(res, R.mipmap.rose), FLOWERD[0], FLOWER[0]),
-                new FlowerModel("2", "兰花", BitmapFactory.decodeResource(res, R.mipmap.orchid), FLOWERD[1], FLOWER[1]),
-                new FlowerModel("3", "牡丹", BitmapFactory.decodeResource(res, R.mipmap.peony), FLOWERD[2], FLOWER[2]),
-                new FlowerModel("4", "向日葵", BitmapFactory.decodeResource(res, R.mipmap.sunflower), FLOWERD[3], FLOWER[3]),
-                new FlowerModel("5", "樱花", BitmapFactory.decodeResource(res, R.mipmap.cerasus), FLOWERD[4], FLOWER[4]),
-                new FlowerModel("6", "油菜花", BitmapFactory.decodeResource(res, R.mipmap.brassicacampestris), FLOWERD[5], FLOWER[5])
-        ));
+        /*
         mAdapter = new RecyclerAdapter(data);
         mAdapter.setItemClickListener(new RecyclerAdapter.OnItemClickListener() {
             @Override
@@ -163,6 +152,7 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
         mRecyclerView.setAdapter(mAdapter);
+        */
         //mPosition = getArguments().getInt("position");
     }
 
