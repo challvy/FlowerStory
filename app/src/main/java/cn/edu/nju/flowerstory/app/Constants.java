@@ -18,7 +18,8 @@ public class Constants {
     public static final int CURRENT_ITEM_INDEX = 0;
 
     public static final int HANDLER_CALLBACK_SUCCESS = 1;
-    public static final int HANDLER_CALLBACK_FAILURE = 2;;
+    public static final int HANDLER_CALLBACK_FAILURE = 2;
+    public static final int HANDLER_CALLBACK_GET_BITMAP = 3;
     public static final int HANDLER_CALLBACK_SUCCESS_NAME = 4;
 
 

@@ -2,6 +2,7 @@ package cn.edu.nju.flowerstory.layout;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -73,7 +74,7 @@ public class PullToRefeshLayout extends LinearLayout {
                 delta = mCurrentY - mStratY;
                 tmpCur = cur + delta;
                 if (mCurrentY - mStratY < 0) {
-                    if(tmpCur<=-870){
+                    if(tmpCur<=-670){
                         return true;
                     }
                     getChildAt(0).setTranslationY(delta);
@@ -90,8 +91,8 @@ public class PullToRefeshLayout extends LinearLayout {
             case MotionEvent.ACTION_UP:
                 Log.i("delta",""+delta);
                 cur += (mCurrentY - mStratY);
-                if(cur<-870){
-                    cur = -870;
+                if(cur<-670){
+                    cur = -670;
                 } else if (cur>0){
                     cur = 0;
                 }

@@ -35,7 +35,7 @@ import cn.edu.nju.flowerstory.activity.ViewBitmapActivity;
 import cn.edu.nju.flowerstory.adapter.ViewPagerAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.fragment.StoryFragment;
-import cn.edu.nju.flowerstory.fragment.UserFragment;
+import cn.edu.nju.flowerstory.fragment.MapFragment;
 import cn.edu.nju.flowerstory.utils.MakeDirUtil;
 
 import static cn.edu.nju.flowerstory.app.Constants.*;
@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mFlowerFragment);
         adapter.addFragment(mStoryFragment);
-        adapter.addFragment(new UserFragment());
+        adapter.addFragment(new MapFragment());
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setCurrentItem(MAIN_VIEW_PAGER_CURRENT_ITEM);

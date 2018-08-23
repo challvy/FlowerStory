@@ -34,7 +34,7 @@ import static cn.edu.nju.flowerstory.utils.BitmapUtil.saveBitmap;
  *
  * Created by Administrator on 2018/3/22 0022.
  */
-public class UserFragment extends Fragment {
+public class MapFragment extends Fragment {
 
     WebView webview;
     String url = "http://10.0.2.2:8080/recognition";
@@ -48,7 +48,7 @@ public class UserFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_user, container, false);
+        View v = inflater.inflate(R.layout.fragment_map, container, false);
         webview = (WebView) v.findViewById(R.id.webview);
         final SwipeRefreshLayout mRefreshLayout = v.findViewById(R.id.refreshLayoutFlower);
 

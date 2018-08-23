@@ -23,8 +23,15 @@ public class FlowerModel {
     private String detail;
     private Bitmap bitmap;
 
+    private boolean getFlag=false;
+    private boolean getAgainFlag=true;
+
     public FlowerModel(){
 
+    }
+
+    public FlowerModel(String id){
+        this.id = id;
     }
 
     public FlowerModel(String id, String name, Bitmap bitmap, String imageDetail, String detail) {
@@ -70,4 +77,22 @@ public class FlowerModel {
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
+
+    public void setGetFlag(boolean getFlag) {
+        this.getFlag = getFlag;
+    }
+
+    public boolean isGetFlag() {
+        return getFlag;
+    }
+
+    public boolean isGetAgainFlag() {
+        return getAgainFlag;
+    }
+
+    public void setGetAgainFlag(boolean getAgainFlag) {
+        this.getAgainFlag = getAgainFlag;
+    }
+
+
 }

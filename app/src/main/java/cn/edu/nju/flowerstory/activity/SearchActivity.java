@@ -59,7 +59,7 @@ public class SearchActivity extends AppCompatActivity {
         layoutManager.canScrollVertically();
 
         initData();
-        mAdapter.setItems(new ArrayList<FlowerModel>());
+        //mAdapter.setItems(new ArrayList<FlowerModel>());
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String s) {
                 if(s.isEmpty()){
-                    mAdapter.setItems(new ArrayList<FlowerModel>());
+                    ;//mAdapter.setItems(new ArrayList<FlowerModel>());
                 }
                 //initData();
                 Cursor cursor = TextUtils.isEmpty(s) ? null : null;

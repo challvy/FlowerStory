@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -22,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import cn.edu.nju.flowerstory.R;
@@ -35,6 +38,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_FAILURE;
+import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_GET_BITMAP;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS_NAME;
 
@@ -45,7 +49,8 @@ import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS_NAME
  */
 public class StoryItemFragment extends StoryItemBaseFragment {
 
-    private List<FlowerModel> items = new ArrayList<>();
+    private List<FlowerModel> flowerModels = new ArrayList<>();
+    private ArrayList<String> Data;
 
     private String TAG = StoryItemFragment.class.getSimpleName();
     private int id;
@@ -58,33 +63,69 @@ public class StoryItemFragment extends StoryItemBaseFragment {
     RecyclerAdapter mAdapter;
     int mPosition;
 
-    private final int GET_BITMAP = 3;
+    private int lastVisibleItem = 0;
+    private final int PAGE_COUNT = 5;
+    private GridLayoutManager mLayoutManager;
+
+    @Override
+    protected void onFragmentFirstVisible() {
+        initData();
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(TAG, id+"\tonCreateView()");
         View view = inflater.inflate(R.layout.layout_flowers, container, false);
         mRefreshLayout = view.findViewById(R.id.refreshFlowersLayout);
+        mRecyclerView = view.findViewById(R.id.flowerRecyclerView);
+
+        mRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light,
+                android.R.color.holo_orange_light, android.R.color.holo_green_light);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 Log.i(TAG, "SwipeRefreshLayout.OnRefreshListener().onRefresh()");
                 loadData();
+                if(mAdapter != null) {
+                    mAdapter.resetDatas();
+                }
+                updateRecyclerView(0, PAGE_COUNT);
             }
         });
-        mRecyclerView = view.findViewById(R.id.flowerRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), GridLayoutManager.VERTICAL, false));
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        layoutManager.canScrollVertically();
+        mLayoutManager = new GridLayoutManager(getContext(), 1);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        //mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), GridLayoutManager.VERTICAL, false));
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    Log.i(TAG, ""+ mAdapter.isFadeTips());
+                    Log.i(TAG, ""+ lastVisibleItem);
+                    Log.i(TAG, ""+ mAdapter.getItemCount());
+                    if (!mAdapter.isFadeTips() && lastVisibleItem + 1 == mAdapter.getItemCount()) {
+                        updateRecyclerView(mAdapter.getRealLastPosition(), mAdapter.getRealLastPosition() + PAGE_COUNT);
+                    }
+                    if (mAdapter.isFadeTips() && lastVisibleItem + 2 == mAdapter.getItemCount()) {
+                        updateRecyclerView(mAdapter.getRealLastPosition(), mAdapter.getRealLastPosition() + PAGE_COUNT);
+                    }
+                }
+            }
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
+            }
+        });
+
         return view;
     }
 
     private void loadData(){
         Log.i(TAG, id+"\tloadData()");
+        flowerModels.clear();
         // 加载开始 开始刷新
-        items.clear();
         mRefreshLayout.setRefreshing(true);
         new Thread(new Runnable() {
             public void run() {
@@ -118,27 +159,21 @@ public class StoryItemFragment extends StoryItemBaseFragment {
 
         mOkHttpClient = new OkHttpClient();
 
-        mAdapter = new RecyclerAdapter();
         loadData();
-        mAdapter.setItemClickListener(new RecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Log.i(TAG, "onItemClick at Position " + position);
-                mAdapter.notifyDataSetChanged();
-                Intent intent = new Intent(getContext(), FlowerDetailActivity.class);
-                intent.putExtra(FlowerDetailActivity.RETURN_INFO, items.get(position).getId());
-                startActivity(intent);
-            }
-            @Override
-            public void onItemLongClick(View view, int position) {
-                Log.i(TAG,"onItemLongClick at Position " + items.get(position).getId());
-            }
-        });
-        mRecyclerView.setAdapter(mAdapter);
+        //mRecyclerView.setAdapter(mAdapter);
         mPosition = getArguments().getInt("position");
     }
 
-    ArrayList<String> Data;
+    private List<FlowerModel> getDatas(final int firstIndex, final int lastIndex) {
+        List<FlowerModel> resList = new ArrayList<>();
+        for (int i = firstIndex; i < lastIndex; i++) {
+            if (i < flowerModels.size()) {
+                resList.add(flowerModels.get(i));
+            }
+        }
+        return resList;
+    }
+
     private class InnerCallBack implements Handler.Callback {
         @Override
         public boolean handleMessage(Message message) {
@@ -151,12 +186,12 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                             Data.add(Array.getString(i));
                         }
                         for (String item : Data) {
-                            Log.i(TAG, item);
+                            flowerModels.add(new FlowerModel(item));
+
                             // Get
                             OkHttpClient mOkHttpClient = new OkHttpClient();
                             Request request = new Request.Builder()
-                                    .url("http://47.106.159.26/knowledge/" + item)
-                                    //.url("http://10.0.2.2:8080/knowledge/" + item)
+                                    .url("http://47.106.159.26/knowledge/" + item)   //.url("http://10.0.2.2:8080/knowledge/" + item)
                                     .build();
                             Call call = mOkHttpClient.newCall(request);
                             call.enqueue(new Callback() {
@@ -171,26 +206,46 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                                 }
                             });
                         }
+                        mAdapter = new RecyclerAdapter(getDatas(0, PAGE_COUNT), getContext(), getDatas(0, PAGE_COUNT).size() > 0);
+                        mRecyclerView.setAdapter(mAdapter);
+                        mAdapter.notifyDataSetChanged();
+                        mAdapter.setItemClickListener(new RecyclerAdapter.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(View view, int position) {
+                                Log.i(TAG, "onItemClick at Position " + position);
+                                mAdapter.notifyDataSetChanged();
+                                Intent intent = new Intent(getContext(), FlowerDetailActivity.class);
+                                intent.putExtra(FlowerDetailActivity.RETURN_INFO, flowerModels.get(position).getId());
+                                startActivity(intent);
+                            }
+                            @Override
+                            public void onItemLongClick(View view, int position) {
+                                Log.i(TAG,"onItemLongClick at Position " + flowerModels.get(position).getId());
+                            }
+                        });
                     }catch (Exception e) {
                         Log.i(TAG, e.getMessage());
                     }
                     break;
                 }
                 case HANDLER_CALLBACK_SUCCESS: {
-                    Log.i(TAG, "Handler.Callback.handleMessage()");
-                    FlowerModel flowerModel = new FlowerModel();
                     try {
                         JSONObject obj = new JSONObject(message.obj.toString());
+                        final String id = obj.get("id").toString();
                         final String name = obj.get("name").toString();
-                        flowerModel.setName(name);
-                        flowerModel.setId(obj.get("id").toString());
-                        final String uri = obj.get("bitmap").toString();
-                        Log.i(TAG, uri);
+                        for(FlowerModel item:flowerModels){
+                            if(item.getId().equals(id)){
+                                item.setName(name);
+                                break;
+                            }
+                        }
+                        mAdapter.notifyDataSetChanged();
+
                         // Get
+                        final String uri = obj.get("bitmap").toString();
                         OkHttpClient mOkHttpClient = new OkHttpClient();
                         Request request = new Request.Builder()
-                                .url("http://47.106.159.26/knowledge/bitmap/" + uri)
-                                //.url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
+                                .url("http://47.106.159.26/knowledge/bitmap/" + uri)  //.url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
                                 .build();
                         Call call = mOkHttpClient.newCall(request);
                         call.enqueue(new Callback() {
@@ -200,24 +255,17 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                             }
                             @Override
                             public void onResponse(Call call, Response response) throws IOException {
-                                Log.i(TAG, "onResponse()");
                                 byte[] data = response.body().bytes();
                                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                for(FlowerModel model:items) {
-                                    if (model.getName().equals(name)) {
-                                        model.setBitmap(bitmap);
+                                for(FlowerModel item:flowerModels){
+                                    if(item.getId().equals(id)){
+                                        item.setBitmap(bitmap);
                                         break;
                                     }
                                 }
-                                //byte[] data = response.body().bytes();
-                                Message.obtain(mUIHandler, GET_BITMAP).sendToTarget();
+                                Message.obtain(mUIHandler, HANDLER_CALLBACK_GET_BITMAP).sendToTarget();
                             }
                         });
-                        items.add(flowerModel);
-                        mAdapter.setItems(items);
-                        mAdapter.notifyDataSetChanged();
-                        // 加载完成 结束刷新
-                        //mRefreshLayout.setRefreshing(false);
                     } catch (Exception e) {
                         Log.i(TAG, e.getMessage());
                     }
@@ -225,25 +273,13 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                 }
                 case HANDLER_CALLBACK_FAILURE: {
                     // 加载失敗 结束刷新
-                    mRefreshLayout.setRefreshing(false);
                     Toast.makeText(getActivity(), "糟糕,网络开了小差", Toast.LENGTH_SHORT).show();
+                    mRefreshLayout.setRefreshing(false);
                     break;
                 }
-                case GET_BITMAP: {
-                    /*
-                    BitmapName bitmapName = (BitmapName) message.obj;
-                    //byte[] data = ((byte[]) message.obj);
-                    byte[] data = bitmapName.data;
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                    for(FlowerModel model:items){
-                        if(model.getName().equals(bitmapName.name)){
-                            model.setBitmap(bitmap);
-                            Log.i("!!!!!!!!!!!!!!!!!!!!", "123");
-                            mAdapter.notifyDataSetChanged();
-                            break;
-                        }
-                    }*/
+                case HANDLER_CALLBACK_GET_BITMAP: {
                     mAdapter.notifyDataSetChanged();
+                    // 加载完成 结束刷新
                     mRefreshLayout.setRefreshing(false);
                     break;
                 }
@@ -252,9 +288,33 @@ public class StoryItemFragment extends StoryItemBaseFragment {
         }
     }
 
-    @Override
-    protected void onFragmentFirstVisible() {
-        initData();
+    private void updateRecyclerView(int fromIndex, int toIndex) {
+        List<FlowerModel> newDatas = getDatas(fromIndex, toIndex);
+        if (newDatas.size() > 0) {
+            mAdapter.updateList(newDatas, true);
+        } else {
+            mAdapter.updateList(null, false);
+        }
+    }
+
+    private void get(String item){
+        // Get
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("http://47.106.159.26/knowledge/" + item)   //.url("http://10.0.2.2:8080/knowledge/" + item)
+                .build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call arg0, IOException e) {
+                Message.obtain(mUIHandler, HANDLER_CALLBACK_FAILURE).sendToTarget();
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonData = response.body().string();
+                Message.obtain(mUIHandler, HANDLER_CALLBACK_SUCCESS, jsonData).sendToTarget();
+            }
+        });
     }
 
     public void setId(int id){

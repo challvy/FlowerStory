@@ -1,9 +1,15 @@
 package cn.edu.nju.flowerstory.adapter;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,58 +25,37 @@ import cn.edu.nju.flowerstory.model.FlowerModel;
  *
  * Created by Administrator on 2018/4/13 0013.
  */
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private List<FlowerModel> datas;
+    private Context context;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+    private int normalType = 0;
+    private int footType = 1;
 
-    private List<FlowerModel> items;
-    private OnItemClickListener mOnItemClickListener;
+    private boolean hasMore = true;
+    private boolean fadeTips = false;
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        private SoftReference<RecyclerAdapter> mAdapter;
-        private ImageView mImageView;
-        private TextView tittle;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
-        ViewHolder(View itemView, RecyclerAdapter adapter) {
-            super(itemView);
-            mAdapter = new SoftReference<>(adapter);
-            mImageView = itemView.findViewById(R.id.imageView);
-            tittle = itemView.findViewById(R.id.text);
+    private RecyclerAdapter.OnItemClickListener mOnItemClickListener;
+
+    public RecyclerAdapter(List<FlowerModel> datas, Context context, boolean hasMore) {
+        this.datas = datas;
+        this.context = context;
+        this.hasMore = hasMore;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == normalType) {
+            return new NormalHolder(LayoutInflater.from(context).inflate(R.layout.layout_recyclerview, null));
+        } else {
+            return new FootHolder(LayoutInflater.from(context).inflate(R.layout.footview, null));
         }
     }
 
-    public RecyclerAdapter(){
-        items = new ArrayList<FlowerModel>();
-    }
-
-    public RecyclerAdapter(List<FlowerModel> items) {
-        this.items = items;
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(View view,int position);
-        void onItemLongClick(View view,int position);
-    }
-
-    public void setItemClickListener(OnItemClickListener mOnItemClickListener ){
-        this.mOnItemClickListener = mOnItemClickListener;
-    }
-
-    public void setItems(List<FlowerModel> items) {
-        this.items = items;
-    }
-
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_recyclerview, parent,false);
-        return new ViewHolder(v,this);
-    }
-
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        FlowerModel item = items.get(position);
-        holder.mImageView.setImageBitmap(item.getBitmap());
-        String tittle = item.getName();
-        holder.tittle.setText(tittle);
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if(mOnItemClickListener !=null){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -89,25 +74,97 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 }
             });
         }
+
+        if (holder instanceof NormalHolder) {
+            FlowerModel item = datas.get(position);
+            ((NormalHolder) holder).tittle.setText(datas.get(position).getName());
+            ((NormalHolder) holder).mImageView.setImageBitmap(item.getBitmap());
+        } else {
+            ((FootHolder) holder).tips.setVisibility(View.VISIBLE);
+            if (hasMore) {
+                fadeTips = false;
+                if (datas.size() > 0) {
+                    ((FootHolder) holder).tips.setText("正在加载更多...");
+                }
+            } else {
+                if (datas.size() > 0) {
+                    ((FootHolder) holder).tips.setText("我可是有底线的");
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((FootHolder) holder).tips.setVisibility(View.GONE);
+                            fadeTips = true;
+                            hasMore = true;
+                        }
+                    }, 1000);
+                }
+            }
+        }
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return datas.size() + 1;
     }
 
-    public void appendData(List<FlowerModel> newItems){
-        if (newItems != null && newItems.size() > 0) {
-            items.addAll(newItems);
-            notifyItemRangeInserted(items.size()-newItems.size(), newItems.size());
+    public int getRealLastPosition() {
+        return datas.size();
+    }
+
+
+    public void updateList(List<FlowerModel> newDatas, boolean hasMore) {
+        if (newDatas != null) {
+            datas.addAll(newDatas);
+        }
+        this.hasMore = hasMore;
+        notifyDataSetChanged();
+    }
+
+    class NormalHolder extends RecyclerView.ViewHolder {
+        public ImageView mImageView;
+        public TextView tittle;
+
+        public NormalHolder(View itemView) {
+            super(itemView);
+            mImageView = itemView.findViewById(R.id.imageView);
+            tittle = itemView.findViewById(R.id.text);
         }
     }
 
-    public void removeData(int position) {
-        if (position >= 0 && position < items.size()) {
-            items.remove(position);
-            notifyItemRemoved(position);
+    class FootHolder extends RecyclerView.ViewHolder {
+        private TextView tips;
+
+        public FootHolder(View itemView) {
+            super(itemView);
+            tips = itemView.findViewById(R.id.tips);
         }
+    }
+
+    public boolean isFadeTips() {
+        return fadeTips;
+    }
+
+    public void resetDatas() {
+        datas = new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == getItemCount() - 1) {
+            return footType;
+        } else {
+            return normalType;
+        }
+    }
+
+    public void setItemClickListener(RecyclerAdapter.OnItemClickListener mOnItemClickListener ){
+        this.mOnItemClickListener = mOnItemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view,int position);
+        void onItemLongClick(View view,int position);
     }
 
 }
