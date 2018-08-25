@@ -12,55 +12,12 @@
     <list default="true" id="f02b987c-75e0-4af1-8669-5ee8484548d7" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/fileHashes/fileHashes.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/classAnalysis.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/javaCompile.lock" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskHistory.bin" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/javaCompile/taskJars.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.bin" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" afterPath="$PROJECT_DIR$/.gradle/4.4/taskHistory/taskHistory.lock" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/activity/UserActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/activity/UserActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/activity/ViewBitmapActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/activity/ViewBitmapActivity.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/adapter/RecyclerAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/adapter/RecyclerAdapter.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/app/Constants.java" afterPath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/app/Constants.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/CameraFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/CameraFragment.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/FlowerFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/FlowerFragment.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/StoryFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/StoryFragment.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/StoryItemBaseFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/StoryItemBaseFragment.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/StoryItemFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/StoryItemFragment.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/layout/PullToRefeshLayout.java" afterPath="$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/layout/PullToRefeshLayout.java" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_camer.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_gallery.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_recognize.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/avatar.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/bg_empty_personal_update.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_action_camer.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_action_gallery.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_action_recognize.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_action_camer.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_action_gallery.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_action_recognize.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_action_camer.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_action_gallery.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_action_recognize.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_user.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_user.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_flower.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_flower.xml" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_user.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-hdpi/ic_user_false.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_user.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-mdpi/ic_user_false.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_user.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xhdpi/ic_user_false.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_user.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxhdpi/ic_user_false.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_user.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/mipmap-xxxhdpi/ic_user_false.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
+      <change beforePath="$PROJECT_DIR$/README_RES/FlowerStory.gif" afterPath="$PROJECT_DIR$/README_RES/FlowerStory.gif" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -96,8 +53,8 @@
       <file leaf-file-name="StoryItemFragment.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/StoryItemFragment.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="434">
-              <caret line="295" column="0" lean-forward="false" selection-start-line="295" selection-start-column="0" selection-end-line="295" selection-end-column="0" />
+            <state relative-caret-position="6670">
+              <caret line="293" column="0" lean-forward="false" selection-start-line="293" selection-start-column="0" selection-end-line="293" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2033#2034#0" expanded="true" />
@@ -2326,7 +2283,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-9" />
     <option name="y" value="-9" />
     <option name="width" value="976" />
@@ -2462,7 +2419,7 @@
     <property name="android.project.structure.proportion" value="0.15" />
     <property name="device.picker.selection" value="e4c6f4b0" />
     <property name="android.profiler.active" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1535180933613" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1535181724079" />
     <property name="show.do.not.copy.http.proxy.settings.to.gradle" value="true" />
   </component>
   <component name="RecentsManager">
@@ -2845,8 +2802,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="7" />
-    <editor active="true" />
+    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.7225368" sideWeight="0.49785408" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32879817" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -2857,7 +2813,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41269842" sideWeight="0.50429183" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32879817" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2853907" sideWeight="0.49570817" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2853907" sideWeight="0.49570817" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Logcat" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32842582" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -3427,8 +3383,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/cn/edu/nju/flowerstory/fragment/StoryItemFragment.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="434">
-          <caret line="295" column="0" lean-forward="false" selection-start-line="295" selection-start-column="0" selection-end-line="295" selection-end-column="0" />
+        <state relative-caret-position="6670">
+          <caret line="293" column="0" lean-forward="false" selection-start-line="293" selection-start-column="0" selection-end-line="293" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#2033#2034#0" expanded="true" />
