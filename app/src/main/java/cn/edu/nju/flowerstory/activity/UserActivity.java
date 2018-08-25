@@ -66,7 +66,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
 
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        Bitmap bitmap = BlurBitmapUtil.blurBitmap(this, BitmapFactory.decodeResource(getResources(), R.drawable.avatar), 3f);
+        Bitmap bitmap = BlurBitmapUtil.blurBitmap(this, BitmapFactory.decodeResource(getResources(), R.mipmap.bgp), 3f);
         ivBackGround.setImageBitmap(bitmap);
 
     }

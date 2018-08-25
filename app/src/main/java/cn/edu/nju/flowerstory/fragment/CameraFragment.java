@@ -73,8 +73,6 @@ import okhttp3.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -114,7 +112,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
 
     private boolean flagToken = false;
     private String mCameraId;
-    private static final String TAG = "CameraFragment.java";
+    private static final String TAG = CameraFragment.class.getSimpleName();;
     public static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("image/jpeg; charset=utf-16");
 
     private CameraCaptureSession mCameraCaptureSession;

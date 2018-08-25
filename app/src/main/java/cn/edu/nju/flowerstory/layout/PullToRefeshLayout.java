@@ -2,9 +2,7 @@ package cn.edu.nju.flowerstory.layout;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -31,9 +29,7 @@ public class PullToRefeshLayout extends LinearLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int sizeWidth = MeasureSpec.getSize(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int sizeHeight = MeasureSpec.getSize(heightMeasureSpec);
         measureChildren(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(sizeWidth, sizeHeight);
@@ -48,11 +44,10 @@ public class PullToRefeshLayout extends LinearLayout {
         int headHeight = 0;
         for (int i = 0; i < count; i++) {
             View childView = getChildAt(i);
-
             if (i == 0) {
                 headHeight = childView.getMeasuredHeight();
                 childView.layout(0, -mHeaderOffsetTop, childView.getMeasuredWidth(), headHeight - mHeaderOffsetTop);
-            } else if (i==1) {
+            } else {
                 childView.layout(0, headHeight - mHeaderOffsetTop - mHeaderOffsetBottom, childView.getMeasuredWidth(), headHeight - mHeaderOffsetTop - mHeaderOffsetBottom + childView.getMeasuredHeight());
             }
         }
@@ -89,7 +84,6 @@ public class PullToRefeshLayout extends LinearLayout {
                 }
                 return true;
             case MotionEvent.ACTION_UP:
-                Log.i("delta",""+delta);
                 cur += (mCurrentY - mStratY);
                 if(cur<-670){
                     cur = -670;
@@ -98,9 +92,6 @@ public class PullToRefeshLayout extends LinearLayout {
                 }
                 getChildAt(0).animate().translationY(cur);
                 getChildAt(1).animate().translationY(cur);
-
-                Log.i(TAG, "" + cur);
-
                 return true;
             default:
                 break;

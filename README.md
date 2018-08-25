@@ -13,7 +13,7 @@ Flower Story is an Android App project that provides flower recognition service.
 - Gradle
 
   ```
-  gradle: 3.1.3
+  gradle: 3.1.4
   distributionUrl=http\://services.gradle.org/distributions/gradle-4.4-all.zip
   ```
 

@@ -6,9 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 public class StoryItemBaseFragment extends Fragment {
-
-    private static final String TAG = StoryItemBaseFragment.class.getSimpleName();
-
     private boolean isFragmentVisible;
     private boolean isReuseView;
     private boolean isFirstVisible;

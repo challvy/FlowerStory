@@ -8,15 +8,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -24,7 +21,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import cn.edu.nju.flowerstory.R;
@@ -40,7 +36,7 @@ import okhttp3.Response;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_FAILURE;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_GET_BITMAP;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS;
-import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS_NAME;
+import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS_GET_LIST;
 
 
 /**
@@ -50,13 +46,10 @@ import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS_NAME
 public class StoryItemFragment extends StoryItemBaseFragment {
 
     private List<FlowerModel> flowerModels = new ArrayList<>();
-    private ArrayList<String> Data;
+    private ArrayList<String> Data = new ArrayList<>();
 
     private String TAG = StoryItemFragment.class.getSimpleName();
-    private int id;
     private Handler mUIHandler;
-
-    OkHttpClient mOkHttpClient;
 
     RecyclerView mRecyclerView;
     SwipeRefreshLayout mRefreshLayout;
@@ -66,6 +59,8 @@ public class StoryItemFragment extends StoryItemBaseFragment {
     private int lastVisibleItem = 0;
     private final int PAGE_COUNT = 5;
     private GridLayoutManager mLayoutManager;
+
+    private int flowerModels_load_cnt=0;
 
     @Override
     protected void onFragmentFirstVisible() {
@@ -94,16 +89,12 @@ public class StoryItemFragment extends StoryItemBaseFragment {
 
         mLayoutManager = new GridLayoutManager(getContext(), 1);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        //mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        //mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), GridLayoutManager.VERTICAL, false));
+        mRecyclerView.setAdapter(new RecyclerAdapter());
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    Log.i(TAG, ""+ mAdapter.isFadeTips());
-                    Log.i(TAG, ""+ lastVisibleItem);
-                    Log.i(TAG, ""+ mAdapter.getItemCount());
                     if (!mAdapter.isFadeTips() && lastVisibleItem + 1 == mAdapter.getItemCount()) {
                         updateRecyclerView(mAdapter.getRealLastPosition(), mAdapter.getRealLastPosition() + PAGE_COUNT);
                     }
@@ -118,22 +109,34 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                 lastVisibleItem = mLayoutManager.findLastVisibleItemPosition();
             }
         });
-
         return view;
     }
 
+    private void initData(){
+        /* 创建UI主线程，同时设置消息回调 */
+        mUIHandler = new Handler(new InnerCallBack());
+        loadData();
+        mPosition = getArguments().getInt("position");
+    }
+
     private void loadData(){
-        Log.i(TAG, id+"\tloadData()");
-        flowerModels.clear();
-        // 加载开始 开始刷新
+        Log.i(TAG, "loadData()");
+
+        /* 加载开始 开始刷新 */
         mRefreshLayout.setRefreshing(true);
+
+        /* 清除缓存数据 */
+        flowerModels.clear();
+        flowerModels_load_cnt=0;
+        Data.clear();
+
+        /* 加载Data List */
         new Thread(new Runnable() {
             public void run() {
                 Request request = new Request.Builder()
                         .url("http://47.106.159.26/knowledge/all")
-                        //.url("http://10.0.2.2:8080/knowledge/all") //localhost
                         .build();
-                Call call = mOkHttpClient.newCall(request);
+                Call call = new OkHttpClient().newCall(request);
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(Call arg0, IOException e) {
@@ -142,78 +145,31 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                     }
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        Log.i(TAG, "Callback.onResponse()");
                         String jsonData = response.body().string();
-                        Message.obtain(mUIHandler, HANDLER_CALLBACK_SUCCESS_NAME, jsonData).sendToTarget();
+                        Message.obtain(mUIHandler, HANDLER_CALLBACK_SUCCESS_GET_LIST, jsonData).sendToTarget();
                     }
                 });
             }
         }).start();
     }
 
-    private void initData(){
-        Log.i(TAG, id+"\tinitData()");
-
-        // 创建UI主线程，同时设置消息回调
-        mUIHandler = new Handler(new InnerCallBack());
-
-        mOkHttpClient = new OkHttpClient();
-
-        loadData();
-        //mRecyclerView.setAdapter(mAdapter);
-        mPosition = getArguments().getInt("position");
-    }
-
-    private List<FlowerModel> getDatas(final int firstIndex, final int lastIndex) {
-        List<FlowerModel> resList = new ArrayList<>();
-        for (int i = firstIndex; i < lastIndex; i++) {
-            if (i < flowerModels.size()) {
-                resList.add(flowerModels.get(i));
-            }
-        }
-        return resList;
-    }
-
     private class InnerCallBack implements Handler.Callback {
         @Override
         public boolean handleMessage(Message message) {
             switch (message.what) {
-                case HANDLER_CALLBACK_SUCCESS_NAME: {
+                case HANDLER_CALLBACK_SUCCESS_GET_LIST: {
                     try{
                         JSONArray Array = new JSONArray(message.obj.toString());
-                        Data = new ArrayList<>();
                         for (int i = 0; i < Array.length(); i++) {
                             Data.add(Array.getString(i));
                         }
-                        for (String item : Data) {
-                            flowerModels.add(new FlowerModel(item));
-
-                            // Get
-                            OkHttpClient mOkHttpClient = new OkHttpClient();
-                            Request request = new Request.Builder()
-                                    .url("http://47.106.159.26/knowledge/" + item)   //.url("http://10.0.2.2:8080/knowledge/" + item)
-                                    .build();
-                            Call call = mOkHttpClient.newCall(request);
-                            call.enqueue(new Callback() {
-                                @Override
-                                public void onFailure(Call arg0, IOException e) {
-                                    Message.obtain(mUIHandler, HANDLER_CALLBACK_FAILURE).sendToTarget();
-                                }
-                                @Override
-                                public void onResponse(Call call, Response response) throws IOException {
-                                    String jsonData = response.body().string();
-                                    Message.obtain(mUIHandler, HANDLER_CALLBACK_SUCCESS, jsonData).sendToTarget();
-                                }
-                            });
-                        }
-                        mAdapter = new RecyclerAdapter(getDatas(0, PAGE_COUNT), getContext(), getDatas(0, PAGE_COUNT).size() > 0);
+                        mAdapter = new RecyclerAdapter(getDatas(0, PAGE_COUNT), getContext(), hasMore());
                         mRecyclerView.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
                         mAdapter.setItemClickListener(new RecyclerAdapter.OnItemClickListener() {
                             @Override
                             public void onItemClick(View view, int position) {
                                 Log.i(TAG, "onItemClick at Position " + position);
-                                mAdapter.notifyDataSetChanged();
                                 Intent intent = new Intent(getContext(), FlowerDetailActivity.class);
                                 intent.putExtra(FlowerDetailActivity.RETURN_INFO, flowerModels.get(position).getId());
                                 startActivity(intent);
@@ -240,8 +196,6 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                             }
                         }
                         mAdapter.notifyDataSetChanged();
-
-                        // Get
                         final String uri = obj.get("bitmap").toString();
                         OkHttpClient mOkHttpClient = new OkHttpClient();
                         Request request = new Request.Builder()
@@ -279,8 +233,11 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                 }
                 case HANDLER_CALLBACK_GET_BITMAP: {
                     mAdapter.notifyDataSetChanged();
-                    // 加载完成 结束刷新
-                    mRefreshLayout.setRefreshing(false);
+                    flowerModels_load_cnt++;
+                    if(flowerModels_load_cnt==flowerModels.size()) {
+                        // 加载完成 结束刷新
+                        mRefreshLayout.setRefreshing(false);
+                    }
                     break;
                 }
             }
@@ -291,34 +248,48 @@ public class StoryItemFragment extends StoryItemBaseFragment {
     private void updateRecyclerView(int fromIndex, int toIndex) {
         List<FlowerModel> newDatas = getDatas(fromIndex, toIndex);
         if (newDatas.size() > 0) {
-            mAdapter.updateList(newDatas, true);
+            // 加载更多 开始刷新
+            mRefreshLayout.setRefreshing(true);
+            mAdapter.updateList(newDatas,true);
         } else {
-            mAdapter.updateList(null, false);
+            mAdapter.updateList(null,false);
         }
     }
 
-    private void get(String item){
-        // Get
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("http://47.106.159.26/knowledge/" + item)   //.url("http://10.0.2.2:8080/knowledge/" + item)
-                .build();
-        Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call arg0, IOException e) {
-                Message.obtain(mUIHandler, HANDLER_CALLBACK_FAILURE).sendToTarget();
+    private List<FlowerModel> getDatas(final int firstIndex, final int lastIndex) {
+        for (int i = firstIndex; i < lastIndex; i++) {
+            if(i<Data.size()) {
+                flowerModels.add(new FlowerModel(Data.get(i)));
+                // Get
+                OkHttpClient mOkHttpClient = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url("http://47.106.159.26/knowledge/" + Data.get(i))
+                        .build();
+                Call call = mOkHttpClient.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call arg0, IOException e) {
+                        Message.obtain(mUIHandler, HANDLER_CALLBACK_FAILURE).sendToTarget();
+                    }
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String jsonData = response.body().string();
+                        Message.obtain(mUIHandler, HANDLER_CALLBACK_SUCCESS, jsonData).sendToTarget();
+                    }
+                });
             }
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String jsonData = response.body().string();
-                Message.obtain(mUIHandler, HANDLER_CALLBACK_SUCCESS, jsonData).sendToTarget();
+        }
+        List<FlowerModel> resList = new ArrayList<>();
+        for (int i = firstIndex; i < lastIndex; i++) {
+            if (i < flowerModels.size()) {
+                resList.add(flowerModels.get(i));
             }
-        });
+        }
+        return resList;
     }
 
-    public void setId(int id){
-        this.id = id;
+    private boolean hasMore(){
+        return lastVisibleItem < Data.size();
     }
 
 }

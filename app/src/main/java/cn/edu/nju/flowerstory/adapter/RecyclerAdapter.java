@@ -1,21 +1,18 @@
 package cn.edu.nju.flowerstory.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cn.edu.nju.flowerstory.R;
@@ -29,8 +26,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private List<FlowerModel> datas;
     private Context context;
 
-    private int normalType = 0;
-    private int footType = 1;
+    private final int TYPE_NORMAL = 0;
+    private final int TYPE_FOOT = 1;
 
     private boolean hasMore = true;
     private boolean fadeTips = false;
@@ -39,15 +36,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private RecyclerAdapter.OnItemClickListener mOnItemClickListener;
 
+    public RecyclerAdapter(){}
+
     public RecyclerAdapter(List<FlowerModel> datas, Context context, boolean hasMore) {
         this.datas = datas;
         this.context = context;
         this.hasMore = hasMore;
     }
 
+    @SuppressLint("InflateParams")
+    @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == normalType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == TYPE_NORMAL) {
             return new NormalHolder(LayoutInflater.from(context).inflate(R.layout.layout_recyclerview, null));
         } else {
             return new FootHolder(LayoutInflater.from(context).inflate(R.layout.footview, null));
@@ -55,7 +56,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
         if(mOnItemClickListener !=null){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -96,7 +97,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             fadeTips = true;
                             hasMore = true;
                         }
-                    }, 1000);
+                    }, 500);
                 }
             }
         }
@@ -104,27 +105,29 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return datas.size() + 1;
+        if(datas != null && !datas.isEmpty()) {
+            return datas.size() + 1;
+        } else {
+            return 0;
+        }
     }
 
     public int getRealLastPosition() {
         return datas.size();
     }
 
-
     public void updateList(List<FlowerModel> newDatas, boolean hasMore) {
         if (newDatas != null) {
             datas.addAll(newDatas);
         }
-        this.hasMore = hasMore;
         notifyDataSetChanged();
+        this.hasMore = hasMore;
     }
 
     class NormalHolder extends RecyclerView.ViewHolder {
-        public ImageView mImageView;
+        ImageView mImageView;
         public TextView tittle;
-
-        public NormalHolder(View itemView) {
+        NormalHolder(View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageView);
             tittle = itemView.findViewById(R.id.text);
@@ -133,8 +136,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     class FootHolder extends RecyclerView.ViewHolder {
         private TextView tips;
-
-        public FootHolder(View itemView) {
+        FootHolder(View itemView) {
             super(itemView);
             tips = itemView.findViewById(R.id.tips);
         }
@@ -152,9 +154,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public int getItemViewType(int position) {
         if (position == getItemCount() - 1) {
-            return footType;
+            return TYPE_FOOT;
         } else {
-            return normalType;
+            return TYPE_NORMAL;
         }
     }
 

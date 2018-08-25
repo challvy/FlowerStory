@@ -1,10 +1,10 @@
 package cn.edu.nju.flowerstory.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +25,7 @@ import static cn.edu.nju.flowerstory.app.Constants.TAB_TITLE;
  * Created by Administrator on 2018/3/22 0022.
  */
 public class StoryFragment extends Fragment {
-
-    private final String TAG = "StoryFragment";
+    private final String TAG = StoryFragment.class.getSimpleName();;
 
     View view;
     ViewPager tabViewpager;
@@ -36,7 +35,7 @@ public class StoryFragment extends Fragment {
     private List<String> mTabs = new ArrayList<>();
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (view != null) {
             ViewGroup parent = (ViewGroup) view.getParent();
             if (parent != null) {
@@ -57,9 +56,7 @@ public class StoryFragment extends Fragment {
         }
         mTabs.addAll(Arrays.asList(TAB_TITLE).subList(0, TAB_SIZE));
         for (int i = 0; i < mTabs.size(); i++) {
-            Log.i(TAG, "new StoryItemFragment()");
             StoryItemFragment fragment = new StoryItemFragment();
-            fragment.setId(i);
             Bundle bundle = new Bundle();
             bundle.putInt("position", i);
             fragment.setArguments(bundle);

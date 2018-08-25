@@ -14,13 +14,13 @@ public class Constants {
     public static final int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 2;
 
     public static final int TAB_SIZE = 5;
-    public static final String TAB_TITLE[] = {"首页", "美图", "百科", "养护",  "收藏"};
+    public static final String TAB_TITLE[] = {"首页", "美图", "百科", "养护", "收藏"};
     public static final int CURRENT_ITEM_INDEX = 0;
 
     public static final int HANDLER_CALLBACK_SUCCESS = 1;
     public static final int HANDLER_CALLBACK_FAILURE = 2;
     public static final int HANDLER_CALLBACK_GET_BITMAP = 3;
-    public static final int HANDLER_CALLBACK_SUCCESS_NAME = 4;
+    public static final int HANDLER_CALLBACK_SUCCESS_GET_LIST = 4;
 
 
     public static final int MAIN_VIEW_PAGER_CURRENT_ITEM = 1;

@@ -1,7 +1,6 @@
 package cn.edu.nju.flowerstory.activity;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
@@ -42,8 +41,6 @@ public class ViewBitmapActivity extends AppCompatActivity implements View.OnClic
             byte[] bis = intent.getByteArrayExtra("bitmap");
             Bitmap bitmap = BitmapFactory.decodeByteArray(bis, 0, bis.length);
             mTouchImageView.setImageBitmap(bitmap);
-            //Resources res = this.getResources();
-            //mTouchImageView.setImageBitmap(BitmapFactory.decodeResource(res, R.mipmap.rose));
         }
 
     }
