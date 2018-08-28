@@ -21,6 +21,7 @@ public class Constants {
     public static final int HANDLER_CALLBACK_FAILURE = 2;
     public static final int HANDLER_CALLBACK_GET_BITMAP = 3;
     public static final int HANDLER_CALLBACK_SUCCESS_GET_LIST = 4;
+    public static final int HANDLER_CALLBACK_GET_BITMAP_FAILURE = 5;
 
 
     public static final int MAIN_VIEW_PAGER_CURRENT_ITEM = 1;

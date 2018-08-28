@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import okhttp3.Response;
 
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_FAILURE;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_GET_BITMAP;
+import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_GET_BITMAP_FAILURE;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS_GET_LIST;
 
@@ -60,7 +62,8 @@ public class StoryItemFragment extends StoryItemBaseFragment {
     private final int PAGE_COUNT = 5;
     private GridLayoutManager mLayoutManager;
 
-    private int flowerModels_load_cnt=0;
+    private int flowerModels_load_success_cnt =0;
+    private int flowerModels_load_fail_cnt = 0;
 
     @Override
     protected void onFragmentFirstVisible() {
@@ -78,7 +81,7 @@ public class StoryItemFragment extends StoryItemBaseFragment {
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Log.i(TAG, "SwipeRefreshLayout.OnRefreshListener().onRefresh()");
+                Log.i(TAG, "onRefresh()");
                 loadData();
                 if(mAdapter != null) {
                     mAdapter.resetDatas();
@@ -127,7 +130,8 @@ public class StoryItemFragment extends StoryItemBaseFragment {
 
         /* 清除缓存数据 */
         flowerModels.clear();
-        flowerModels_load_cnt=0;
+        flowerModels_load_success_cnt =0;
+        flowerModels_load_fail_cnt=0;
         Data.clear();
 
         /* 加载Data List */
@@ -205,19 +209,23 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                         call.enqueue(new Callback() {
                             @Override
                             public void onFailure(Call arg0, IOException e) {
-                                Message.obtain(mUIHandler, HANDLER_CALLBACK_FAILURE).sendToTarget();
+                                Message.obtain(mUIHandler, HANDLER_CALLBACK_GET_BITMAP_FAILURE).sendToTarget();
                             }
                             @Override
                             public void onResponse(Call call, Response response) throws IOException {
-                                byte[] data = response.body().bytes();
-                                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                                for(FlowerModel item:flowerModels){
-                                    if(item.getId().equals(id)){
-                                        item.setBitmap(bitmap);
-                                        break;
+                                try {
+                                    byte[] data = response.body().bytes();
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                    for (FlowerModel item : flowerModels) {
+                                        if (item.getId().equals(id)) {
+                                            item.setBitmap(bitmap);
+                                            break;
+                                        }
                                     }
+                                    Message.obtain(mUIHandler, HANDLER_CALLBACK_GET_BITMAP).sendToTarget();
+                                } catch (SocketTimeoutException e) {
+                                    Message.obtain(mUIHandler, HANDLER_CALLBACK_GET_BITMAP_FAILURE).sendToTarget();
                                 }
-                                Message.obtain(mUIHandler, HANDLER_CALLBACK_GET_BITMAP).sendToTarget();
                             }
                         });
                     } catch (Exception e) {
@@ -226,18 +234,23 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                     break;
                 }
                 case HANDLER_CALLBACK_FAILURE: {
-                    // 加载失敗 结束刷新
+                    // 加载失败 结束刷新
                     Toast.makeText(getActivity(), "糟糕,网络开了小差", Toast.LENGTH_SHORT).show();
                     mRefreshLayout.setRefreshing(false);
                     break;
                 }
                 case HANDLER_CALLBACK_GET_BITMAP: {
                     mAdapter.notifyDataSetChanged();
-                    flowerModels_load_cnt++;
-                    if(flowerModels_load_cnt==flowerModels.size()) {
-                        // 加载完成 结束刷新
+                    flowerModels_load_success_cnt++;
+                    if(flowerModels_load_success_cnt == flowerModels.size()-flowerModels_load_fail_cnt) {
+                        // 加载所有图像完成 结束刷新
                         mRefreshLayout.setRefreshing(false);
                     }
+                    break;
+                }
+                case HANDLER_CALLBACK_GET_BITMAP_FAILURE: {
+                    // 加载单张图像失败
+                    flowerModels_load_fail_cnt++;
                     break;
                 }
             }
@@ -273,8 +286,14 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                     }
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        String jsonData = response.body().string();
-                        Message.obtain(mUIHandler, HANDLER_CALLBACK_SUCCESS, jsonData).sendToTarget();
+                        try {
+                            String jsonData = response.body().string();
+                            Message.obtain(mUIHandler, HANDLER_CALLBACK_SUCCESS, jsonData).sendToTarget();
+                        } catch (SocketTimeoutException e) {
+                            // 加载列表失败 结束刷新
+                            Toast.makeText(getActivity(), "糟糕,网络开了小差", Toast.LENGTH_SHORT).show();
+                            mRefreshLayout.setRefreshing(false);
+                        }
                     }
                 });
             }
