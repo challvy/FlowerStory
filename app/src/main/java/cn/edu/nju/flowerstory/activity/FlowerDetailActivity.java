@@ -145,13 +145,16 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.imageViewDetail: {
-                Log.i("FlowerDetailActivity", "clickImageView");
-                Intent intent = new Intent(getApplication(), ViewBitmapActivity.class);
-                ByteArrayOutputStream baos=new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte [] bitmapByte =baos.toByteArray();
-                intent.putExtra("bitmap", bitmapByte);
-                startActivity(intent);
+                if(mImageView.getDrawable() != null) {
+                    Intent intent = new Intent(getApplication(), ViewBitmapActivity.class);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] bitmapByte = baos.toByteArray();
+                    intent.putExtra("bitmap", bitmapByte);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "图片正在加载中", Toast.LENGTH_SHORT).show();
+                }
                 break;
             }
         }
