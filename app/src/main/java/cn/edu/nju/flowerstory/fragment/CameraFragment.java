@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -109,6 +110,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private TextView mTextViewFlower;
     private TextView mTextViewAbstract;
     private TextView mTextViewConfidence;
+
+    private TextView mTextViewModeClass;
+    private TextView mTextViewModeDisease;
+    private boolean modeClass;
 
     private boolean flagToken = false;
     private String mCameraId;
@@ -217,14 +222,22 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         mTextViewAbstract = view.findViewById(R.id.textViewAbstract);
         mTextViewConfidence = view.findViewById(R.id.textViewConfidence);
 
+        mTextViewModeClass = view.findViewById(R.id.modeClass);
+        mTextViewModeDisease = view.findViewById(R.id.modeDisease);
+
         mImageViewRecentPic.setBackgroundColor(0xffffff);
         mView.setAlpha(0.3f);
+        mTextViewModeClass.getBackground().setAlpha(255);
+        mTextViewModeDisease.getBackground().setAlpha(75);
+        modeClass = true;
 
         mSeekbar.setOnSeekBarChangeListener(this);
         mImageViewRecentPic.setOnClickListener(this);
         mButtonPicture.setOnClickListener(this);
         mImageViewChoose.setOnClickListener(this);
         mTextViewMoreResult.setOnClickListener(this);
+        mTextViewModeClass.setOnClickListener(this);
+        mTextViewModeDisease.setOnClickListener(this);
 
         PickerLayoutManager pickerLayoutManager = new PickerLayoutManager(getContext(), PickerLayoutManager.HORIZONTAL, false);
         pickerLayoutManager.setChangeAlpha(false);
@@ -266,8 +279,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     @Override
     public void onResume() {
         super.onResume();
-        flagToken = false;
         Log.i(TAG, "onResume");
+        flagToken = false;
+        modeClass = true;
         if(!selectPhoto) {
             close = true;
 
@@ -291,6 +305,16 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             mImageViewRecentPic.setVisibility(View.VISIBLE);
             imageViewBG.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.VISIBLE);
+
+            mTextViewModeClass.setVisibility(View.VISIBLE);
+            mTextViewModeDisease.setVisibility(View.VISIBLE);
+
+            mTextViewModeClass.setBackgroundColor(Color.WHITE);
+            mTextViewModeClass.getBackground().setAlpha(255);
+            mTextViewModeClass.setTextColor(Color.BLACK);
+            mTextViewModeDisease.setBackgroundColor(getResources().getColor(R.color.background));
+            mTextViewModeDisease.getBackground().setAlpha(75);
+            mTextViewModeDisease.setTextColor(Color.WHITE);
         }
     }
 
@@ -333,6 +357,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     mTextViewFlower.setVisibility(View.INVISIBLE);
                     mTextViewAbstract.setVisibility(View.INVISIBLE);
                     mTextViewConfidence.setVisibility(View.INVISIBLE);
+                    mTextViewModeClass.setVisibility(View.VISIBLE);
+                    mTextViewModeDisease.setVisibility(View.VISIBLE);
                 }
                 break;
             }
@@ -349,6 +375,30 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             case R.id.textViewMoreResult: {
                 Intent intent = new Intent(getContext(), RecognitionMoreActivity.class);
                 startActivity(intent);
+                break;
+            }
+            case R.id.modeClass: {
+                if(!modeClass) {
+                    mTextViewModeClass.setBackgroundColor(Color.WHITE);
+                    mTextViewModeClass.getBackground().setAlpha(255);
+                    mTextViewModeClass.setTextColor(Color.BLACK);
+                    mTextViewModeDisease.setBackgroundColor(getResources().getColor(R.color.background));
+                    mTextViewModeDisease.getBackground().setAlpha(75);
+                    mTextViewModeDisease.setTextColor(Color.WHITE);
+                    modeClass = true;
+                }
+                break;
+            }
+            case R.id.modeDisease: {
+                if(modeClass) {
+                    mTextViewModeDisease.setBackgroundColor(Color.WHITE);
+                    mTextViewModeDisease.getBackground().setAlpha(255);
+                    mTextViewModeDisease.setTextColor(Color.BLACK);
+                    mTextViewModeClass.setBackgroundColor(getResources().getColor(R.color.background));
+                    mTextViewModeClass.getBackground().setAlpha(75);
+                    mTextViewModeClass.setTextColor(Color.WHITE);
+                    modeClass = false;
+                }
                 break;
             }
         }
@@ -905,43 +955,29 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     Bitmap newbm2 = sizeBitmap(newbm1, 300, 300);
 
                     File mmFile = saveBitmap(newbm2,SUB_DIR_PATH[0]+"FS_" + str + ".jpg",100);
-                    byte [] buffer = getFileToByte(mmFile);
-
-                    /*
-                    File mmFile = new File(SUB_DIR_PATH[0]+"FS_" + str + ".jpg");
-                    try {
-                        FileOutputStream out = new FileOutputStream(mmFile);
-                        if (newbm2.compress(Bitmap.CompressFormat.JPEG, 100, out)) {
-                            out.flush();
-                            out.close();
+                    // Post
+                    OkHttpClient mOkHttpClient = new OkHttpClient();
+                    RequestBody fileBody = RequestBody.create(MEDIA_TYPE_MARKDOWN, mmFile);
+                    RequestBody requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("image", "p.jpg", fileBody)
+                            .build();
+                    Request request = new Request.Builder()
+                            .url("http://47.106.159.26/recognition")
+                            //.url("http://10.0.2.2:8080/recognition")
+                            .post(requestBody)
+                            .build();
+                    Call call = mOkHttpClient.newCall(request);
+                    call.enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call arg0, IOException e) {
+                            System.out.println(e.toString());
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }*/
-
-                    if(mmFile.exists()) {
-                        // Post
-                        OkHttpClient mOkHttpClient = new OkHttpClient();
-                        Request request = new Request.Builder()
-                                .url("http://47.106.159.26/recognition")
-                                //.url("http://10.0.2.2:8080/recognition") //localhost
-                                .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, buffer))
-                                .build();
-
-                        Call call = mOkHttpClient.newCall(request);
-                        call.enqueue(new Callback() {
-                            @Override
-                            public void onFailure(Call arg0, IOException e) {
-                                System.out.println(e.toString());
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-                                Message.obtain(mUIHandler, CAMERA_RESULT, response.body().string()).sendToTarget();
-                                //System.out.println(response.body().string());
-                            }
-                        });
-                    }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            Message.obtain(mUIHandler, CAMERA_RESULT, response.body().string()).sendToTarget();
+                        }
+                    });
                     break;
                 case CAMERA_MOVE_FOCK:
                     if(!flagToken) {
@@ -958,6 +994,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     mTextViewAbstract.setText(message.obj.toString());
                     mImageViewRecentPic.setImageBitmap(mTextureView.getBitmap());
                     mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
+
+                    mTextViewModeClass.setVisibility(View.INVISIBLE);
+                    mTextViewModeDisease.setVisibility(View.INVISIBLE);
                     mImageViewResult.setVisibility(View.VISIBLE);
                     mView.setVisibility(View.VISIBLE);
                     mTextViewMoreResult.setVisibility(View.VISIBLE);
