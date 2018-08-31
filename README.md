@@ -1,6 +1,6 @@
 # FlowerStory
 
-[![Download](https://img.shields.io/badge/Download-v1.0.0-ff8080.svg) ](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory.apk)
+[![Download](https://img.shields.io/badge/Download-v1.0.0-ff8080.svg)](https://github.com/challvy/FlowerStory/raw/master/README_RES/app.apk)
 
 The project isn't able to run on your Android Studio since the server end is to be done.
 
@@ -44,8 +44,7 @@ Flower Story is an Android App project that provides flower recognition service.
 ## Demo
 
 <div align=center>
-
-<img src="https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory.gif" width="40%"/> 
+<img src="https://github.com/challvy/FlowerStory/raw/master/README_RES/app.gif" width="40%"/> 
 
 </div>
 
