@@ -37,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="24sp"
                 android:textColor="#333333" />
 
             <ImageView
@@ -52,6 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_gravity="center_horizontal"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#2E3092" />
 
@@ -69,8 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:text=" --以上信息取自百度百科--"
+                android:text="信息来源@百度百科"
                 android:textColor="#888888"
                 android:textSize="14sp" />
 

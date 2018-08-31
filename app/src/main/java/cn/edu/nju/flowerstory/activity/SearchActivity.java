@@ -1,11 +1,7 @@
 package cn.edu.nju.flowerstory.activity;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,13 +19,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.adapter.RecyclerAdapter;
-import cn.edu.nju.flowerstory.model.FlowerModel;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -140,7 +131,7 @@ public class SearchActivity extends AppCompatActivity {
             public void onItemClick(View view, int position) {
                 //Toast.makeText(getApplicationContext(), "点击了" + position, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), FlowerDetailActivity.class);
-                intent.putExtra(FlowerDetailActivity.RETURN_INFO, position);
+                intent.putExtra(FlowerDetailActivity.sFlowerID, position);
                 RecognitionActivity.mBitmap = data.get(position).getBitmap();
                 startActivity(intent);
                 //startActivityForResult(intent,0);

@@ -53,11 +53,6 @@
         <activity
             android:name=".activity.RecognitionActivity"
             android:label="@string/result"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppItemTheme" />
-        <activity
-            android:name=".activity.RecognitionMoreActivity"
-            android:label="@string/moreresult"
             android:parentActivityName=".activity.CameraActivity"
             android:theme="@style/AppItemTheme" />
         <activity
@@ -73,10 +68,6 @@
             android:name=".activity.CameraActivity"
             android:label="@string/takephoto"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/MaterialTheme" />
-        <activity
-            android:name=".activity.CameraOnePictureActivity"
-            android:parentActivityName=".activity.CameraActivity"
             android:theme="@style/MaterialTheme" />
         <activity
             android:name=".activity.ViewBitmapActivity"

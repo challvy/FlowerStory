@@ -66,12 +66,12 @@ public class FlowerModel {
         return imageDetail;
     }
 
-    public String getDetail() {
-        return detail;
+    public String getTaxonomy() {
+        return taxonomy;
     }
 
-    public void setDetail(String detail) {
-        this.detail = detail;
+    public void setTaxonomy(String taxonomy) {
+        this.taxonomy = taxonomy;
     }
 
     public void setBitmap(Bitmap bitmap) {

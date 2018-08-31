@@ -39,6 +39,7 @@ import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_GET_BITMAP;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_GET_BITMAP_FAILURE;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS_GET_LIST;
+import static cn.edu.nju.flowerstory.app.Constants.sFlowerID;
 
 
 /**
@@ -175,7 +176,7 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                             public void onItemClick(View view, int position) {
                                 Log.i(TAG, "onItemClick at Position " + position);
                                 Intent intent = new Intent(getContext(), FlowerDetailActivity.class);
-                                intent.putExtra(FlowerDetailActivity.RETURN_INFO, flowerModels.get(position).getId());
+                                intent.putExtra(sFlowerID, flowerModels.get(position).getId());
                                 startActivity(intent);
                             }
                             @Override
@@ -193,9 +194,11 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                         JSONObject obj = new JSONObject(message.obj.toString());
                         final String id = obj.get("id").toString();
                         final String name = obj.get("name").toString();
+                        final String detail = obj.get("taxonomy").toString();
                         for(FlowerModel item:flowerModels){
                             if(item.getId().equals(id)){
                                 item.setName(name);
+                                item.setTaxonomy(detail);
                                 break;
                             }
                         }

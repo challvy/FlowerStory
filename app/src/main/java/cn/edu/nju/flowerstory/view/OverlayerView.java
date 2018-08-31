@@ -8,10 +8,11 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.ImageView;
 
 import cn.edu.nju.flowerstory.R;
-import cn.edu.nju.flowerstory.utils.DisplayUtil;
 
 @SuppressLint("AppCompatCustomView")
 public class OverlayerView extends ImageView {
@@ -24,11 +25,19 @@ public class OverlayerView extends ImageView {
     private Paint paint;
     private int widthScreen, heightScreen;
 
+    public static Point getScreenMetrics(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        int w_screen = dm.widthPixels;
+        int h_screen = dm.heightPixels;
+        Log.i(TAG, "Screen---Width = " + w_screen + " Height = " + h_screen + " densityDpi = " + dm.densityDpi);
+        return new Point(w_screen, h_screen);
+    }
+
     public OverlayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initPaint();
         mContext = context;
-        Point p = DisplayUtil.getScreenMetrics(mContext);
+        Point p = getScreenMetrics(mContext);
         widthScreen = p.x;
         heightScreen = p.y;
     }
@@ -79,7 +88,4 @@ public class OverlayerView extends ImageView {
         canvas.drawRect(mCenterRect, mLinePaint);
     }
 
-    public void post() {
-        postInvalidate();
-    }
 }

@@ -15,7 +15,6 @@ import cn.edu.nju.flowerstory.view.TouchImageView;
 public class ViewBitmapActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TouchImageView mTouchImageView;
-    private ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +22,7 @@ public class ViewBitmapActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_view_bitmap);
 
         mTouchImageView = findViewById(R.id.imageViewDetailView);
-        mImageView = findViewById(R.id.imageViewReturn);
+        ImageView imageView = findViewById(R.id.imageViewReturn);
         mTouchImageView.setActivity(this);
 
         ViewTreeObserver viewTreeObserver = mTouchImageView.getViewTreeObserver();
@@ -34,7 +33,7 @@ public class ViewBitmapActivity extends AppCompatActivity implements View.OnClic
             }
         });
 
-        mImageView.setOnClickListener(this);
+        imageView.setOnClickListener(this);
 
         Intent intent=getIntent();
         if(intent !=null) {
@@ -54,4 +53,5 @@ public class ViewBitmapActivity extends AppCompatActivity implements View.OnClic
             }
         }
     }
+
 }

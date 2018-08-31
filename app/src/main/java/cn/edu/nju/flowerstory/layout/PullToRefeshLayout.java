@@ -7,24 +7,26 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import cn.edu.nju.flowerstory.utils.ScreenUtil;
-
 /**
  * Created by Roy on 2016/12/28.
  * desc:
  */
 
 public class PullToRefeshLayout extends LinearLayout {
-    private static final String TAG = "PullToRefeshLayout";
     private int mHeaderOffsetTop = 0;
     private int mHeaderOffsetBottom = 0;
 
     private float mStratY;
 
+    public int dip2px(Context context, float dipValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dipValue * scale + 0.5f);
+    }
+
     public PullToRefeshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mHeaderOffsetTop = ScreenUtil.dip2px(context, 100);
-        mHeaderOffsetBottom = ScreenUtil.dip2px(context, 100);
+        mHeaderOffsetTop = dip2px(context, 100);
+        mHeaderOffsetBottom = dip2px(context, 100);
     }
 
     @Override
@@ -68,30 +70,23 @@ public class PullToRefeshLayout extends LinearLayout {
                 mCurrentY = event.getY();
                 delta = mCurrentY - mStratY;
                 tmpCur = cur + delta;
-                if (mCurrentY - mStratY < 0) {
-                    if(tmpCur<=-670){
-                        return true;
-                    }
-                    getChildAt(0).setTranslationY(delta);
-                    getChildAt(1).setTranslationY(delta);
+                if ((mCurrentY-mStratY<0 && tmpCur<=-670) || (mCurrentY-mStratY>=0 && tmpCur>=90)){
                     return true;
-                } else {
-                    if(tmpCur>=80){
-                        return true;
-                    }
-                    getChildAt(0).setTranslationY(cur + mCurrentY - mStratY);
-                    getChildAt(1).setTranslationY(cur + mCurrentY - mStratY);
                 }
+                getChildAt(0).setTranslationY(cur + delta);
+                getChildAt(1).setTranslationY(cur + delta);
                 return true;
             case MotionEvent.ACTION_UP:
                 cur += (mCurrentY - mStratY);
                 if(cur<-670){
                     cur = -670;
+                    getChildAt(0).setTranslationY(cur);
+                    getChildAt(1).setTranslationY(cur);
                 } else if (cur>0){
                     cur = 0;
+                    getChildAt(0).animate().translationY(cur);
+                    getChildAt(1).animate().translationY(cur);
                 }
-                getChildAt(0).animate().translationY(cur);
-                getChildAt(1).animate().translationY(cur);
                 return true;
             default:
                 break;

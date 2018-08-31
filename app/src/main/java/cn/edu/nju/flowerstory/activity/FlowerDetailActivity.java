@@ -1,8 +1,6 @@
 package cn.edu.nju.flowerstory.activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -28,17 +26,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import cn.edu.nju.flowerstory.R;
-import cn.edu.nju.flowerstory.view.TouchImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static cn.edu.nju.flowerstory.app.Constants.sFlowerID;
+
 
 public class FlowerDetailActivity extends AppCompatActivity implements View.OnClickListener {
-
-    public static String RETURN_INFO = "cn.edu.nju.flowerstory.activity.FlowerDetailActivity.info";
 
     private Handler mUIHandler;
 
@@ -98,7 +95,6 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
         mTextViewPhotoDetail = findViewById(R.id.photodetail);
         mTextViewDetail = findViewById(R.id.detail);
         toolbar = findViewById(R.id.mToolbarDetail);
-
         toolbar.setTitle(R.string.detail);
         toolbar.inflateMenu(R.menu.menu_favr);
         setSupportActionBar(toolbar);
@@ -106,11 +102,6 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        //Resources res = this.getResources();
-        //mTouchImageView.setImageBitmap(bitmap);
-        //mImageView.setImageBitmap(BitmapFactory.decodeResource(res, R.mipmap.rose));
-
         mImageView.setOnClickListener(this);
     }
 
@@ -118,14 +109,10 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
         // 创建UI主线程，同时设置消息回调
         mUIHandler = new Handler(new InnerCallBack());
 
-        // TODO: 这里传进来的是花的名字，加到"http://10.0.2.2:8080/knowledge/"后面
-        String infoInt = getIntent().getStringExtra(RETURN_INFO);
-
-        // Post
+        String flowerName = getIntent().getStringExtra(sFlowerID);
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("http://47.106.159.26/knowledge/" + infoInt)
-                //.url("http://10.0.2.2:8080/knowledge/" + infoInt) //localhost
+                .url("http://47.106.159.26/knowledge/" + flowerName)
                 .build();
         Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
@@ -186,11 +173,13 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
                                     Data[i][j] = Array2.getString(j);
                             }
                             content.append("Plant Diseases Insect Pests\n");
-                            for (String[] item : Data) {
-                                for (String tmp : item) {
+                            for(int i=0; i<Data.length;i++){
+                                for (String tmp : Data[i]) {
                                     content.append(tmp).append("\n");
                                 }
-                                content.append("\n");
+                                if(i!=Data.length-1) {
+                                    content.append("\n");
+                                }
                             }
                         }
                         mTextViewDetail.setText(content);
@@ -200,7 +189,6 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
                         OkHttpClient mOkHttpClient = new OkHttpClient();
                         Request request = new Request.Builder()
                                 .url("http://47.106.159.26/knowledge/bitmap/" + uri)
-                                //.url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
                                 .build();
                         Call call = mOkHttpClient.newCall(request);
                         call.enqueue(new Callback() {

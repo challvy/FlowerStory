@@ -55,7 +55,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.edu.nju.flowerstory.R;
-import cn.edu.nju.flowerstory.activity.RecognitionMoreActivity;
+import cn.edu.nju.flowerstory.activity.RecognitionActivity;
 import cn.edu.nju.flowerstory.adapter.PickerAdapter;
 import cn.edu.nju.flowerstory.utils.AlbumUtil;
 import cn.edu.nju.flowerstory.model.AlbumItemModel;
@@ -74,8 +74,10 @@ import okhttp3.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,7 +103,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private AutoFitTextureView mTextureView;
     private View imageViewBG;
     private ImageView mImageViewRecentPic;
-    private ImageView mImageViewChoose;
     private Button mButtonPicture;
     private RecyclerView mRecyclerView;
     private ImageView mImageViewResult;
@@ -136,13 +137,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private Uri imageUri;
     private Bitmap albumBitmap;
 
-    // 辅助逻辑标志
-
     // 是否点击相册选择图片标志
     boolean selectPhoto = false;
     // 相册能否关闭
     boolean close = false;
 
+    Range <Integer> range;
     /**
      * A {@link Semaphore} to prevent the app from exiting before closing the camera.
      */
@@ -213,7 +213,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         mTextureView =  view.findViewById(R.id.texture);
         imageViewBG = view.findViewById(R.id.imageViewBG);
         mImageViewRecentPic =  view.findViewById(R.id.imageViewRecentPic);
-        mImageViewChoose = view.findViewById(R.id.imageViewReturn);
         mRecyclerView = view.findViewById(R.id.rv);
         mImageViewResult = view.findViewById(R.id.imageViewResult);
         mView = view.findViewById(R.id.view2);
@@ -221,20 +220,18 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         mTextViewFlower = view.findViewById(R.id.textViewFlower);
         mTextViewAbstract = view.findViewById(R.id.textViewAbstract);
         mTextViewConfidence = view.findViewById(R.id.textViewConfidence);
-
         mTextViewModeClass = view.findViewById(R.id.modeClass);
         mTextViewModeDisease = view.findViewById(R.id.modeDisease);
 
         mImageViewRecentPic.setBackgroundColor(0xffffff);
         mView.setAlpha(0.3f);
         mTextViewModeClass.getBackground().setAlpha(255);
-        mTextViewModeDisease.getBackground().setAlpha(75);
+        mTextViewModeDisease.getBackground().setAlpha(160);
         modeClass = true;
 
         mSeekbar.setOnSeekBarChangeListener(this);
         mImageViewRecentPic.setOnClickListener(this);
         mButtonPicture.setOnClickListener(this);
-        mImageViewChoose.setOnClickListener(this);
         mTextViewMoreResult.setOnClickListener(this);
         mTextViewModeClass.setOnClickListener(this);
         mTextViewModeDisease.setOnClickListener(this);
@@ -265,9 +262,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         // 创建UI主线程，同时设置消息回调
         mUIHandler = new Handler(new InnerCallBack());
 
-        AlbumUtil helper = AlbumUtil.getHelper();
-        helper.init(getContext());
-        List<AlbumItemModel> list = helper.getImagesList();
+        // 从相册中选取图片
+        AlbumUtil albumUtil = AlbumUtil.getHelper();
+        albumUtil.init(getContext());
+        List<AlbumItemModel> list = albumUtil.getImagesList();
         if (list != null && list.size() != 0) {
             mImageViewRecentPic.setImageBitmap(BitmapUtil.createCaptureBitmap(list.get(0).imagePath));
             mImageViewRecentPic.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -282,9 +280,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         Log.i(TAG, "onResume");
         flagToken = false;
         modeClass = true;
+        mSeekbar.setProgress(0);
         if(!selectPhoto) {
             close = true;
-
             startBackgroundThread();
             if (mTextureView.isAvailable()) {
                 openCamera(mTextureView.getWidth(), mTextureView.getHeight());
@@ -301,19 +299,18 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             mTextViewFlower.setVisibility(View.INVISIBLE);
             mTextViewAbstract.setVisibility(View.INVISIBLE);
             mTextViewConfidence.setVisibility(View.INVISIBLE);
-
             mImageViewRecentPic.setVisibility(View.VISIBLE);
             imageViewBG.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.VISIBLE);
-
             mTextViewModeClass.setVisibility(View.VISIBLE);
             mTextViewModeDisease.setVisibility(View.VISIBLE);
+            mSeekbar.setVisibility(View.VISIBLE);
 
             mTextViewModeClass.setBackgroundColor(Color.WHITE);
             mTextViewModeClass.getBackground().setAlpha(255);
             mTextViewModeClass.setTextColor(Color.BLACK);
             mTextViewModeDisease.setBackgroundColor(getResources().getColor(R.color.background));
-            mTextViewModeDisease.getBackground().setAlpha(75);
+            mTextViewModeDisease.getBackground().setAlpha(160);
             mTextViewModeDisease.setTextColor(Color.WHITE);
         }
     }
@@ -334,10 +331,14 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         switch (view.getId()) {
             case R.id.picture: {
                 if(!mButtonPicture.isSelected()) {
+                    Toast.makeText(getActivity(), "正在处理中...", Toast.LENGTH_SHORT).show();
                     mButtonPicture.setSelected(true);
                     mImageViewRecentPic.setVisibility(View.GONE);
                     imageViewBG.setVisibility(View.GONE);
                     mRecyclerView.setVisibility(View.GONE);
+                    mTextViewModeClass.setVisibility(View.GONE);
+                    mTextViewModeDisease.setVisibility(View.GONE);
+                    mSeekbar.setVisibility(View.GONE);
                     // 拍照后修改标志 顺序不能变
                     takePicture();
                     flagToken = true;
@@ -359,31 +360,32 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     mTextViewConfidence.setVisibility(View.INVISIBLE);
                     mTextViewModeClass.setVisibility(View.VISIBLE);
                     mTextViewModeDisease.setVisibility(View.VISIBLE);
+                    mTextViewModeClass.setVisibility(View.VISIBLE);
+                    mTextViewModeDisease.setVisibility(View.VISIBLE);
+                    mSeekbar.setVisibility(View.VISIBLE);
                 }
                 break;
             }
             case R.id.imageViewRecentPic:{
-                Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);//Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                albumIntent.setType("image/*");
                 selectPhoto = true;
+                Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                albumIntent.setType("image/*");
                 startActivityForResult(albumIntent, SELECT_PHOTO);
                 break;
             }
-            case R.id.imageViewReturn: {
-                break;//mImageViewChoose.setImageResource(R.mipmap.yes);
-            }
             case R.id.textViewMoreResult: {
-                Intent intent = new Intent(getContext(), RecognitionMoreActivity.class);
+                Intent intent = new Intent(getContext(), RecognitionActivity.class);
                 startActivity(intent);
                 break;
             }
             case R.id.modeClass: {
                 if(!modeClass) {
+                    Toast.makeText(getActivity(), "种属识别", Toast.LENGTH_SHORT).show();
                     mTextViewModeClass.setBackgroundColor(Color.WHITE);
                     mTextViewModeClass.getBackground().setAlpha(255);
                     mTextViewModeClass.setTextColor(Color.BLACK);
                     mTextViewModeDisease.setBackgroundColor(getResources().getColor(R.color.background));
-                    mTextViewModeDisease.getBackground().setAlpha(75);
+                    mTextViewModeDisease.getBackground().setAlpha(160);
                     mTextViewModeDisease.setTextColor(Color.WHITE);
                     modeClass = true;
                 }
@@ -391,11 +393,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             }
             case R.id.modeDisease: {
                 if(modeClass) {
+                    Toast.makeText(getActivity(), "疾病识别", Toast.LENGTH_SHORT).show();
                     mTextViewModeDisease.setBackgroundColor(Color.WHITE);
                     mTextViewModeDisease.getBackground().setAlpha(255);
                     mTextViewModeDisease.setTextColor(Color.BLACK);
                     mTextViewModeClass.setBackgroundColor(getResources().getColor(R.color.background));
-                    mTextViewModeClass.getBackground().setAlpha(75);
+                    mTextViewModeClass.getBackground().setAlpha(160);
                     mTextViewModeClass.setTextColor(Color.WHITE);
                     modeClass = false;
                 }
@@ -417,7 +420,21 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                 if (resultCode == RESULT_OK) {
                     Intent intent = new Intent("com.android.camera.action.CROP");
                     File selectFile = new File(selectPic(data));
-                    imageUri = Uri.fromFile(selectFile);
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);
+                    Date curDate =  new Date(System.currentTimeMillis());
+                    String str = formatter.format(curDate);
+                    File dstFile = new File(DIR_PATH+"FS_" + str + "_source.jpg");
+                    FileChannel srcChannel = null;
+                    FileChannel dstChannel = null;
+                    try {
+                        srcChannel = new FileInputStream(selectFile).getChannel();
+                        dstChannel = new FileOutputStream(dstFile).getChannel();
+                        srcChannel.transferTo(0, srcChannel.size(), dstChannel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    imageUri = Uri.fromFile(dstFile);
                     intent.setDataAndType(data.getData(), "image/*");
                     intent.putExtra("scale", true);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
@@ -429,33 +446,31 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                 break;
             }
             case CUT_PHOTO: {
+                Toast.makeText(getActivity(), "正在处理中...", Toast.LENGTH_SHORT).show();
                 Intent it = new Intent();
                 it.setAction(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 it.setData(imageUri);
-                getActivity().sendBroadcast(it);
+                //getActivity().sendBroadcast(it);
                 try {
                     albumBitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+                    Bitmap newbm = Bitmap.createBitmap(albumBitmap);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);
                     Date curDate =  new Date(System.currentTimeMillis());
                     String str = formatter.format(curDate);
-
-                    int width = albumBitmap.getWidth();
-                    int height = albumBitmap.getHeight();
-
-                    // 设置想要的大小
-                    int newWidth = (int)(width/(curZoom)*0.8);
-                    int newHeight = (int)(height/(curZoom)*0.8);
-                    Bitmap newbm = Bitmap.createBitmap(albumBitmap, (width-newWidth)/2, (height-newHeight)/2, newWidth, newHeight);
-                    Bitmap newbm1 = cropImage(newbm);
-                    Bitmap newbm2 = sizeBitmap(newbm1, 300, 300);
-                    File mmFile = saveBitmap(newbm2,SUB_DIR_PATH[0]+"FS_" + str + ".jpg",100);
+                    Bitmap newbm1 = sizeBitmap(newbm, 300, 300);
+                    File mFile = saveBitmap(newbm1,DIR_PATH+"FS_" + str + ".jpg",100);
+                    getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(mFile)));
 
                     // Post
                     OkHttpClient mOkHttpClient = new OkHttpClient();
+                    RequestBody fileBody = RequestBody.create(MEDIA_TYPE_MARKDOWN, mFile);
+                    RequestBody requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("image", "p.jpg", fileBody)
+                            .build();
                     Request request = new Request.Builder()
                             .url("http://47.106.159.26/recognition")
-                            //.url("http://10.0.2.2:8080/recognition") //localhost
-                            .post(RequestBody.create(MEDIA_TYPE_MARKDOWN, mmFile))
+                            .post(requestBody)
                             .build();
                     Call call = mOkHttpClient.newCall(request);
                     call.enqueue(new Callback() {
@@ -466,7 +481,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             Message.obtain(mUIHandler, CAMERA_SELECTED, response.body().string()).sendToTarget();
-                            //System.out.println(response.body().string());
                         }
                     });
                 } catch (IOException e) {
@@ -554,7 +568,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                         picRect.left = (int) (maxZoomrect.left / (curZoom));
                         picRect.right = (int) (maxZoomrect.right / (curZoom));
                         picRect.bottom = (int) (maxZoomrect.bottom / (curZoom));
-                        Message.obtain(mUIHandler, CAMERA_MOVE_FOCK).sendToTarget();
+                        // 如果mCameraCaptureSession为空，则放大缩小没意义
+                        if(mCameraCaptureSession!=null) {
+                            Message.obtain(mUIHandler, CAMERA_MOVE_FOCK).sendToTarget();
+                        }
                     }
                     break;
                 }
@@ -676,16 +693,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
 
             // 开始拍照
             mCameraCaptureSession.capture(mCaptureRequestBuilder.build(),
-                    // 这个回调接口用于拍照结束时重启预览，因为拍照会导致预览停止
-                    // 但这里不需要自动恢复预览
-                    new CameraCaptureSession.CaptureCallback() {
-                        @Override
-                        public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-                            //showToast("Saved");
-                            Log.d(TAG, "Saved");
-                            //unlockFocus();
-                        }
-                    }, null
+                // 这个回调接口用于拍照结束时重启预览，因为拍照会导致预览停止
+                // 但这里不需要自动恢复预览
+                new CameraCaptureSession.CaptureCallback() {
+                    @Override
+                    public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+                        Log.d(TAG, "Saved");
+                        //unlockFocus();
+                    }
+                }, null
             );
         } catch (CameraAccessException e) {
             e.printStackTrace();
@@ -754,7 +770,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         picRect.left = (int) (maxZoomrect.left / (curZoom));
         picRect.right = (int) (maxZoomrect.right / (curZoom));
         picRect.bottom = (int) (maxZoomrect.bottom / (curZoom));
-        Message.obtain(mUIHandler, CAMERA_MOVE_FOCK).sendToTarget();
+        // 如果mCameraCaptureSession为空，则放大缩小没意义
+        if(mCameraCaptureSession!=null) {
+            Message.obtain(mUIHandler, CAMERA_MOVE_FOCK).sendToTarget();
+        }
     }
 
     @Override
@@ -851,20 +870,19 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                 mSensorOrientation = mCameraCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
                 boolean swappedDimensions = false;
                 switch (displayRotation) {
-                    case Surface.ROTATION_0:
-                    case Surface.ROTATION_180:
+                    case Surface.ROTATION_0: case Surface.ROTATION_180:
                         if (mSensorOrientation == 90 || mSensorOrientation == 270) {
                             swappedDimensions = true;
                         }
                         break;
-                    case Surface.ROTATION_90:
-                    case Surface.ROTATION_270:
+                    case Surface.ROTATION_90: case Surface.ROTATION_270:
                         if (mSensorOrientation == 0 || mSensorOrientation == 180) {
                             swappedDimensions = true;
                         }
                         break;
                     default:
                         Log.e(TAG, "Display rotation is invalid: " + displayRotation);
+                        break;
                 }
                 Point displaySize = new Point();
                 activity.getWindowManager().getDefaultDisplay().getSize(displaySize);
@@ -912,27 +930,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             e.printStackTrace();
         }
     }
-    Range <Integer> range;
 
-    public static byte[] getFileToByte(File file) {
-        byte[] by = new byte[(int) file.length()];
-        try {
-            InputStream is = new FileInputStream(file);
-            ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
-            byte[] bb = new byte[2048];
-            int ch;
-            ch = is.read(bb);
-            while (ch != -1) {
-                bytestream.write(bb, 0, ch);
-                ch = is.read(bb);
-            }
-            by = bytestream.toByteArray();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return by;
-    }
-    private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
     private class InnerCallBack implements Handler.Callback {
         @Override
         public boolean handleMessage(Message message) {
@@ -940,7 +938,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                 case CAMERA_SETIMAGE:
                     mBitmap = mTextureView.getBitmap();
 
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);
                     Date curDate =  new Date(System.currentTimeMillis());
                     String str = formatter.format(curDate);
 
@@ -948,13 +946,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     int height = mBitmap.getHeight();
 
                     // 设置想要的大小
-                    int newWidth = (int)(width/(curZoom)*0.8);
-                    int newHeight = (int)(height/(curZoom)*0.8);
+                    int newWidth = (int)(width/(curZoom)*0.85);
+                    int newHeight = (int)(height/(curZoom)*0.85);
                     Bitmap newbm = Bitmap.createBitmap(mBitmap, (width-newWidth)/2, (height-newHeight)/2, newWidth, newHeight);
                     Bitmap newbm1 = cropImage(newbm);
                     Bitmap newbm2 = sizeBitmap(newbm1, 300, 300);
 
-                    File mmFile = saveBitmap(newbm2,SUB_DIR_PATH[0]+"FS_" + str + ".jpg",100);
+                    File mmFile = saveBitmap(newbm2,DIR_PATH+"FS_" + str + ".jpg",100);
+                    getActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(mmFile)));
+
                     // Post
                     OkHttpClient mOkHttpClient = new OkHttpClient();
                     RequestBody fileBody = RequestBody.create(MEDIA_TYPE_MARKDOWN, mmFile);
@@ -964,7 +964,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                             .build();
                     Request request = new Request.Builder()
                             .url("http://47.106.159.26/recognition")
-                            //.url("http://10.0.2.2:8080/recognition")
                             .post(requestBody)
                             .build();
                     Call call = mOkHttpClient.newCall(request);
@@ -994,7 +993,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     mTextViewAbstract.setText(message.obj.toString());
                     mImageViewRecentPic.setImageBitmap(mTextureView.getBitmap());
                     mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
-
                     mTextViewModeClass.setVisibility(View.INVISIBLE);
                     mTextViewModeDisease.setVisibility(View.INVISIBLE);
                     mImageViewResult.setVisibility(View.VISIBLE);
@@ -1003,6 +1001,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     mTextViewFlower.setVisibility(View.VISIBLE);
                     mTextViewAbstract.setVisibility(View.VISIBLE);
                     mTextViewConfidence.setVisibility(View.VISIBLE);
+                    mSeekbar.setVisibility(View.INVISIBLE);
                     break;
                 case CAMERA_SELECTED: {
                     mTextViewAbstract.setText(message.obj.toString());
@@ -1014,7 +1013,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                         e.printStackTrace();
                     }
                     mButtonPicture.setSelected(true);
-                    mRecyclerView.setVisibility(View.GONE);
                     flagToken = true;
                     mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
                     mImageViewResult.setVisibility(View.VISIBLE);
@@ -1023,6 +1021,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     mTextViewFlower.setVisibility(View.VISIBLE);
                     mTextViewAbstract.setVisibility(View.VISIBLE);
                     mTextViewConfidence.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.GONE);
+                    mTextViewModeClass.setVisibility(View.INVISIBLE);
+                    mTextViewModeDisease.setVisibility(View.INVISIBLE);
+                    mSeekbar.setVisibility(View.INVISIBLE);
                     break;
                 }
             }
@@ -1127,7 +1129,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private void createCameraPreviewSession() {
         try {
             SurfaceTexture mSurfaceTexture = mTextureView.getSurfaceTexture();
-            // if(mSurfaceTexture==null) return;
+            //if(mSurfaceTexture==null) return;
             // 设置mSurfaceTexture的缓冲区大小
             mSurfaceTexture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
             // 获取Surface显示预览数据
@@ -1144,25 +1146,25 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             // 第三个参数用来确定Callback在哪个线程执行，为null的话就在当前线程执行
             // 创建CaptureSession时加上imageReaderSurface，这样预览数据就会同时输出到mSurface和imageReaderSurface了
             mCameraDevice.createCaptureSession(Arrays.asList(mSurface, mImageReader.getSurface()), new CameraCaptureSession.StateCallback() {
-                        @Override
-                        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                            mCameraCaptureSession = cameraCaptureSession;
-                            try {
-                                mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-                                setAutoFlash(mPreviewRequestBuilder);
+                    @Override
+                    public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+                        mCameraCaptureSession = cameraCaptureSession;
+                        try {
+                            mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                            setAutoFlash(mPreviewRequestBuilder);
 
-                                // 设置反复捕获数据的请求，这样预览界面就会一直有数据显示
-                                // 捕获请求mPreviewRequestBuilder.build()
-                                mCameraCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
-                                setBrightness(85);
-                            } catch (CameraAccessException e) {
-                                e.printStackTrace();
-                            }
+                            // 设置反复捕获数据的请求，这样预览界面就会一直有数据显示
+                            // 捕获请求mPreviewRequestBuilder.build()
+                            mCameraCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+                            setBrightness(85);
+                        } catch (CameraAccessException e) {
+                            e.printStackTrace();
                         }
-                        @Override
-                        public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                        }
-                    }, null
+                    }
+                    @Override
+                    public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+                    }
+                }, null
             );
         } catch (CameraAccessException e) {
             e.printStackTrace();
@@ -1192,10 +1194,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         }
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture texture, int width, int height) {
+            openCamera(width, height);
         }
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture texture) {
-
             return true;
         }
         @Override
@@ -1265,24 +1267,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private final ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
         @Override
         public void onImageAvailable(ImageReader reader) {
-            /*
-            Image image = reader.acquireLatestImage();
-            // 我们可以将这帧数据转成字节数组，类似于Camera1的PreviewCallback回调的预览帧数据
-            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-            byte[] data = new byte[buffer.remaining()];
-            buffer.get(data);
-            image.close();
-            */
-
-            /*
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
-            Date curDate =  new Date(System.currentTimeMillis());
-            String str = formatter.format(curDate);
-            mFile = new File(new File(SUB_DIR_PATH[0]), "FS_" + str + ".jpg");
-            // 通过Handler发送消息
-            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile, mUIHandler, curZoom));
-            */
-            //mBackgroundHandler.post(new BitmapUploadUtil(reader.acquireNextImage(), mFile,mUIHandler,curZoom));
         }
     };
 }

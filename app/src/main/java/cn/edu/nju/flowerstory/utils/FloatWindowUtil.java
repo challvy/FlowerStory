@@ -16,7 +16,6 @@ import android.view.animation.LinearInterpolator;
 
 import cn.edu.nju.flowerstory.activity.CameraActivity;
 import cn.edu.nju.flowerstory.view.FloatWindowView;
-import static cn.edu.nju.flowerstory.app.Constants.*;
 
 /**
  * Created by AwenZeng on 2016/12/30.
@@ -34,10 +33,6 @@ public class FloatWindowUtil {
     private int direction;
     private final int LEFT = 0;
     private final int RIGHT = 1;
-
-    public interface setOnClickListener {
-        void onDataCallBack(String str);
-    }
 
     public FloatWindowUtil(Context context, Fragment fragment, Activity activity) {
         mContext = context;
@@ -70,7 +65,7 @@ public class FloatWindowUtil {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mActivity, CameraActivity.class);
-                mFragment.startActivityForResult(intent, CAMERA);
+                mFragment.startActivity(intent);
             }
         });
         windowManager.addView(mFloatWindowView, layoutParams);

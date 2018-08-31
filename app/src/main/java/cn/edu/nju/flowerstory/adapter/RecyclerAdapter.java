@@ -80,6 +80,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             FlowerModel item = datas.get(position);
             ((NormalHolder) holder).tittle.setText(datas.get(position).getName());
             ((NormalHolder) holder).mImageView.setImageBitmap(item.getBitmap());
+            ((NormalHolder) holder).detail.setText(datas.get(position).getTaxonomy());
         } else {
             ((FootHolder) holder).tips.setVisibility(View.VISIBLE);
             if (hasMore) {
@@ -97,7 +98,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             fadeTips = true;
                             hasMore = true;
                         }
-                    }, 500);
+                    }, 1000);
                 }
             }
         }
@@ -127,10 +128,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     class NormalHolder extends RecyclerView.ViewHolder {
         ImageView mImageView;
         public TextView tittle;
+        public TextView detail;
         NormalHolder(View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageView);
             tittle = itemView.findViewById(R.id.text);
+            detail = itemView.findViewById(R.id.text_detail);
         }
     }
 

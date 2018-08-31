@@ -25,15 +25,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:progressTint="@color/colorPrimary"
-                android:progressTintMode="src_atop"
-                android:theme="@style/Widget.AppCompat.ProgressBar.Horizontal" />
-
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recognition_recycler_view"
                 android:layout_width="match_parent"

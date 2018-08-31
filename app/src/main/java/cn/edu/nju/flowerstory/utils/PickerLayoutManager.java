@@ -5,9 +5,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-/**
- * Created by adityagohad on 06/06/17.
- */
 
 public class PickerLayoutManager extends LinearLayoutManager {
 
@@ -87,24 +84,12 @@ public class PickerLayoutManager extends LinearLayoutManager {
         }
     }
 
-    public float getScaleDownBy() {
-        return scaleDownBy;
-    }
-
     public void setScaleDownBy(float scaleDownBy) {
         this.scaleDownBy = scaleDownBy;
     }
 
-    public float getScaleDownDistance() {
-        return scaleDownDistance;
-    }
-
     public void setScaleDownDistance(float scaleDownDistance) {
         this.scaleDownDistance = scaleDownDistance;
-    }
-
-    public boolean isChangeAlpha() {
-        return changeAlpha;
     }
 
     public void setChangeAlpha(boolean changeAlpha) {

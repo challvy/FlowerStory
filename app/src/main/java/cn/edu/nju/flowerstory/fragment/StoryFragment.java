@@ -25,7 +25,7 @@ import static cn.edu.nju.flowerstory.app.Constants.TAB_TITLE;
  * Created by Administrator on 2018/3/22 0022.
  */
 public class StoryFragment extends Fragment {
-    private final String TAG = StoryFragment.class.getSimpleName();;
+    private final String TAG = StoryFragment.class.getSimpleName();
 
     View view;
     ViewPager tabViewpager;

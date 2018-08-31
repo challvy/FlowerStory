@@ -13,9 +13,6 @@ import java.util.List;
 
 import cn.edu.nju.flowerstory.R;
 
-/**
- * Created by adityagohad on 06/06/17.
- */
 
 public class PickerAdapter extends RecyclerView.Adapter<PickerAdapter.TextVH> {
 
@@ -27,7 +24,7 @@ public class PickerAdapter extends RecyclerView.Adapter<PickerAdapter.TextVH> {
         TextView pickerTxt;
         TextVH(View itemView) {
             super(itemView);
-            pickerTxt = (TextView) itemView.findViewById(R.id.picker_item);
+            pickerTxt = itemView.findViewById(R.id.picker_item);
         }
     }
 

@@ -1,5 +1,6 @@
 package cn.edu.nju.flowerstory.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Point;
 import android.util.AttributeSet;
@@ -60,7 +61,6 @@ public class AutoFitTextureView extends TextureView {
     }
 
     private float startDis;
-
     /**
      * 记录是拖拉照片模式还是放大缩小照片模式
      */
@@ -71,6 +71,7 @@ public class AutoFitTextureView extends TextureView {
     private static final int MODE_ZOOM = 1;
     private int mode = MODE_INIT;// 初始状态
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -79,13 +80,6 @@ public class AutoFitTextureView extends TextureView {
                 mode = MODE_INIT;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                //如果mZoomSeekBar为null 表示该设备不支持缩放 直接跳过设置mode Move指令也无法执行
-                //if (mZoomSeekBar == null) return true;
-                //移除token对象为mZoomSeekBar的延时任务
-                //mHandler.removeCallbacksAndMessages(mZoomSeekBar);
-//                mZoomSeekBar.setVisibility(View.VISIBLE);
-                //mZoomSeekBar.setVisibility(View.GONE);
-
                 mode = MODE_ZOOM;
                 /** 计算两个手指间的距离 */
                 startDis = spacing(event);
@@ -98,36 +92,9 @@ public class AutoFitTextureView extends TextureView {
                     //每变化10f zoom变1
                     int scale = (int) ((endDis - startDis) / 10f);
                     if (scale >= 1 || scale <= -1) {
-                        /*
-                        int zoom = mCameraView.getZoom() + scale;
-                        //zoom不能超出范围
-                        if (zoom > mCameraView.getMaxZoom()) zoom = mCameraView.getMaxZoom();
-                        if (zoom < 0) zoom = 0;
-                        mCameraView.setZoom(zoom);
-                        mZoomSeekBar.setProgress(zoom);
-                        */
                         //将最后一次的距离设为当前距离
                         startDis = endDis;
                     }
-                }
-                break;
-            // 手指离开屏幕
-            case MotionEvent.ACTION_UP:
-                if (mode != MODE_ZOOM) {
-                    //设置聚焦
-                    Point point = new Point((int) event.getX(), (int) event.getY());
-                    //onCameraFocus(point);
-                } else {
-                    //ZOOM模式下 在结束两秒后隐藏seekbar 设置token为mZoomSeekBar用以在连续点击时移除前一个定时任务
-                    /*
-                    mHandler.postAtTime(new Runnable() {
-                        @Override
-                        public void run() {
-                            // TODO Auto-generated method stub
-                            mZoomSeekBar.setVisibility(View.GONE);
-                        }
-                    }, mZoomSeekBar, SystemClock.uptimeMillis() + 2000);
-                    */
                 }
                 break;
         }

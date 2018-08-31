@@ -2,40 +2,25 @@ package cn.edu.nju.flowerstory.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
-import android.graphics.BitmapRegionDecoder;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.os.Build;
-import android.text.TextUtils;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+
+import static cn.edu.nju.flowerstory.app.Constants.BITMAP_SCALE;
 
 
 public class BitmapUtil {
 
     private static final String TAG = "BitmapUtil";
-/*
-    public static boolean saveBitmap(Bitmap b, String absolutePath) {
-        return saveBitmap(b, absolutePath, 100);
-    }
 
-    public static boolean saveBitmap(Bitmap b, String absolutePath, Bitmap.CompressFormat format) {
-        return saveBitmap(b, absolutePath, 100, format);
-    }
-*/
     public static File saveBitmap(Bitmap b, String absolutePath, int quality) {
         return saveBitmap(b, absolutePath, quality, Bitmap.CompressFormat.JPEG);
     }
@@ -43,112 +28,13 @@ public class BitmapUtil {
     public static File saveBitmap(Bitmap b, String absolutePath, int quality, Bitmap.CompressFormat format) {
         File f = new File(absolutePath);
         try {
-            //f.createNewFile();
             FileOutputStream fOut = new FileOutputStream(f);
             b.compress(format, quality, fOut);
-            //fOut.flush();
             fOut.close();
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
         return f;
-    }
-
-
-    public static Bitmap createBitmap(Bitmap b, float width, float angle) {
-        // 计算缩放比例
-        if (b != null) {
-            if (b.getWidth() != width) {
-                float scale = width / b.getWidth();
-                Matrix matrix = new Matrix();
-                matrix.postScale(scale, scale);
-                matrix.postRotate(angle);
-                return Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), matrix, true);
-            } else {
-                return b;
-            }
-        }
-        return null;
-    }
-
-
-    public static Bitmap Bytes2Bimap(byte[] b) {
-        if (b != null) {
-            if (b.length != 0) {
-                return BitmapFactory.decodeByteArray(b, 0, b.length);
-            }
-        }
-        return null;
-    }
-
-
-    public static byte[] bitmap2Bytes(Bitmap bitmap, Bitmap.CompressFormat format) {
-        if (bitmap == null) return null;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(format, 100, baos);
-        return baos.toByteArray();
-    }
-
-    public static Bitmap scale(Bitmap bitmap, float scale) {
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
-        int x = 1;
-        int y = 1;
-        Bitmap outBitmap = Bitmap.createBitmap(bitmap, x, y, 300, 300);
-        bitmap.recycle();
-        return outBitmap;
-    }
-
-
-    /**
-     * 圆角图片
-     *
-     * @param resId   资源文件
-     * @param ratio   圆角占图片的百分比
-     */
-
-    public static Bitmap getRoundCornerBitmapByRatio(Context context, int resId, float ratio) {
-        Bitmap output = BitmapFactory.decodeResource(context.getResources(), resId);
-        return getRoundCornerBitmapByRatio(output, ratio);
-    }
-
-    /**
-     * 圆角图片
-     *
-     * @param bm
-     * @param ratio 圆角占图片的百分比
-     * @return
-     */
-    public static Bitmap getRoundCornerBitmapByRatio(Bitmap bm, float ratio) {
-        try {
-            if (bm != null) {
-                float roundPx = bm.getWidth() * ratio;
-                Bitmap output = Bitmap.createBitmap(bm.getWidth(),
-                        bm.getHeight(), Config.ARGB_8888);
-                if (output == null) {
-                    return null;
-                }
-                Canvas canvas = new Canvas(output);
-
-                final int color = 0xff424242;
-                final Paint paint = new Paint();
-                final Rect rect = new Rect(0, 0, bm.getWidth(), bm.getHeight());
-                final RectF rectF = new RectF(rect);
-
-                paint.setAntiAlias(true);
-                canvas.drawARGB(0, 0, 0, 0);
-                paint.setColor(color);
-                canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-                paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
-                canvas.drawBitmap(bm, rect, rect, paint);
-
-                return output;
-            }
-        } catch (Throwable e) {
-        }
-
-        return null;
     }
 
     public static Bitmap createCaptureBitmap(String filepath) {
@@ -179,135 +65,14 @@ public class BitmapUtil {
     }
 
     /**
-     * 旋转图片
-     *
-     * @param imgPath
-     * @param rotateDegress：旋转角度，顺时针
-     * @return 旋转后的图片路径
-     */
-    public static String rotateImage(String imgPath, int rotateDegress) {
-        ByteArrayOutputStream baos = null;
-        FileOutputStream fos = null;
-        BufferedOutputStream bos = null;
-        if (rotateDegress % 360 == 0
-                || rotateDegress % 90 != 0
-                ) {
-            return imgPath;
-        }
-
-        if (TextUtils.isEmpty(imgPath)) {
-            return imgPath;
-        }
-
-        int index = imgPath.lastIndexOf(".");
-        if (index <= 0) {
-            index = imgPath.length();
-        }
-        String outImgPath = imgPath.substring(0, index) + "_" + rotateDegress + ".jpg";
-        try {
-
-            Options opt = new Options();
-            opt.inJustDecodeBounds = true;
-
-            Bitmap bit = BitmapFactory.decodeFile(imgPath, opt);
-            int width = opt.outWidth;
-            int height = opt.outHeight;
-            if (width > height && width > 1024) {
-                opt.inSampleSize = width / 1024 + 1;
-            } else if (height > 1024) {
-                opt.inSampleSize = height / 1024 + 1;
-            }
-            opt.inJustDecodeBounds = false;
-            bit = BitmapFactory.decodeFile(imgPath, opt).copy(Config.ARGB_8888, true);
-
-            Matrix matrix = new Matrix();
-            matrix.postScale(1.0f, 1.0f);
-            matrix.postRotate(rotateDegress);
-            Bitmap bitmap = Bitmap.createBitmap(bit, 0, 0, bit.getWidth(),
-                    bit.getHeight(), matrix, false);
-            bit.recycle();
-            bit = null;
-            bit = bitmap;
-
-            baos = new ByteArrayOutputStream();
-            bit.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            //			String newImagePath = imgPath + "1.jpg";
-            File file = new File(outImgPath);
-            if (!file.exists()) {
-                file.createNewFile();
-            } else {
-                file.delete();
-                file.createNewFile();
-            }
-            bos = new BufferedOutputStream(new FileOutputStream(file));
-            bos.write(baos.toByteArray());
-            bos.flush();
-
-            bit.recycle();
-            bit = null;
-
-            return outImgPath;
-        } catch (Throwable e) {
-            Log.e(TAG, e.getMessage());
-        } finally {
-            try {
-                if (baos != null) {
-                    baos.close();
-                }
-                if (fos != null) {
-                    fos.close();
-                }
-                if (bos != null) {
-                    bos.close();
-                }
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        return imgPath;
-    }
-
-    public static Bitmap rotateImage(Bitmap bm, int rotateDegress) {
-        Matrix m = new Matrix();
-        m.setRotate(rotateDegress, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-        float targetX, targetY;
-        if (rotateDegress == 90) {
-            targetX = bm.getHeight();
-            targetY = 0;
-        } else {
-            targetX = bm.getHeight();
-            targetY = bm.getWidth();
-        }
-
-        final float[] values = new float[9];
-        m.getValues(values);
-
-        float x1 = values[Matrix.MTRANS_X];
-        float y1 = values[Matrix.MTRANS_Y];
-
-        m.postTranslate(targetX - x1, targetY - y1);
-
-        Bitmap bm1 = Bitmap.createBitmap(bm.getHeight(), bm.getWidth(), Config.ARGB_8888);
-        Paint paint = new Paint();
-        Canvas canvas = new Canvas(bm1);
-        canvas.drawBitmap(bm, m, paint);
-
-        return bm1;
-    }
-
-    /**
      * 从中心点   按正方形裁切图片  边长为小边
      */
     public static Bitmap cropImage(Bitmap bitmap) {
         int w = bitmap.getWidth(); // 得到图片的宽，高
         int h = bitmap.getHeight();
-
         int wh = w > h ? h : w;// 裁切后所取的正方形区域边长
-
         int centerX = w / 2;
         int centerY = h / 2;
-
         Bitmap outBitmap = Bitmap.createBitmap(bitmap, centerX - wh / 2, centerY - wh / 2, wh, wh);
         bitmap.recycle();
         return outBitmap;
@@ -322,34 +87,49 @@ public class BitmapUtil {
         float scaleWidth = ((float) newWidth) / width;
         float scaleHeight = ((float) newHeight) / height;
         Matrix matrix = new Matrix();
-        matrix.postScale(scaleWidth, scaleHeight);// 使用后乘
+        matrix.postScale(scaleWidth, scaleHeight);
         Bitmap newBM = Bitmap.createBitmap(origin, 0, 0, width, height, matrix, false);
-        if (!origin.isRecycled()) {//这时候origin还有吗？
-            origin.recycle();
-        }
         return newBM;
     }
 
     /**
-     * 按指定区域解码
+     * 模糊图片的具体方法
      *
-     * @param is
-     * @param rect
-     * @param options
+     * @param context 上下文对象
+     * @param image   需要模糊的图片
+     * @return 模糊处理后的图片
      */
-    public static Bitmap decode(InputStream is, Rect rect, Options options) throws Exception {
-        Bitmap bitmap = null;
-        if (Build.VERSION.SDK_INT > 9) {
-            BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(is, false);
-            bitmap = decoder.decodeRegion(rect, options);
-        } else {
-            Bitmap temp = BitmapFactory.decodeStream(is, null, options);
-            bitmap = Bitmap.createBitmap(temp, rect.left, rect.top, rect.width(), rect.height());
-            if(temp!=null && !temp.isRecycled()){
-                temp.recycle();
-            }
-        }
-        return bitmap;
+    public static Bitmap blurBitmap(Context context, Bitmap image, float blurRadius) {
+        // 计算图片缩小后的长宽
+        int width = Math.round(image.getWidth() * BITMAP_SCALE);
+        int height = Math.round(image.getHeight() * BITMAP_SCALE);
+
+        // 将缩小后的图片做为预渲染的图片
+        Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
+        // 创建一张渲染后的输出图片
+        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
+
+        // 创建RenderScript内核对象
+        RenderScript rs = RenderScript.create(context);
+        // 创建一个模糊效果的RenderScript的工具对象
+        ScriptIntrinsicBlur blurScript = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+
+        // 由于RenderScript并没有使用VM来分配内存,所以需要使用Allocation类来创建和分配内存空间
+        // 创建Allocation对象的时候其实内存是空的,需要使用copyTo()将数据填充进去
+        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
+        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
+
+        // 设置渲染的模糊程度, 25f是最大模糊度
+        blurScript.setRadius(blurRadius);
+        // 设置blurScript对象的输入内存
+        blurScript.setInput(tmpIn);
+        // 将输出数据保存到输出内存中
+        blurScript.forEach(tmpOut);
+
+        // 将数据填充到Allocation中
+        tmpOut.copyTo(outputBitmap);
+
+        return outputBitmap;
     }
 
 }

@@ -7,9 +7,6 @@ import android.content.Context;
 
 import java.util.List;
 
-/**
- * Created by Administrator on 2017/10/10.
- */
 
 public class FloatWindowApp extends Application {
 

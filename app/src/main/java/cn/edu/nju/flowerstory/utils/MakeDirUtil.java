@@ -18,10 +18,15 @@ public class MakeDirUtil {
         File tmpDirPath = new File(DIR_PATH);
         if (!tmpDirPath.exists() && tmpDirPath.mkdir()) {
             Log.d(TAG, "Create directory [ " + DIR_PATH + " ] success.");
-            for(int i=0; i<SUB_DIR_PATH_SIZE; i++){
-                File tmpSubDirPath = new File(SUB_DIR_PATH[i]);
+        }
+
+        File tmpDirPath2 = new File(DIR_PATH_SYSTEM);
+        if (!tmpDirPath2.exists() && tmpDirPath2.mkdir()) {
+            Log.d(TAG, "Create directory [ " + DIR_PATH + " ] success.");
+            for(int i=0; i<SUB_DIR_PATH_SYSTEM_SIZE; i++){
+                File tmpSubDirPath = new File(SUB_DIR_PATH_SYSTEM[i]);
                 if (!tmpSubDirPath.exists() && tmpSubDirPath.mkdir()){
-                    Log.d(TAG, "Create directory [ " + tmpSubDirPath + " ] success.");
+                    Log.d(TAG, "Create directory [ " + tmpDirPath2 + " ] success.");
                 }
             }
         }

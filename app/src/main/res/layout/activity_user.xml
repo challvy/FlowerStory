@@ -87,7 +87,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
-                        android:text="关注的提醒"
+                        android:text="收藏"
                         android:textSize="12sp"/>
                 </LinearLayout>
 
@@ -108,7 +108,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
-                        android:text="我关注的人"
+                        android:text="关注"
                         android:textSize="12sp"/>
                 </LinearLayout>
 
@@ -129,7 +129,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
-                        android:text="关注我的人"
+                        android:text="粉丝"
                         android:textSize="12sp"/>
                 </LinearLayout>
             </LinearLayout>

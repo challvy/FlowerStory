@@ -3,9 +3,7 @@ package cn.edu.nju.flowerstory.view;
 import android.animation.Animator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -282,7 +280,7 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
                 setMyAnimation(dx,dy,toScale,toScale);
             }
             else {
-                Log.i("TouchImageView","Exit");//ActivityManager.popActivity((Activity)context);
+                Log.i("TouchImageView","Exit");
                 mActivity.finish();
             }
 

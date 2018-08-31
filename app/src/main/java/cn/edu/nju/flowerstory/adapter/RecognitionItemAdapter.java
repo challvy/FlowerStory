@@ -31,10 +31,10 @@ public class RecognitionItemAdapter extends RecyclerView.Adapter<RecognitionItem
 
         ViewHolder(View itemView, RecognitionItemAdapter adapter) {
             super(itemView);
-            mAdapter = new SoftReference<RecognitionItemAdapter>(adapter);
-            mImageView = (ImageView) itemView.findViewById(R.id.imageViewRec);
-            tittle = (TextView) itemView.findViewById(R.id.tittle);
-            digest = (TextView) itemView.findViewById(R.id.digest);
+            mAdapter = new SoftReference<>(adapter);
+            mImageView = itemView.findViewById(R.id.imageViewRec);
+            tittle = itemView.findViewById(R.id.tittle);
+            digest = itemView.findViewById(R.id.digest);
         }
     }
 

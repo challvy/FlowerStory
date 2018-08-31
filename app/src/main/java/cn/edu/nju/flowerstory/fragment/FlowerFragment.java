@@ -74,7 +74,7 @@ public class FlowerFragment extends Fragment  {
             public void onItemClik(View view, int position) {
                 //Toast.makeText(getApplicationContext(), "点击了" + position, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getContext(), FlowerDetailActivity.class);
-                intent.putExtra(FlowerDetailActivity.RETURN_INFO, position);
+                intent.putExtra(FlowerDetailActivity.sFlowerID, position);
                 RecognitionActivity.mBitmap = data.get(position).getBitmap();
                 startActivity(intent);
                 //startActivityForResult(intent,0);

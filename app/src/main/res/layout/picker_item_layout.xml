@@ -6,5 +6,5 @@
     android:textColor="#ffffff"
     android:textSize="14sp"
     android:layout_centerHorizontal="true"
-    android:layout_marginHorizontal="16dp"
+    android:layout_marginHorizontal="12dp"
     tools:targetApi="o" />

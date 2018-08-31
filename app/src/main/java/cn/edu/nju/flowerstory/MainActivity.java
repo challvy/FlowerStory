@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 //Toast.makeText(getApplicationContext(), "Open", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                //intent.putExtra(RecognitionActivity.RETURN_INFO, imageUri.toString());
+                //intent.putExtra(RecognitionActivity.sFlowerID, imageUri.toString());
                 startActivityForResult(intent,0);
                 return true;
             }
