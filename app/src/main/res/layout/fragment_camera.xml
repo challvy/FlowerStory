@@ -119,26 +119,29 @@
                 android:textColor="#ffffff"
                 android:textSize="28dp" />
 
+            <!--android:layout_above="@+id/textViewMoreResult"-->
             <TextView
                 android:id="@+id/textViewAbstract"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/textViewMoreResult"
+                android:layout_height="24dp"
                 android:layout_alignStart="@+id/textViewFlower"
+                android:layout_below="@+id/textViewFlower"
                 android:text="Brassica campestris"
+                android:ellipsize="end"
+                android:singleLine="true"
                 android:textColor="#ffffff" />
 
-            <TextView
+            <!--TextView
                 android:id="@+id/textViewConfidence"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignStart="@+id/textViewAbstract"
                 android:layout_marginBottom="6dp"
-                android:text="可信度91.2%"
-                android:textColor="#ffffff" />
+                android:text="可信度:TODO"
+                android:textColor="#ffffff" /-->
 
-            <TextView
+            <!--TextView
                 android:id="@+id/textViewMoreResult"
                 android:layout_width="80dp"
                 android:layout_height="60dp"
@@ -148,7 +151,7 @@
                 android:gravity="center"
                 android:text="更多结果"
                 android:clickable="true"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/colorPrimary" /-->
         </RelativeLayout>
 
         <RelativeLayout
@@ -194,14 +197,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
                 android:clipToPadding="false"
-                android:paddingHorizontal="180dp"
+                android:paddingHorizontal="160dp"
                 tools:targetApi="o" />
         </RelativeLayout>
 
-
+        <ImageView
+            android:id="@+id/imageViewReturnCamera"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="start|top"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="39dp"
+            android:padding="5dp"
+            app:srcCompat="@mipmap/ic_return"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="16dp" />
 
     </RelativeLayout>
 

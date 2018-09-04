@@ -29,7 +29,7 @@ public class PickerLayoutManager extends LinearLayoutManager {
         }
         getChildAt(curSelectedIndex).setSelected(true);
         getChildAt(curSelectedIndex).setAlpha(1.0f);
-        onScrollStopListener.selectedView(getChildAt(curSelectedIndex));
+        //onScrollStopListener.selectedView(getChildAt(curSelectedIndex));
     }
 
     @Override
