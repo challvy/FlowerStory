@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="40dp"
             android:max="100"
-            android:progress="0"
+            android:progress="50"
             tools:targetApi="o" />
 
         <RelativeLayout
@@ -98,6 +98,7 @@
                 android:layout_height="wrap_content"
                 android:background="#666666" />
 
+            <!--app:srcCompat="@mipmap/brassicacampestris"-->
             <ImageView
                 android:id="@+id/imageViewResult"
                 android:layout_width="100dp"
@@ -105,17 +106,16 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="25dp"
-                app:srcCompat="@mipmap/brassicacampestris" />
+                app:srcCompat="@mipmap/flowerstoryphoto"/>
 
             <TextView
-                android:id="@+id/textViewFlower"
+                android:id="@+id/textViewResult"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="138dp"
                 android:layout_marginTop="12dp"
-                android:text="油菜花"
                 android:textColor="#ffffff"
                 android:textSize="28dp" />
 
@@ -124,9 +124,8 @@
                 android:id="@+id/textViewAbstract"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
-                android:layout_alignStart="@+id/textViewFlower"
-                android:layout_below="@+id/textViewFlower"
-                android:text="Brassica campestris"
+                android:layout_alignStart="@+id/textViewResult"
+                android:layout_below="@+id/textViewResult"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textColor="#ffffff" />
@@ -213,6 +212,20 @@
             app:srcCompat="@mipmap/ic_return"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="16dp" />
+
+
+        <TextView
+            android:id="@+id/textViewInfo"
+            android:layout_width="250dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/imageViewReturnCamera"
+            android:layout_gravity="start|top"
+            android:layout_marginEnd="15dp"
+            android:gravity="right|center_vertical"
+            android:padding="5dp"
+            android:textColor="#ffffff"
+            android:textSize="16sp"/>
 
     </RelativeLayout>
 

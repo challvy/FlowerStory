@@ -196,8 +196,8 @@ public class MainActivity extends AppCompatActivity {
                 mViewPager.setCurrentItem(2);
             }
         });
-        camera.setSelected(false);
-        story.setSelected(true);
+        camera.setSelected(true);
+        story.setSelected(false);
         user.setSelected(false);
         tabs.add(camera);
         tabs.add(story);

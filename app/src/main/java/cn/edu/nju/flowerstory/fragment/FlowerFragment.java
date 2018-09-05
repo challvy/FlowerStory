@@ -64,7 +64,8 @@ public class FlowerFragment extends Fragment  {
         });
 
         mFloatWindowUtil = new FloatWindowUtil(getContext(), this, getActivity());
-
+        // 默认显示
+        mFloatWindowUtil.showContactView();
         loading();
 
         /*
