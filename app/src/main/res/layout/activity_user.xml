@@ -38,16 +38,20 @@
                     android:layout_width="80dp"
                     android:layout_marginLeft="20dp"
                     android:layout_height="0dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:color="@android:color/transparent"
                     android:layout_weight="2"
                     app:srcCompat="@mipmap/ic_launcher_round" />
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="100dp"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:layout_marginLeft="20dp"
-                    android:text="Story Flower"
+                    android:gravity="center"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:color="@android:color/transparent"
+                    android:layout_marginLeft="10dp"
+                    android:text="Flower"
                     android:textColor="#ffffff"
                     android:textSize="16sp" />
                 <View
@@ -74,6 +78,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:color="@android:color/transparent"
                     android:orientation="vertical">
 
                     <TextView
@@ -95,6 +101,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:color="@android:color/transparent"
                     android:orientation="vertical">
 
                     <TextView
@@ -116,6 +124,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:color="@android:color/transparent"
                     android:orientation="vertical">
 
                     <TextView
@@ -169,6 +179,8 @@
         android:id="@+id/imageViewReturnUser"
         android:layout_width="28dp"
         android:layout_height="28dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:color="@android:color/transparent"
         android:layout_gravity="start|top"
         android:layout_marginStart="15dp"
         android:layout_marginTop="39dp"

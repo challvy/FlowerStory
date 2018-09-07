@@ -13,7 +13,7 @@ public class PickerLayoutManager extends LinearLayoutManager {
     private boolean changeAlpha = false;
 
     private onScrollStopListener onScrollStopListener;
-    private int curSelectedIndex = 0;
+    private int curSelectedIndex = 1;
 
     public PickerLayoutManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);

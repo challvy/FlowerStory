@@ -44,7 +44,8 @@
                 android:id="@+id/imageViewDetail"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:background="#ffffff"
+                android:background="?android:attr/selectableItemBackground"
+                android:color="@android:color/transparent"
                 android:layout_gravity="center_horizontal"
                 android:scaleType="fitCenter" />
 

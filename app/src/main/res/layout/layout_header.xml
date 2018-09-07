@@ -13,6 +13,8 @@
         android:id="@+id/head_portrait"
         android:layout_width="74dp"
         android:layout_height="74dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:color="@android:color/transparent"
         app:srcCompat="@mipmap/ic_launcher_round" />
 
     <TextView

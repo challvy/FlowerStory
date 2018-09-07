@@ -2,6 +2,7 @@ package cn.edu.nju.flowerstory.app;
 
 import android.os.Environment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -10,6 +11,7 @@ import java.util.HashMap;
  */
 public class Constants {
 
+    public static final String REC_FORM_MODE[] = {"三图", "单图", "视频"};
     public static final int MAX_PREVIEW_WIDTH = 1920;
     public static final int MAX_PREVIEW_HEIGHT = 1080;
 
@@ -41,6 +43,8 @@ public class Constants {
     public static final int CAMERA_MOVE_FOCK = 1;
     public static final int CAMERA_RESULT = 2;
     public static final int CAMERA_SELECTED = 3;
+    public static final int CAMERA_THREE_PICTURE = 4;
+    public static final int CAMERA_VIDEO = 5;
 
     // UserActivity图片缩放比例
     public static final float BITMAP_SCALE = 0.4f;
@@ -113,4 +117,5 @@ public class Constants {
             put("栀子花", "gardenia");
         }
     };
+
 }
