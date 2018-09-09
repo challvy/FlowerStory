@@ -1385,7 +1385,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private void applySettings() {
         if(mCameraCaptureSession!=null) {
             try {
-                if(!threePic && !recNoMode.equals(REC_FORM_MODE[0]))
+                if(!threePic)
                     mCameraCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
             } catch (CameraAccessException e) {
                 e.printStackTrace();
@@ -1426,7 +1426,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                             // 设置反复捕获数据的请求，这样预览界面就会一直有数据显示
                             // 捕获请求mPreviewRequestBuilder.build()
 
-                            if(!threePic || !recNoMode.equals(REC_FORM_MODE[0]))
+                            if(!threePic)
                                 mCameraCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
                             setBrightness(50.0);
                         } catch (CameraAccessException e) {
