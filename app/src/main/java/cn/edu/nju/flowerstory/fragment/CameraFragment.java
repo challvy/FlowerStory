@@ -548,6 +548,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             // 从相册中取消选择图片，置false
             selectPhoto = false;
             mButtonPicture.setClickable(true);
+            mImageViewRecentPic.setClickable(true);
             return;
         }
         switch (requestCode) {
@@ -560,8 +561,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     Date curDate =  new Date(System.currentTimeMillis());
                     String str = formatter.format(curDate);
                     File dstFile = new File(DIR_PATH+"FS_" + str + "_source.jpg");
-                    FileChannel srcChannel = null;
-                    FileChannel dstChannel = null;
+                    FileChannel srcChannel, dstChannel;
                     try {
                         srcChannel = new FileInputStream(selectFile).getChannel();
                         dstChannel = new FileOutputStream(dstFile).getChannel();
