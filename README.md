@@ -6,7 +6,7 @@ The project isn't able to run on your Android Studio since the server end is to 
 
 ## Introduce
 
-Flower Story is an Android App project that provides flower recognition service. However, the recognition service is on the server but not on this App.
+Flower Story is an Android App project that provides flower recognition service.
 
 ## Environment
 
@@ -40,6 +40,16 @@ Flower Story is an Android App project that provides flower recognition service.
   ```java
   Android Version >= 6.0.1
   ```
+
+## Reference
+
+- Wikipedia Data
+
+  [百度百科](https://baike.baidu.com/)
+
+- Logo
+
+  [花瓣](http://huaban.com/)
 
 ## Demo
 
