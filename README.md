@@ -47,11 +47,11 @@ Android Version >= 6.0.1
 
 * About android.hardware.camera2
 
-![android.hardware.camera2](E:\git\FlowerStory\README_RES\android.hardware.camera2.png)
+![android.hardware.camera2](https://github.com/challvy/FlowerStory/raw/master/README_RES/android.hardware.camera2.png)
 
 * Flowchart of Camera2
 
-![CameraFlowchart](E:\git\FlowerStory\README_RES\CameraFlowchart.png)
+![CameraFlowchart](https://github.com/challvy/FlowerStory/raw/master/README_RES/CameraFlowchart.png)
 
 * Set Brightness
 
