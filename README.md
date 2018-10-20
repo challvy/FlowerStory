@@ -57,11 +57,11 @@ Android Version >= 6.0.1
 
 ```java
 public void setBrightness(double value) {
-	minCompensationRange = range.getLower();
-	maxCompensationRange = range.getUpper();
-	int brightness = (int) (minCompensationRange + (maxCompensationRange - minCompensationRange)*(value/100.0f));
-	mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, brightness);
-	mCameraCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
+    minCompensationRange = range.getLower();
+    maxCompensationRange = range.getUpper();
+    int brightness = (int) (minCompensationRange + (maxCompensationRange - minCompensationRange)*(value/100.0f));
+    mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION, brightness);
+    mCameraCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(), mCaptureCallback, mBackgroundHandler);
 }
 ```
 
@@ -80,17 +80,19 @@ PreviewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION,Rect);
 ```java
 import okhttp3.*;
 import org.json.*;
+
 Request request = new Request.Builder()
-.url(URL)
-.build();
+	.url(URL)
+	.build();
 Call call = new OkHttpClient().newCall(request);
 call.enqueue(new Callback() {
-@Override
+    @Override
     public void onFailure(Call arg0, IOException e) {…}
+    
     @Override
     public void onResponse(Call call, Response response) throws IOException {
         String jsonData = response.body().string();
-Message.obtain(mUIHandler,GET_FROM_URL,jsonData).sendToTarget();
+	Message.obtain(mUIHandler,GET_FROM_URL,jsonData).sendToTarget();
     }
 });
 ```
@@ -100,25 +102,27 @@ Message.obtain(mUIHandler,GET_FROM_URL,jsonData).sendToTarget();
 ```java
 import okhttp3.*;
 import org.json.*;
+
 OkHttpClient mOkHttpClient = new OkHttpClient();
 RequestBody fileBody = RequestBody.create(TYPE, mFile);
-    RequestBody requestBody = new MultipartBody.Builder()
+RequestBody requestBody = new MultipartBody.Builder()
         .setType(MultipartBody.FORM)
         .addFormDataPart(KEY_PARA, VALUE_PARA)
         .addFormDataPart(KEY_FILE, VALUE_FILENAME, fileBody)
         .build();
 Request request = new Request.Builder()
-.url(URL)
-.post(requestBody)
-    .build();
+	.url(URL)
+	.post(requestBody)
+    	.build();
 Call call = mOkHttpClient.newCall(request);
 call.enqueue(new Callback() {
-@Override
-    public void onFailure(Call arg0, IOException e) {…}
     @Override
-public void onResponse(Call call, Response response) throws IOException {
-Message.obtain(mUIHandler,MESSAGE_URL,response.body().string()).sendToTarget();
-}
+    public void onFailure(Call arg0, IOException e) {…}
+    
+    @Override
+    public void onResponse(Call call, Response response) throws IOException {
+	Message.obtain(mUIHandler,MESSAGE_URL,response.body().string()).sendToTarget();
+    }
 });
 ```
 
@@ -146,7 +150,7 @@ public class ItemFragment extends Fragment {
             isFragmentVisible = false;
             onFragmentVisibleChange(false);
         }
-	}
+    }
 }
 ```
 
@@ -154,12 +158,12 @@ public class ItemFragment extends Fragment {
 
 ```java
 mRecyclerView.addOnScrollListener(new RecyclerView .OnScrollListener(){
-	@Override
+    @Override
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-super.onScrollStateChanged(recyclerView, newState);
+	super.onScrollStateChanged(recyclerView, newState);
         if (newState==RecyclerView.SCROLL_STATE_IDLE) {
             if(!mAdapter.isFadeTips()&&lastVisibleItem+1== mAdapter.getItemCount()) {
-				updateRecyclerView(mAdapter.getRealLastPosition(), mAdapter.getRealLastPosition() + PAGE_COUNT);
+		updateRecyclerView(mAdapter.getRealLastPosition(), mAdapter.getRealLastPosition() + PAGE_COUNT);
             }
             if (mAdapter.isFadeTips() && lastVisibleItem + 2 == mAdapter.getItemCount()) {
                 updateRecyclerView(mAdapter.getRealLastPosition(), mAdapter.getRealLastPosition()+PAGE_COUNT);
@@ -169,7 +173,7 @@ super.onScrollStateChanged(recyclerView, newState);
     
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-super.onScrolled(recyclerView, dx, dy);
+	super.onScrolled(recyclerView, dx, dy);
         lastVisibleItem= mLayoutManager.findLastVisibleItemPosition();
     }
 });
