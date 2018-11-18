@@ -45,11 +45,13 @@ public class Constants {
     public static final int CAMERA_SELECTED = 3;
     public static final int CAMERA_THREE_PICTURE = 4;
     public static final int CAMERA_VIDEO = 5;
+    public static final int CAMERA_RESULT_PICTURE = 6;
 
     // UserActivity图片缩放比例
     public static final float BITMAP_SCALE = 0.4f;
 
     public static String sFlowerID = "FlowerID";
+    public static String sDiseaseID = "DiseaseID";
 
     // 疾病结果键值对
     public static final HashMap<String, String> mResult = new HashMap<String, String>(){

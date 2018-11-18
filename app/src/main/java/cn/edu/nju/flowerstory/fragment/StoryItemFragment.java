@@ -139,6 +139,8 @@ public class StoryItemFragment extends StoryItemBaseFragment {
         new Thread(new Runnable() {
             public void run() {
                 Request request = new Request.Builder()
+                        //.url("http://192.168.1.101:8080/knowledge/all")
+                        //.url("http://10.0.2.2:8080/knowledge/all")
                         .url("http://47.106.159.26/knowledge/all")
                         .build();
                 Call call = new OkHttpClient().newCall(request);
@@ -206,6 +208,8 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                         final String uri = obj.get("bitmap").toString();
                         OkHttpClient mOkHttpClient = new OkHttpClient();
                         Request request = new Request.Builder()
+                                //.url("http://192.168.1.101:8080/knowledge/bitmap/" + uri)
+                                //.url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
                                 .url("http://47.106.159.26/knowledge/bitmap/" + uri)  //.url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
                                 .build();
                         Call call = mOkHttpClient.newCall(request);
@@ -279,6 +283,8 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                 // Get
                 OkHttpClient mOkHttpClient = new OkHttpClient();
                 Request request = new Request.Builder()
+                        //.url("http://192.168.1.101:8080/knowledge/" + Data.get(i))
+                        //.url("http://10.0.2.2:8080/knowledge/" + Data.get(i))
                         .url("http://47.106.159.26/knowledge/" + Data.get(i))
                         .build();
                 Call call = mOkHttpClient.newCall(request);

@@ -32,6 +32,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static cn.edu.nju.flowerstory.app.Constants.sDiseaseID;
 import static cn.edu.nju.flowerstory.app.Constants.sFlowerID;
 
 
@@ -45,10 +46,12 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
     ImageView mImageView;
     TextView mTextViewPhotoDetail;
     TextView mTextViewDetail;
+    TextView mTextViewReadme;
 
     private final int GET_CONTENT = 1;
     private final int GET_BITMAP = 2;
 
+    private String diseaseName = "null";
     Bitmap bitmap;
 
     @Override
@@ -94,6 +97,7 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
         mImageView = findViewById(R.id.imageViewDetail);
         mTextViewPhotoDetail = findViewById(R.id.photodetail);
         mTextViewDetail = findViewById(R.id.detail);
+        mTextViewReadme = findViewById(R.id.readme);
         toolbar = findViewById(R.id.mToolbarDetail);
         toolbar.setTitle(R.string.detail);
         toolbar.inflateMenu(R.menu.menu_favr);
@@ -110,8 +114,12 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
         mUIHandler = new Handler(new InnerCallBack());
 
         String flowerName = getIntent().getStringExtra(sFlowerID);
+        diseaseName = getIntent().getStringExtra(sDiseaseID);
+
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
+                //.url("http://192.168.1.101:8080/knowledge/" + flowerName)
+                //.url("http://10.0.2.2:8080/knowledge/" + flowerName)
                 .url("http://47.106.159.26/knowledge/" + flowerName)
                 .build();
         Call call = mOkHttpClient.newCall(request);
@@ -154,15 +162,21 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
                 case GET_CONTENT: {
                     try {
                         JSONObject obj = new JSONObject(message.obj.toString());
-                        mTextViewTittle.setText(obj.get("name").toString().split(",")[0]);
+                        String title = obj.get("name").toString().split(",")[0];
+                        if(diseaseName!=null) {
+                            title += " | " + diseaseName;
+                        }
+                        mTextViewTittle.setText(title);
                         mTextViewPhotoDetail.setText(obj.get("name").toString());
                         StringBuilder content = new StringBuilder();
-                        content.append("Taxonomy\n").append(obj.get("taxonomy").toString()).append("\n\n");
-                        content.append("Culture\n").append(obj.get("culture").toString()).append("\n\n");
-                        content.append("Morphological Character\n").append(obj.get("morphological_character").toString()).append("\n\n");
-                        content.append("Growth Habit\n").append(obj.get("growth_habit").toString()).append("\n\n");
-                        content.append("Distribution Range\n").append(obj.get("distribution_range").toString()).append("\n\n");
-                        content.append("Growth Habit\n").append(obj.get("growth_habit").toString()).append("\n\n");
+                        if(diseaseName==null) {
+                            content.append("Taxonomy\n\n").append(obj.get("taxonomy").toString()).append("\n\n");
+                            content.append("Culture\n\n").append(obj.get("culture").toString()).append("\n\n");
+                            content.append("Morphological Character\n\n").append(obj.get("morphological_character").toString()).append("\n\n");
+                            content.append("Growth Habit\n\n").append(obj.get("growth_habit").toString()).append("\n\n");
+                            content.append("Distribution Range\n\n").append(obj.get("distribution_range").toString()).append("\n\n");
+                            content.append("Growth Habit\n\n").append(obj.get("growth_habit").toString()).append("\n\n");
+                        }
                         if (obj.has("plant_diseases_insect_pests")) {
                             JSONArray Array = obj.getJSONArray("plant_diseases_insect_pests");
                             String[][] Data = new String[Array.length()][];
@@ -172,22 +186,33 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
                                 for (int j = 0; j < Array2.length(); j++)
                                     Data[i][j] = Array2.getString(j);
                             }
-                            content.append("Plant Diseases Insect Pests\n");
-                            for(int i=0; i<Data.length;i++){
-                                for (String tmp : Data[i]) {
-                                    content.append(tmp).append("\n");
+                            if(diseaseName==null) {
+                                content.append("Plant Diseases Insect Pests\n\n");
+                                for (int i = 0; i < Data.length; i++) {
+                                    for (String tmp : Data[i]) {
+                                        content.append(tmp).append("\n");
+                                    }
+                                    if (i != Data.length - 1) {
+                                        content.append("\n");
+                                    }
                                 }
-                                if(i!=Data.length-1) {
-                                    content.append("\n");
+                            } else {
+                                for (String[] aData : Data) {
+                                    if (aData[0].equals(diseaseName)) {
+                                        content.append(aData[1]).append("\n");
+                                    }
                                 }
                             }
                         }
                         mTextViewDetail.setText(content);
-                        String uri = obj.get("bitmap").toString();
+                        mTextViewReadme.setText("信息来源@百度百科");
 
                         // Get
+                        String uri = obj.get("bitmap").toString();
                         OkHttpClient mOkHttpClient = new OkHttpClient();
                         Request request = new Request.Builder()
+                                //.url("http://192.168.1.101:8080/knowledge/bitmap/" + uri)
+                                //.url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
                                 .url("http://47.106.159.26/knowledge/bitmap/" + uri)
                                 .build();
                         Call call = mOkHttpClient.newCall(request);
