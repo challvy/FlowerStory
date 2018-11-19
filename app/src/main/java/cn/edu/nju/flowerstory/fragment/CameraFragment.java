@@ -120,12 +120,11 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private View mViewA;
     private View mViewB;
     private View mViewC;
-    //private TextView mTextViewMoreResult;
     private TextView mTextViewResult;
     private TextView mTextViewAbstract;
     private boolean getResult;
     private String result;
-    Bitmap bitmap;
+    private Bitmap bitmap;
 
     private TextView mTextViewModeClass;
     private TextView mTextViewModeDisease;
@@ -155,8 +154,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
 
     // 是否点击相册选择图片标志
     boolean selectPhoto = false;
-    // 相册能否关闭
-    boolean close = false;
+    // 相机能否关闭
+    boolean couldCloseCamera = false;
     // 是否裁剪完成
     boolean cutEnding = false;
     // 是否准备好三张图片
@@ -245,10 +244,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         mViewA = view.findViewById(R.id.viewA);
         mViewB = view.findViewById(R.id.viewB);
         mViewC = view.findViewById(R.id.viewC);
-        //mTextViewMoreResult = view.findViewById(R.id.textViewMoreResult);
         mTextViewResult = view.findViewById(R.id.textViewResult);
         mTextViewAbstract = view.findViewById(R.id.textViewAbstract);
-        //mTextViewConfidence = view.findViewById(R.id.textViewConfidence);
         mTextViewModeClass = view.findViewById(R.id.modeClass);
         mTextViewModeDisease = view.findViewById(R.id.modeDisease);
         ImageView imageViewReturnCamera = view.findViewById(R.id.imageViewReturnCamera);
@@ -265,7 +262,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         mImageViewRecentPic.setOnClickListener(this);
         imageViewReturnCamera.setOnClickListener(this);
         mButtonPicture.setOnClickListener(this);
-        //mTextViewMoreResult.setOnClickListener(this);
         mTextViewModeClass.setOnClickListener(this);
         mTextViewModeDisease.setOnClickListener(this);
         mView.setOnClickListener(this);
@@ -276,7 +272,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         pickerLayoutManager.setScaleDownBy(1.0f);
         pickerLayoutManager.setScaleDownDistance(1.0f);
 
-        mRecyclerView.setVisibility(View.INVISIBLE);
         List<String> data = new ArrayList<>(Arrays.asList(REC_FORM_MODE).subList(0, 3));
         PickerAdapter adapter = new PickerAdapter(getContext(), data, mRecyclerView);
         SnapHelper snapHelper = new LinearSnapHelper();
@@ -296,14 +291,14 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                         if(mBitmapCount>0) {
                             mImageViewA.setVisibility(View.VISIBLE);
                             mViewA.setVisibility(View.VISIBLE);
-                        }
-                        if(mBitmapCount>1) {
-                            mImageViewB.setVisibility(View.VISIBLE);
-                            mViewB.setVisibility(View.VISIBLE);
-                        }
-                        if(mBitmapCount>2) {
-                            mImageViewC.setVisibility(View.VISIBLE);
-                            mViewC.setVisibility(View.VISIBLE);
+                            if(mBitmapCount>1) {
+                                mImageViewB.setVisibility(View.VISIBLE);
+                                mViewB.setVisibility(View.VISIBLE);
+                                if(mBitmapCount>2) {
+                                    mImageViewC.setVisibility(View.VISIBLE);
+                                    mViewC.setVisibility(View.VISIBLE);
+                                }
+                            }
                         }
                     } else {
                         mImageViewA.setImageBitmap(null);
@@ -333,7 +328,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             mImageViewRecentPic.setImageBitmap(BitmapUtil.createCaptureBitmap(list.get(0).imagePath));
             mImageViewRecentPic.setScaleType(ImageView.ScaleType.CENTER_CROP);
         }
-        flagToken = false;
 
         mOptionsPickerView = new OptionsPickerView<>(getActivity());
         final ArrayList<String> disease_list = new ArrayList<>(Arrays.asList("兰花","玫瑰","牡丹","木槿","三色堇","向日葵","绣球花","萱草","玉簪","栀子花"));
@@ -347,6 +341,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             }
         });
 
+        // 未拍照
+        flagToken = false;
+        // 默认为单拍，因此多拍数量为0
+        mBitmapCount=0;
+        // 未获得识别结果
+        getResult = false;
+        // 默认种属识别模式
         modeClass = true;
         mTextViewModeClass.setBackgroundColor(Color.WHITE);
         mTextViewModeClass.getBackground().setAlpha(255);
@@ -354,9 +355,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         mTextViewModeDisease.setBackgroundColor(getResources().getColor(R.color.background));
         mTextViewModeDisease.getBackground().setAlpha(160);
         mTextViewModeDisease.setTextColor(Color.WHITE);
-
-        mBitmapCount=0;
-        getResult = false;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -365,103 +363,97 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         super.onResume();
         Log.i(TAG, "onResume");
 
-        mImageViewRecentPic.setClickable(true);
-        mSeekbar.setVisibility(View.VISIBLE);
-        mRecyclerView.setVisibility(View.VISIBLE);
-        mTextViewModeClass.setVisibility(View.VISIBLE);
-        mTextViewModeDisease.setVisibility(View.VISIBLE);
-
-        getResult = false;
         flagToken = false;
         mSeekbar.setProgress(50);
-        if(!selectPhoto) {
-            close = true;
-            startBackgroundThread();
-            if (mTextureView.isAvailable()) {
-                openCamera(mTextureView.getWidth(), mTextureView.getHeight());
-            } else {
-                mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
-            }
-            mTextureView.setOnTouchListener(textTureOntuchListener);
 
-            mButtonPicture.setSelected(false);
-            mButtonPicture.setBackgroundResource(R.mipmap.icon_shutter);
-            mImageViewResult.setVisibility(View.INVISIBLE);
-            mView.setVisibility(View.INVISIBLE);
-            if(recNoMode.equals(REC_FORM_MODE[0])) {
-                mViewABC.setVisibility(View.VISIBLE);
-                if(mBitmapCount==0){
-                    threePic = false;
-                    mImageViewA.setVisibility(View.INVISIBLE);
-                    mImageViewB.setVisibility(View.INVISIBLE);
-                    mImageViewC.setVisibility(View.INVISIBLE);
-                    mViewA.setVisibility(View.INVISIBLE);
-                    mViewB.setVisibility(View.INVISIBLE);
-                    mViewC.setVisibility(View.INVISIBLE);
-                    mButtonPicture.setSelected(false);
-                    mButtonPicture.setBackgroundResource(R.mipmap.icon_shutter);
-                    mImageViewRecentPic.setVisibility(View.VISIBLE);
-                    imageViewBG.setVisibility(View.VISIBLE);
-                    mRecyclerView.setVisibility(View.VISIBLE);
-                    mImageViewResult.setVisibility(View.INVISIBLE);
-                    mView.setVisibility(View.INVISIBLE);
-                    mTextViewResult.setVisibility(View.INVISIBLE);
-                    mTextViewAbstract.setVisibility(View.INVISIBLE);
-                    mTextViewModeClass.setVisibility(View.VISIBLE);
-                    mTextViewModeDisease.setVisibility(View.VISIBLE);
-                    mTextViewModeClass.setVisibility(View.VISIBLE);
-                    mTextViewModeDisease.setVisibility(View.VISIBLE);
-                    mSeekbar.setVisibility(View.VISIBLE);
-                }else {
-                    if (mBitmapCount > 0) {
-                        mImageViewA.setVisibility(View.VISIBLE);
-                        mViewA.setVisibility(View.VISIBLE);
-                    }
-                    if (mBitmapCount > 1) {
-                        mImageViewB.setVisibility(View.VISIBLE);
-                        mViewB.setVisibility(View.VISIBLE);
-                    }
-                    if (mBitmapCount > 2) {
-                        mImageViewC.setVisibility(View.VISIBLE);
-                        mViewC.setVisibility(View.VISIBLE);
-                    }
-                }
-            } else {
-                mViewABC.setVisibility(View.INVISIBLE);
+        // 如果处于调用系统相册并裁剪进程中(应保持相机关闭状态)，或者应用暂停，直接返回
+        if(selectPhoto) return;
+        // 否则，可正常开启相机
+        couldCloseCamera = true;
+        startBackgroundThread();
+        if (mTextureView.isAvailable()) {
+            openCamera(mTextureView.getWidth(), mTextureView.getHeight());
+        } else {
+            mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
+        }
+        mTextureView.setOnTouchListener(textTureOntuchListener);
+
+        // 相关视图控件显示与否
+        if(getResult) return;
+        mTextViewResult.setVisibility(View.INVISIBLE);
+        mTextViewAbstract.setVisibility(View.INVISIBLE);
+        mImageViewRecentPic.setVisibility(View.VISIBLE);
+        imageViewBG.setVisibility(View.VISIBLE);
+        mButtonPicture.setSelected(false);
+        mButtonPicture.setBackgroundResource(R.mipmap.icon_shutter);
+        mImageViewResult.setVisibility(View.INVISIBLE);
+        mView.setVisibility(View.INVISIBLE);
+        if (recNoMode.equals(REC_FORM_MODE[0])) {
+            mViewABC.setVisibility(View.VISIBLE);
+            if (mBitmapCount == 0) {
+                threePic = false;
                 mImageViewA.setVisibility(View.INVISIBLE);
                 mImageViewB.setVisibility(View.INVISIBLE);
                 mImageViewC.setVisibility(View.INVISIBLE);
                 mViewA.setVisibility(View.INVISIBLE);
                 mViewB.setVisibility(View.INVISIBLE);
                 mViewC.setVisibility(View.INVISIBLE);
-            }
-            mTextViewResult.setVisibility(View.INVISIBLE);
-            mTextViewAbstract.setVisibility(View.INVISIBLE);
-            mImageViewRecentPic.setVisibility(View.VISIBLE);
-            imageViewBG.setVisibility(View.VISIBLE);
-            if(!cutEnding && recNoMode.equals(REC_FORM_MODE[1])) {
-                mImageViewRecentPic.setClickable(true);
                 mRecyclerView.setVisibility(View.VISIBLE);
+                mImageViewResult.setVisibility(View.INVISIBLE);
+                mView.setVisibility(View.INVISIBLE);
+                mTextViewModeClass.setVisibility(View.VISIBLE);
+                mTextViewModeDisease.setVisibility(View.VISIBLE);
                 mTextViewModeClass.setVisibility(View.VISIBLE);
                 mTextViewModeDisease.setVisibility(View.VISIBLE);
                 mSeekbar.setVisibility(View.VISIBLE);
-                try {
-                    if(mCameraCaptureSession!=null) {
-                        mCameraCaptureSession.stopRepeating();
-                        mCameraCaptureSession.abortCaptures();
-                    }
-                } catch (CameraAccessException e) {
-                    e.printStackTrace();
+            } else {
+                if (mBitmapCount > 0) {
+                    mImageViewA.setVisibility(View.VISIBLE);
+                    mViewA.setVisibility(View.VISIBLE);
                 }
-                cutEnding = false;
+                if (mBitmapCount > 1) {
+                    mImageViewB.setVisibility(View.VISIBLE);
+                    mViewB.setVisibility(View.VISIBLE);
+                }
+                if (mBitmapCount > 2) {
+                    mImageViewC.setVisibility(View.VISIBLE);
+                    mViewC.setVisibility(View.VISIBLE);
+                }
             }
-
-            if(!recNoMode.equals(REC_FORM_MODE[0])) {
-                mImageViewA.setImageBitmap(null);
-                mImageViewB.setImageBitmap(null);
-                mImageViewC.setImageBitmap(null);
-                mBitmapCount = 0;
+        } else {
+            if (recNoMode.equals(REC_FORM_MODE[1])) {
+                if (!cutEnding) {
+                    mImageViewRecentPic.setClickable(true);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mTextViewModeClass.setVisibility(View.VISIBLE);
+                    mTextViewModeDisease.setVisibility(View.VISIBLE);
+                    mSeekbar.setVisibility(View.VISIBLE);
+                    try {
+                        if (mCameraCaptureSession != null) {
+                            mCameraCaptureSession.stopRepeating();
+                            mCameraCaptureSession.abortCaptures();
+                        }
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
+                    mImageViewRecentPic.setClickable(false);
+                    mSeekbar.setVisibility(View.INVISIBLE);
+                    mRecyclerView.setVisibility(View.INVISIBLE);
+                    mTextViewModeClass.setVisibility(View.INVISIBLE);
+                    mTextViewModeDisease.setVisibility(View.INVISIBLE);
+                    cutEnding = false;
+                }
             }
+            mBitmapCount = 0;
+            mViewABC.setVisibility(View.INVISIBLE);
+            mImageViewA.setVisibility(View.INVISIBLE);
+            mImageViewB.setVisibility(View.INVISIBLE);
+            mImageViewC.setVisibility(View.INVISIBLE);
+            mViewA.setVisibility(View.INVISIBLE);
+            mViewB.setVisibility(View.INVISIBLE);
+            mViewC.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -469,11 +461,10 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     public void onPause() {
         super.onPause();
         lastZoom = 0;
-        getResult = false;
-        if(close) {
-            close = false;
+        if(couldCloseCamera) {
             closeCamera();
             stopBackgroundThread();
+            couldCloseCamera = false;
         }
     }
 
@@ -486,8 +477,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                         Toast.makeText(getActivity(), "请选择花的种属", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getActivity(), "正在处理中...", Toast.LENGTH_SHORT).show();
-                        mButtonPicture.setSelected(true);
                         mButtonPicture.setClickable(false);
+                        mButtonPicture.setSelected(true);
+                        mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
                         mImageViewRecentPic.setVisibility(View.INVISIBLE);
                         imageViewBG.setVisibility(View.INVISIBLE);
                         mRecyclerView.setVisibility(View.GONE);
@@ -512,15 +504,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     mImageViewRecentPic.setVisibility(View.VISIBLE);
                     imageViewBG.setVisibility(View.VISIBLE);
                     mRecyclerView.setVisibility(View.VISIBLE);
+                    flagToken = true;
                     // 顺序不能变
                     unlockFocus();
                     flagToken = false;
+                    getResult = false;
                     mImageViewResult.setVisibility(View.INVISIBLE);
                     mView.setVisibility(View.INVISIBLE);
-                    //mTextViewMoreResult.setVisibility(View.INVISIBLE);
                     mTextViewResult.setVisibility(View.INVISIBLE);
                     mTextViewAbstract.setVisibility(View.INVISIBLE);
-                    //mTextViewConfidence.setVisibility(View.INVISIBLE);
                     mTextViewModeClass.setVisibility(View.VISIBLE);
                     mTextViewModeDisease.setVisibility(View.VISIBLE);
                     mTextViewModeClass.setVisibility(View.VISIBLE);
@@ -532,7 +524,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             case R.id.imageViewRecentPic:{
                 selectPhoto = true;
                 mImageViewRecentPic.setClickable(false);
-                mButtonPicture.setClickable(false);
                 Intent albumIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 albumIntent.setType("image/*");
                 startActivityForResult(albumIntent, SELECT_PHOTO);
@@ -572,6 +563,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             }
             case R.id.view2:{
                 if(getResult){
+                    getResult = false;
                     Intent intent = new Intent(getContext(), FlowerDetailActivity.class);
                     if(recMode.equals("fresh")) {
                         intent.putExtra(sFlowerID, result);
@@ -594,6 +586,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         if(resultCode==RESULT_CANCELED){
             // 从相册中取消选择图片，或者从识别结果详情页返回，置selectPhoto为false
             selectPhoto = false;
+            cutEnding = true;
+            getResult = false;
             mButtonPicture.setClickable(true);
             mImageViewRecentPic.setClickable(true);
             if(recNoMode.equals(REC_FORM_MODE[0])) {
@@ -611,10 +605,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                 mRecyclerView.setVisibility(View.VISIBLE);
                 mImageViewResult.setVisibility(View.INVISIBLE);
                 mView.setVisibility(View.INVISIBLE);
-                //mTextViewMoreResult.setVisibility(View.INVISIBLE);
                 mTextViewResult.setVisibility(View.INVISIBLE);
                 mTextViewAbstract.setVisibility(View.INVISIBLE);
-                //mTextViewConfidence.setVisibility(View.INVISIBLE);
                 mTextViewModeClass.setVisibility(View.VISIBLE);
                 mTextViewModeDisease.setVisibility(View.VISIBLE);
                 mTextViewModeClass.setVisibility(View.VISIBLE);
@@ -674,6 +666,12 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
 
                     mImageViewRecentPic.setImageBitmap(albumBitmap);
                     mImageViewRecentPic.setClickable(false);
+
+                    mButtonPicture.setClickable(false);
+                    mImageViewRecentPic.setClickable(false);
+                    mRecyclerView.setVisibility(View.GONE);
+                    mSeekbar.setVisibility(View.INVISIBLE);
+
                     if(recNoMode.equals(REC_FORM_MODE[1])) {
                         cutEnding = true;
                         mSeekbar.setVisibility(View.INVISIBLE);
@@ -698,8 +696,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                                 .addFormDataPart("imageA", "p.jpg", fileBody)
                                 .build();
                         Request request = new Request.Builder()
-                                //.url("http://192.168.1.101:8080/recognition")
-                                //.url("http://10.0.2.2:8080/recognition")
                                 .url("http://47.106.159.26/recognition")
                                 .post(requestBody)
                                 .build();
@@ -960,8 +956,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                                     .addFormDataPart("imageA", "p.jpg", fileBody)
                                     .build();
                             Request requesta = new Request.Builder()
-                                    //.url("http://192.168.1.101:8080/recognition")
-                                    //.url("http://10.0.2.2:8080/recognition")
                                     .url("http://47.106.159.26/recognition")
                                     .post(requestBody)
                                     .build();
@@ -1239,8 +1233,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     // Get
                     mOkHttpClient = new OkHttpClient();
                     request = new Request.Builder()
-                            //.url("http://192.168.1.101:8080/knowledge/bitmap/" + uri)
-                            //.url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
                             .url("http://47.106.159.26/knowledge/bitmap/" + uri)
                             .build();
                     call = mOkHttpClient.newCall(request);
@@ -1265,6 +1257,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     imageViewBG.setVisibility(View.VISIBLE);
 
                     mButtonPicture.setClickable(true);
+                    mButtonPicture.setSelected(true);
                     mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
                     mTextViewModeClass.setVisibility(View.INVISIBLE);
                     mTextViewModeDisease.setVisibility(View.INVISIBLE);
@@ -1290,8 +1283,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     mTextViewAbstract.setText(mResult.get(recMode));
                     mButtonPicture.setClickable(true);
                     mButtonPicture.setSelected(true);
-                    flagToken = true;
                     mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
+                    flagToken = true;
                     mView.setVisibility(View.VISIBLE);
                     mTextViewResult.setVisibility(View.VISIBLE);
                     mTextViewAbstract.setVisibility(View.VISIBLE);
@@ -1300,6 +1293,8 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
 
                     mRecyclerView.setVisibility(View.GONE);
                     mSeekbar.setVisibility(View.INVISIBLE);
+
+                    mImageViewRecentPic.setClickable(false);
 
                     mBitmapCount = 0;
                     uploadFile.clear();
@@ -1317,8 +1312,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     // Get
                     mOkHttpClient = new OkHttpClient();
                     request = new Request.Builder()
-                            //.url("http://192.168.1.101:8080/knowledge/bitmap/" + uri)
-                            //.url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
                             .url("http://47.106.159.26/knowledge/bitmap/" + uri)
                             .build();
                     call = mOkHttpClient.newCall(request);
@@ -1371,6 +1364,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                         mImageViewC.setImageBitmap(cameraBitmap);
                         mImageViewC.setVisibility(View.VISIBLE);
                         mViewC.setVisibility(View.VISIBLE);
+
+                        mImageViewRecentPic.setClickable(false);
+
+                        mButtonPicture.setClickable(false);
+                        mButtonPicture.setSelected(true);
+                        mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
+                        mRecyclerView.setVisibility(View.GONE);
+                        mSeekbar.setVisibility(View.INVISIBLE);
+
                         // Post
                         mOkHttpClient = new OkHttpClient();
                         RequestBody fileBodyA = RequestBody.create(MEDIA_TYPE_MARKDOWN, uploadFile.get(0));
@@ -1385,8 +1387,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                                 .addFormDataPart("imageC", "c.jpg", fileBodyC)
                                 .build();
                         Request requesta = new Request.Builder()
-                                //.url("http://192.168.1.101:8080/recognition")
-                                //.url("http://10.0.2.2:8080/recognition")
                                 .url("http://47.106.159.26/recognition")
                                 .post(requestBody)
                                 .build();
@@ -1430,7 +1430,9 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     byte[] data = ((byte[]) message.obj);
                     bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                     mImageViewResult.setImageBitmap(bitmap);
-                    mImageViewResult.setVisibility(View.VISIBLE);
+                    if(mButtonPicture.isSelected()) {
+                        mImageViewResult.setVisibility(View.VISIBLE);
+                    }
                     break;
                 }
                 default:break;

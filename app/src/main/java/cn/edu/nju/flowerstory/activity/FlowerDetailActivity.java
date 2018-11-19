@@ -51,8 +51,9 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
     private final int GET_CONTENT = 1;
     private final int GET_BITMAP = 2;
 
+    private String flowerName;
     private String diseaseName = "null";
-    Bitmap bitmap;
+    private Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +100,7 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
         mTextViewDetail = findViewById(R.id.detail);
         mTextViewReadme = findViewById(R.id.readme);
         toolbar = findViewById(R.id.mToolbarDetail);
+
         toolbar.setTitle(R.string.detail);
         toolbar.inflateMenu(R.menu.menu_favr);
         setSupportActionBar(toolbar);
@@ -113,13 +115,11 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
         // 创建UI主线程，同时设置消息回调
         mUIHandler = new Handler(new InnerCallBack());
 
-        String flowerName = getIntent().getStringExtra(sFlowerID);
+        flowerName = getIntent().getStringExtra(sFlowerID);
         diseaseName = getIntent().getStringExtra(sDiseaseID);
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
-                //.url("http://192.168.1.101:8080/knowledge/" + flowerName)
-                //.url("http://10.0.2.2:8080/knowledge/" + flowerName)
                 .url("http://47.106.159.26/knowledge/" + flowerName)
                 .build();
         Call call = mOkHttpClient.newCall(request);
@@ -167,7 +167,9 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
                             title += " | " + diseaseName;
                         }
                         mTextViewTittle.setText(title);
+
                         mTextViewPhotoDetail.setText(obj.get("name").toString());
+
                         StringBuilder content = new StringBuilder();
                         if(diseaseName==null) {
                             content.append("Taxonomy\n\n").append(obj.get("taxonomy").toString()).append("\n\n");
@@ -205,14 +207,13 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
                             }
                         }
                         mTextViewDetail.setText(content);
+
                         mTextViewReadme.setText("信息来源@百度百科");
 
                         // Get
                         String uri = obj.get("bitmap").toString();
                         OkHttpClient mOkHttpClient = new OkHttpClient();
                         Request request = new Request.Builder()
-                                //.url("http://192.168.1.101:8080/knowledge/bitmap/" + uri)
-                                //.url("http://10.0.2.2:8080/knowledge/bitmap/" + uri)
                                 .url("http://47.106.159.26/knowledge/bitmap/" + uri)
                                 .build();
                         Call call = mOkHttpClient.newCall(request);

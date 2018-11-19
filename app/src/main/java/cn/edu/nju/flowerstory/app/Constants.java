@@ -2,7 +2,6 @@ package cn.edu.nju.flowerstory.app;
 
 import android.os.Environment;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
