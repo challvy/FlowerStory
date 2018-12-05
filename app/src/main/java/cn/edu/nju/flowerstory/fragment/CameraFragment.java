@@ -58,6 +58,8 @@ import android.widget.Toast;
 
 import com.airsaid.pickerviewlibrary.OptionsPickerView;
 
+import org.json.JSONObject;
+
 import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.activity.FlowerDetailActivity;
 import cn.edu.nju.flowerstory.adapter.PickerAdapter;
@@ -81,6 +83,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,7 +124,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     private View mViewB;
     private View mViewC;
     private TextView mTextViewResult;
-    private TextView mTextViewAbstract;
+    private TextView mTextViewConfidence;
     private boolean getResult;
     private String result;
     private Bitmap bitmap;
@@ -245,7 +248,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         mViewB = view.findViewById(R.id.viewB);
         mViewC = view.findViewById(R.id.viewC);
         mTextViewResult = view.findViewById(R.id.textViewResult);
-        mTextViewAbstract = view.findViewById(R.id.textViewAbstract);
+        mTextViewConfidence = view.findViewById(R.id.confidence);
         mTextViewModeClass = view.findViewById(R.id.modeClass);
         mTextViewModeDisease = view.findViewById(R.id.modeDisease);
         ImageView imageViewReturnCamera = view.findViewById(R.id.imageViewReturnCamera);
@@ -381,7 +384,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         // 相关视图控件显示与否
         if(getResult) return;
         mTextViewResult.setVisibility(View.INVISIBLE);
-        mTextViewAbstract.setVisibility(View.INVISIBLE);
+        mTextViewConfidence.setVisibility(View.INVISIBLE);
         mImageViewRecentPic.setVisibility(View.VISIBLE);
         imageViewBG.setVisibility(View.VISIBLE);
         mButtonPicture.setSelected(false);
@@ -422,7 +425,15 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
             }
         } else {
             if (recNoMode.equals(REC_FORM_MODE[1])) {
-                if (!cutEnding) {
+                if (cutEnding) {
+                    mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
+                    mImageViewRecentPic.setClickable(false);
+                    mSeekbar.setVisibility(View.INVISIBLE);
+                    mRecyclerView.setVisibility(View.INVISIBLE);
+                    mTextViewModeClass.setVisibility(View.INVISIBLE);
+                    mTextViewModeDisease.setVisibility(View.INVISIBLE);
+                    cutEnding = false;
+                } else {
                     mImageViewRecentPic.setClickable(true);
                     mRecyclerView.setVisibility(View.VISIBLE);
                     mTextViewModeClass.setVisibility(View.VISIBLE);
@@ -436,14 +447,6 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
                     }
-                } else {
-                    mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
-                    mImageViewRecentPic.setClickable(false);
-                    mSeekbar.setVisibility(View.INVISIBLE);
-                    mRecyclerView.setVisibility(View.INVISIBLE);
-                    mTextViewModeClass.setVisibility(View.INVISIBLE);
-                    mTextViewModeDisease.setVisibility(View.INVISIBLE);
-                    cutEnding = false;
                 }
             }
             mBitmapCount = 0;
@@ -512,7 +515,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     mImageViewResult.setVisibility(View.INVISIBLE);
                     mView.setVisibility(View.INVISIBLE);
                     mTextViewResult.setVisibility(View.INVISIBLE);
-                    mTextViewAbstract.setVisibility(View.INVISIBLE);
+                    mTextViewConfidence.setVisibility(View.INVISIBLE);
                     mTextViewModeClass.setVisibility(View.VISIBLE);
                     mTextViewModeDisease.setVisibility(View.VISIBLE);
                     mTextViewModeClass.setVisibility(View.VISIBLE);
@@ -586,7 +589,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
         if(resultCode==RESULT_CANCELED){
             // 从相册中取消选择图片，或者从识别结果详情页返回，置selectPhoto为false
             selectPhoto = false;
-            cutEnding = true;
+            cutEnding = false;
             getResult = false;
             mButtonPicture.setClickable(true);
             mImageViewRecentPic.setClickable(true);
@@ -606,7 +609,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                 mImageViewResult.setVisibility(View.INVISIBLE);
                 mView.setVisibility(View.INVISIBLE);
                 mTextViewResult.setVisibility(View.INVISIBLE);
-                mTextViewAbstract.setVisibility(View.INVISIBLE);
+                mTextViewConfidence.setVisibility(View.INVISIBLE);
                 mTextViewModeClass.setVisibility(View.VISIBLE);
                 mTextViewModeDisease.setVisibility(View.VISIBLE);
                 mTextViewModeClass.setVisibility(View.VISIBLE);
@@ -1201,6 +1204,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
     }
 
     private class InnerCallBack implements Handler.Callback {
+        @SuppressLint("SetTextI18n")
         @Override
         public boolean handleMessage(Message message) {
             OkHttpClient mOkHttpClient;
@@ -1221,35 +1225,40 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                 case CAMERA_RESULT: {
                     Log.i(TAG, "CAMERA_RESULT\t" + message.obj.toString());
                     getResult = true;
-                    result = message.obj.toString();
-                    if (recMode.equals("fresh")) {
-                        mTextViewResult.setText(mFreshResult.get(message.obj.toString()));
-                        uri = message.obj.toString() + ".jpg";
-                    } else {
-                        mTextViewResult.setText(message.obj.toString());
-                        uri = recMode + ".jpg";
+                    try {
+                        JSONObject obj = new JSONObject(message.obj.toString());
+                        String label = obj.get("label").toString();
+                        result = label;
+                        Double conf = Double.parseDouble(obj.get("conf").toString())*100;
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        if (recMode.equals("fresh")) {
+                            mTextViewResult.setText(mFreshResult.get(label));
+                            mTextViewConfidence.setText("置信度：" + df.format(conf) + "%");
+                            uri = label + ".jpg";
+                        } else {
+                            mTextViewResult.setText(label);
+                            uri = recMode + ".jpg";
+                        }
+                        mOkHttpClient = new OkHttpClient();
+                        request = new Request.Builder()
+                                .url("http://47.106.159.26/knowledge/bitmap/" + uri)
+                                .build();
+                        call = mOkHttpClient.newCall(request);
+                        call.enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call arg0, IOException e) {
+                                System.out.println(e.toString());
+                            }
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                byte[] data = response.body().bytes();
+                                Message.obtain(mUIHandler, CAMERA_RESULT_PICTURE, data).sendToTarget();
+                            }
+                        });
+                    } catch (Exception e) {
+                        Log.e("Detail", "Exception = " + e);
                     }
 
-                    // Get
-                    mOkHttpClient = new OkHttpClient();
-                    request = new Request.Builder()
-                            .url("http://47.106.159.26/knowledge/bitmap/" + uri)
-                            .build();
-                    call = mOkHttpClient.newCall(request);
-                    call.enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call arg0, IOException e) {
-                            System.out.println(e.toString());
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            byte[] data = response.body().bytes();
-                            Message.obtain(mUIHandler, CAMERA_RESULT_PICTURE, data).sendToTarget();
-                        }
-                    });
-
-                    mTextViewAbstract.setText(mResult.get(recMode));
                     mImageViewRecentPic.setBackgroundColor(Color.WHITE);
                     mImageViewRecentPic.setImageBitmap(cameraBitmap);
                     mImageViewRecentPic.setVisibility(View.VISIBLE);
@@ -1265,7 +1274,7 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
 
                     mView.setVisibility(View.VISIBLE);
                     mTextViewResult.setVisibility(View.VISIBLE);
-                    mTextViewAbstract.setVisibility(View.VISIBLE);
+                    mTextViewConfidence.setVisibility(View.VISIBLE);
                     mSeekbar.setVisibility(View.INVISIBLE);
                     mBitmapCount = 0;
                     uploadFile.clear();
@@ -1280,14 +1289,13 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
                     } catch (CameraAccessException e) {
                         e.printStackTrace();
                     }
-                    mTextViewAbstract.setText(mResult.get(recMode));
                     mButtonPicture.setClickable(true);
                     mButtonPicture.setSelected(true);
                     mButtonPicture.setBackgroundResource(R.mipmap.icon_cancel);
                     flagToken = true;
                     mView.setVisibility(View.VISIBLE);
                     mTextViewResult.setVisibility(View.VISIBLE);
-                    mTextViewAbstract.setVisibility(View.VISIBLE);
+                    mTextViewConfidence.setVisibility(View.VISIBLE);
                     mTextViewModeClass.setVisibility(View.INVISIBLE);
                     mTextViewModeDisease.setVisibility(View.INVISIBLE);
 
@@ -1298,34 +1306,41 @@ public class CameraFragment extends Fragment implements View.OnClickListener, Ac
 
                     mBitmapCount = 0;
                     uploadFile.clear();
-
                     getResult = true;
-                    result = message.obj.toString();
-                    if(recMode.equals("fresh")) {
-                        mTextViewResult.setText(mFreshResult.get(message.obj.toString()));
-                        uri = message.obj.toString() + ".jpg";
-                    } else {
-                        mTextViewResult.setText(message.obj.toString());
-                        uri = recMode + ".jpg";
-                    }
 
-                    // Get
-                    mOkHttpClient = new OkHttpClient();
-                    request = new Request.Builder()
-                            .url("http://47.106.159.26/knowledge/bitmap/" + uri)
-                            .build();
-                    call = mOkHttpClient.newCall(request);
-                    call.enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call arg0, IOException e) {
-                            System.out.println(e.toString());
+                    try {
+                        JSONObject obj = new JSONObject(message.obj.toString());
+                        String label = obj.get("label").toString();
+                        result = label;
+                        Double conf = Double.parseDouble(obj.get("conf").toString()) * 100;
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        if (recMode.equals("fresh")) {
+                            mTextViewResult.setText(mFreshResult.get(label));
+                            mTextViewConfidence.setText("置信度：" + df.format(conf) + "%");
+                            uri = label + ".jpg";
+                        } else {
+                            mTextViewResult.setText(label);
+                            uri = recMode + ".jpg";
                         }
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            byte[] data = response.body().bytes();
-                            Message.obtain(mUIHandler, CAMERA_RESULT_PICTURE, data).sendToTarget();
-                        }
-                    });
+                        mOkHttpClient = new OkHttpClient();
+                        request = new Request.Builder()
+                                .url("http://47.106.159.26/knowledge/bitmap/" + uri)
+                                .build();
+                        call = mOkHttpClient.newCall(request);
+                        call.enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call arg0, IOException e) {
+                                System.out.println(e.toString());
+                            }
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                byte[] data = response.body().bytes();
+                                Message.obtain(mUIHandler, CAMERA_RESULT_PICTURE, data).sendToTarget();
+                            }
+                        });
+                    } catch (Exception e) {
+                        Log.e("Detail", "Exception = " + e);
+                    }
                     break;
                 }
                 case CAMERA_THREE_PICTURE:{

@@ -1,6 +1,6 @@
 # FlowerStory
 
-[![Download](https://img.shields.io/badge/Download-v1.0.0-ff8080.svg)](https://github.com/challvy/FlowerStory/raw/master/README_RES/app.apk)
+[![Download](https://img.shields.io/badge/Download-v1.0.0-ff8080.svg)](https://github.com/challvy/FlowerStory/raw/master/README_RES/FlowerStory.apk)
 
 ## Introduce
 
@@ -11,25 +11,25 @@ Flower Story is an Android App project that provides flower recognition service.
 ### Gradle
 
 ```java
-gradle: 3.1.4
-distributionUrl=http\://services.gradle.org/distributions/gradle-4.4-all.zip
+gradle: 3.2.1
+distributionUrl=http\://services.gradle.org/distributions/gradle-4.6-all.zip
 ```
 
 ### Android SDK
 
 ```java
-compileSdkVersion: 27
-buildToolsVersion '27.0.3'
+compileSdkVersion: 28
+buildToolsVersion '28.0.3'
 minSdkVersion 21
-targetSdkVersion 27
+targetSdkVersion 28
 ```
 
 ### Dependencies
 
 ```java
-implementation 'com.android.support:appcompat-v7:27.1.1'
-implementation 'com.android.support:design:27.1.1'
-implementation 'com.android.support:cardview-v7:27.1.1'
+implementation 'com.android.support:appcompat-v7:28.0.0'
+implementation 'com.android.support:design:28.0.0'
+implementation 'com.android.support:cardview-v7:28.0.0'
 implementation 'com.squareup.okhttp3:okhttp:3.10.0'
 ```
 
