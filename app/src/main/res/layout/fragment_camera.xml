@@ -130,6 +130,19 @@
                 android:singleLine="true"
                 android:textColor="#ffffff" />
 
+            <TextView
+                android:id="@+id/moreResults"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:padding="5dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="0dp"
+                android:textColor="@color/colorPrimary"
+                android:gravity="center"
+                android:text="更多结果" />
+
         </RelativeLayout>
 
         <RelativeLayout
@@ -178,6 +191,7 @@
                 android:clipToPadding="false"
                 android:paddingHorizontal="160dp"
                 tools:targetApi="o" />
+
         </RelativeLayout>
 
         <ImageView

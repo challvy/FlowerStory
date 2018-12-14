@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
  * Created by Roy on 2016/12/28.
  * desc:
  */
-
 public class PullToRefeshLayout extends LinearLayout {
     private int mHeaderOffsetTop = 0;
     private int mHeaderOffsetBottom = 0;

@@ -22,6 +22,7 @@
         android:layout_height="0dp"
         android:fillViewport="false"
         android:orientation="vertical"
+        android:id="@+id/detailScrollView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mToolbarDetail">
 

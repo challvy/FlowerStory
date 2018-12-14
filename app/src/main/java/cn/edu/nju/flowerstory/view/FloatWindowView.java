@@ -10,7 +10,6 @@ import android.view.View;
 import cn.edu.nju.flowerstory.R;
 import cn.edu.nju.flowerstory.utils.ScreenSizeUtil;
 
-
 public class FloatWindowView extends View {
 
     public int width;
@@ -50,4 +49,5 @@ public class FloatWindowView extends View {
     protected void onDraw(Canvas canvas) {
         canvas.drawBitmap(bitmap, 0, 0, null);
     }
+
 }

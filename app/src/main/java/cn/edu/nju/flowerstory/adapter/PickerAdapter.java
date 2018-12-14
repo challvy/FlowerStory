@@ -13,7 +13,6 @@ import java.util.List;
 
 import cn.edu.nju.flowerstory.R;
 
-
 public class PickerAdapter extends RecyclerView.Adapter<PickerAdapter.TextVH> {
 
     private Context context;
@@ -63,11 +62,6 @@ public class PickerAdapter extends RecyclerView.Adapter<PickerAdapter.TextVH> {
     @Override
     public int getItemCount() {
         return dataList.size();
-    }
-
-    public void swapData(List<String> newData) {
-        dataList = newData;
-        notifyDataSetChanged();
     }
 
 }

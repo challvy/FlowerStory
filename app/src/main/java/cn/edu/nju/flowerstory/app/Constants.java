@@ -30,6 +30,7 @@ public class Constants {
 
     public static final int SELECT_PHOTO = 1;
     public static final int CUT_PHOTO = 2;
+    public static final int RESULT = 3;
 
     public static final int PERMISSIONS_GRANTED = 0;
     public static final int PERMISSIONS_DENIED = 1;
@@ -45,6 +46,8 @@ public class Constants {
     public static final int CAMERA_THREE_PICTURE = 4;
     public static final int CAMERA_VIDEO = 5;
     public static final int CAMERA_RESULT_PICTURE = 6;
+    public static final int CONNECT_FAILED = 7;
+    public static final int CONNECT_THREE_PICTURE_FAILED = 8;
 
     // UserActivity图片缩放比例
     public static final float BITMAP_SCALE = 0.4f;

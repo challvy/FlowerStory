@@ -20,16 +20,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import cn.edu.nju.flowerstory.R;
-import cn.edu.nju.flowerstory.adapter.RecyclerAdapter;
 
 public class SearchActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private SearchView mSearchView;
     private RecyclerView mRecyclerView;
-    private RecyclerAdapter mAdapter;
-    private int mPosition;
-    //private SearchView.SearchAutoComplete mSearchAutoComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +46,6 @@ public class SearchActivity extends AppCompatActivity {
         layoutManager.canScrollVertically();
 
         initData();
-        //mAdapter.setItems(new ArrayList<FlowerModel>());
     }
 
     @Override
@@ -64,7 +59,6 @@ public class SearchActivity extends AppCompatActivity {
         //mSearchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
         mSearchView.onActionViewExpanded();
         mSearchView.setIconified(false);
-
         mSearchView.setQueryHint("搜索");
 
         LinearLayout search_edit_frame = (LinearLayout) mSearchView.findViewById(R.id.search_edit_frame);
@@ -96,7 +90,6 @@ public class SearchActivity extends AppCompatActivity {
                 if(s.isEmpty()){
                     ;//mAdapter.setItems(new ArrayList<FlowerModel>());
                 }
-                //initData();
                 Cursor cursor = TextUtils.isEmpty(s) ? null : null;
 
                 if (mSearchView.getSuggestionsAdapter() == null) {
@@ -124,27 +117,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void initData(){
-        /*
-        mAdapter = new RecyclerAdapter(data);
-        mAdapter.setItemClickListener(new RecyclerAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                //Toast.makeText(getApplicationContext(), "点击了" + position, Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getApplicationContext(), FlowerDetailActivity.class);
-                intent.putExtra(FlowerDetailActivity.sFlowerID, position);
-                RecognitionActivity.mBitmap = data.get(position).getBitmap();
-                startActivity(intent);
-                //startActivityForResult(intent,0);
-            }
 
-            @Override
-            public void onItemLongClick(View view, int position) {
-                //Toast.makeText(getContext(), "长按点击了" + position, Toast.LENGTH_LONG).show();
-            }
-        });
-        mRecyclerView.setAdapter(mAdapter);
-        */
-        //mPosition = getArguments().getInt("position");
     }
 
 }

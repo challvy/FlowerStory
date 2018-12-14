@@ -2,7 +2,6 @@ package cn.edu.nju.flowerstory.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.TextureView;

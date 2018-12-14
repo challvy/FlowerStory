@@ -20,7 +20,6 @@ import cn.edu.nju.flowerstory.view.FloatWindowView;
 /**
  * Created by AwenZeng on 2016/12/30.
  */
-
 public class FloatWindowUtil {
 
     private FloatWindowView mFloatWindowView;

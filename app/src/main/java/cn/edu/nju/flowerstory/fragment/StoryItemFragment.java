@@ -41,7 +41,6 @@ import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS;
 import static cn.edu.nju.flowerstory.app.Constants.HANDLER_CALLBACK_SUCCESS_GET_LIST;
 import static cn.edu.nju.flowerstory.app.Constants.sFlowerID;
 
-
 /**
  *
  * Created by Administrator on 2018/3/23 0023.
@@ -294,7 +293,7 @@ public class StoryItemFragment extends StoryItemBaseFragment {
                             Message.obtain(mUIHandler, HANDLER_CALLBACK_SUCCESS, jsonData).sendToTarget();
                         } catch (SocketTimeoutException e) {
                             // 加载列表失败 结束刷新
-                            Toast.makeText(getActivity(), "糟糕,网络开了小差", Toast.LENGTH_SHORT).show();
+                            Message.obtain(mUIHandler, HANDLER_CALLBACK_FAILURE).sendToTarget();
                             mRefreshLayout.setRefreshing(false);
                         }
                     }

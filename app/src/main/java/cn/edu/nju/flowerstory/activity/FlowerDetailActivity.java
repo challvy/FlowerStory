@@ -93,7 +93,7 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
     private void initView(){
         setContentView(R.layout.activity_flower_detail);
 
-        mScrollView = findViewById(R.id.recognition_recycler_view);
+        mScrollView = findViewById(R.id.detailScrollView);
         mTextViewTittle = findViewById(R.id.tittle);
         mImageView = findViewById(R.id.imageViewDetail);
         mTextViewPhotoDetail = findViewById(R.id.photodetail);
@@ -210,7 +210,6 @@ public class FlowerDetailActivity extends AppCompatActivity implements View.OnCl
 
                         mTextViewReadme.setText("信息来源@百度百科");
 
-                        // Get
                         String uri = obj.get("bitmap").toString();
                         OkHttpClient mOkHttpClient = new OkHttpClient();
                         Request request = new Request.Builder()

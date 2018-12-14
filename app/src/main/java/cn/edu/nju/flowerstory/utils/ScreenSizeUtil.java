@@ -7,7 +7,6 @@ import android.view.WindowManager;
 
 import cn.edu.nju.flowerstory.app.FloatWindowApp;
 
-
 public class ScreenSizeUtil {
 
     private static DisplayMetrics displayMetrics = getDisplayMetrics();

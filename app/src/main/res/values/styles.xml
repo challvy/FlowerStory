@@ -46,7 +46,6 @@
         <item name="searchViewStyle">@style/Widget.SearchView</item>
     </style>
 
-
     <style name="Widget.SearchView" parent="Widget.AppCompat.SearchView">
         <!--修改搜索框左边的搜索按钮图标-->
         <item name="searchHintIcon">@null</item>

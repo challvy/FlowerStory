@@ -31,7 +31,6 @@ import java.util.ArrayList;
 
 import cn.edu.nju.flowerstory.activity.SearchActivity;
 import cn.edu.nju.flowerstory.activity.UserActivity;
-import cn.edu.nju.flowerstory.activity.ViewBitmapActivity;
 import cn.edu.nju.flowerstory.adapter.ViewPagerAdapter;
 import cn.edu.nju.flowerstory.fragment.FlowerFragment;
 import cn.edu.nju.flowerstory.fragment.StoryFragment;
@@ -93,9 +92,7 @@ public class MainActivity extends AppCompatActivity {
         searchItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                //Toast.makeText(getApplicationContext(), "Open", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
-                //intent.putExtra(RecognitionActivity.sFlowerID, imageUri.toString());
                 startActivityForResult(intent,0);
                 return true;
             }

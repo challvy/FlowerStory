@@ -7,15 +7,4 @@
     <string name="share">分享</string>
     <string name="search">搜索</string>
     <string name="takephoto">拍照</string>
-
-    <string name="picture">Picture</string>
-    <string name="description_info">Info</string>
-    <string name="request_permission">This sample needs camera permission.</string>
-    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
-    <string name="intro_message">
-        <![CDATA[
-            This sample demonstrates the basic use of Camera2 API. Check the source code to see how
-            you can display camera preview and take pictures.
-        ]]>
-    </string>
 </resources>

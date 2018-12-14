@@ -11,35 +11,23 @@ public class FlowerModel {
     private String id;
     private String name;
     private String taxonomy;
-    private String morphological_character;
-    private String growth_habit;
-    private String distribution_range;
-    private String plant_diseases_insect_pests;
-    private String culture;
-    private String bitmap_res;
-    private String bitmap_description;
-
-    private String imageDetail;
-    private String detail;
+    private String conf;
     private Bitmap bitmap;
-
-    private boolean getFlag=false;
-    private boolean getAgainFlag=true;
-
-    public FlowerModel(){
-
-    }
+    private String disease;
 
     public FlowerModel(String id){
         this.id = id;
     }
 
-    public FlowerModel(String id, String name, Bitmap bitmap, String imageDetail, String detail) {
+    public FlowerModel(String id, String conf){
         this.id = id;
-        this.name = name;
-        this.bitmap = bitmap;
-        this.imageDetail = imageDetail;
-        this.detail = detail;
+        this.conf = conf;
+    }
+
+    public FlowerModel(String id, String disease, String conf) {
+        this.id = id;
+        this.disease = disease;
+        this.conf = conf;
     }
 
     public String getId() {
@@ -62,10 +50,6 @@ public class FlowerModel {
         return bitmap;
     }
 
-    public String getImageDetail() {
-        return imageDetail;
-    }
-
     public String getTaxonomy() {
         return taxonomy;
     }
@@ -78,21 +62,11 @@ public class FlowerModel {
         this.bitmap = bitmap;
     }
 
-    public void setGetFlag(boolean getFlag) {
-        this.getFlag = getFlag;
+    public String getConf() {
+        return conf;
     }
 
-    public boolean isGetFlag() {
-        return getFlag;
+    public String getDisease() {
+        return disease;
     }
-
-    public boolean isGetAgainFlag() {
-        return getAgainFlag;
-    }
-
-    public void setGetAgainFlag(boolean getAgainFlag) {
-        this.getAgainFlag = getAgainFlag;
-    }
-
-
 }

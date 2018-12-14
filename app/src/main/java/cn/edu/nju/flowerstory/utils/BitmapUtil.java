@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
 
 import static cn.edu.nju.flowerstory.app.Constants.BITMAP_SCALE;
 
-
 public class BitmapUtil {
 
     private static final String TAG = "BitmapUtil";
